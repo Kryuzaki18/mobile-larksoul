@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@ant-design/react-native';
 import Header from '../../components/commons/Header';
 import ViewTabs, { ViewMode } from './ViewTabs';
@@ -25,6 +26,7 @@ function toDateStr(date: Date): string {
 }
 
 export default function Home() {
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<ViewMode>('calendar');
   const [selectedDate, setSelectedDate] = useState(() => new Date());
 
@@ -36,7 +38,7 @@ export default function Home() {
   }, [selectedDate]);
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-50">
+    <View className="flex-1 bg-slate-50" style={{ paddingTop: insets.top }}>
 
       <Header
         name={CURRENT_USER.name.split(' ')[0] + "'s"}
@@ -87,6 +89,6 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-    </SafeAreaView>
+    </View>
   );
 }
