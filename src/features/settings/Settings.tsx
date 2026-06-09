@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { List, Switch, Icon } from '@ant-design/react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,7 +16,12 @@ export default function Settings() {
   return (
     <>
       <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
-        <TouchableOpacity className="p-1.5" onPress={() => {navigation.replace('Home')}}>
+        <TouchableOpacity
+          className="p-1.5"
+          onPress={() => {
+            navigation.replace('Home');
+          }}
+        >
           <Icon name="left" size={20} color="#1e293b" />
         </TouchableOpacity>
         <Text className="text-base font-bold text-slate-800">Settings</Text>
@@ -35,14 +35,22 @@ export default function Settings() {
         <View className="rounded-2xl overflow-hidden mb-5">
           <List>
             <Item
+              style={{ paddingVertical: 14 }}
               thumb={
-                <View className="w-14 h-14 rounded-full bg-sky-200 items-center justify-center overflow-hidden">
+                <View
+                  className="w-14 h-14 rounded-full bg-sky-200 items-center justify-center overflow-hidden"
+                  style={{ marginRight: 12 }}
+                >
                   <Text className="text-3xl">🧑</Text>
                 </View>
               }
               extra={
                 <TouchableOpacity>
-                  <Text className="text-sky-600 font-semibold text-base">Edit</Text>
+                  <View className="p-3">
+                    <Text className="text-sky-600 font-semibold text-base">
+                      Edit
+                    </Text>
+                  </View>
                 </TouchableOpacity>
               }
               multipleLine
@@ -99,7 +107,9 @@ export default function Settings() {
             <Item
               thumb={<Icon name="download" size={22} color="#374151" />}
               extra={
-                <Text className="text-sm font-semibold text-gray-600">PDF, JSON</Text>
+                <Text className="text-sm font-semibold text-gray-600">
+                  PDF, JSON
+                </Text>
               }
               onPress={() => {}}
             >
@@ -117,10 +127,14 @@ export default function Settings() {
           </List>
         </View>
 
-        <TouchableOpacity className="items-center py-4 mb-6" onPress={() => {navigation.replace('Login')}}>
+        <TouchableOpacity
+          className="items-center py-4 mb-6"
+          onPress={() => {
+            navigation.replace('Login');
+          }}
+        >
           <Text className="text-red-500 text-base font-semibold">Sign Out</Text>
         </TouchableOpacity>
-
       </ScrollView>
     </>
   );
