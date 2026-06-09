@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Button, Input } from '@ant-design/react-native';
+import {  Button, Icon, Input } from '@ant-design/react-native';
 import type { RootStackParamList } from '../models/types/navigation.type';
 import GmailIcon from '../assets/gmail.svg';
 import XIcon from '../assets/x.svg';
@@ -43,8 +43,14 @@ export default function Login() {
 
         <View className="w-full border border-gray-200 rounded-2xl p-5">
           <View className="mb-3">
-            <Button type="primary" size="large" onPress={() => navigation.replace('Home')}>
-              Continue as Guest  →
+            <Button type="primary" size="large" onPress={() => navigation.replace('Home')}
+              >
+              <View className="flex-row items-center">
+                <Text className="text-white text-xl font-medium">
+                  Continue as Guest
+                </Text>
+                <Icon name="arrow-right" size={16} color="#fff" style={{ marginLeft: 8 }} />
+              </View>
             </Button>
           </View>
 
@@ -69,6 +75,7 @@ export default function Login() {
               placeholderTextColor="#9ca3af"
               autoCapitalize="none"
               keyboardType="email-address"
+              style={{ paddingHorizontal: 14, paddingVertical: 10 }}
             />
           </View>
 
@@ -87,12 +94,18 @@ export default function Login() {
               placeholder="• • • • • • • •"
               placeholderTextColor="#9ca3af"
               type="password"
+              style={{ paddingHorizontal: 14, paddingVertical: 10 }}
             />
           </View>
 
           <View className="mb-6">
             <Button type="primary" size="large" onPress={() => {}}>
-              Login  →
+              <View className="flex-row items-center">
+                <Text className="text-white text-xl font-medium">
+                  Login
+                </Text>
+                <Icon name="arrow-right" size={16} color="#fff" style={{ marginLeft: 8 }} />
+              </View>
             </Button>
           </View>
 
