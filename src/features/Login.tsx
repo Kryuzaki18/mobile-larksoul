@@ -8,7 +8,11 @@ import {
 } from 'react-native';
 import { Button, Input } from '@ant-design/react-native';
 
-export default function Login() {
+interface LoginProps {
+  onGuestLogin?: () => void;
+}
+
+export default function Login({ onGuestLogin }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -33,7 +37,7 @@ export default function Login() {
         <View className="w-full border border-gray-200 rounded-2xl p-5">
 
           <View className="mb-3">
-            <Button type="primary" size="large" onPress={() => {}}>
+            <Button type="primary" size="large" onPress={onGuestLogin}>
               Continue as Guest  →
             </Button>
           </View>
