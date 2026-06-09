@@ -3,31 +3,32 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
 import { List, Switch, Icon } from '@ant-design/react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../models/types/navigation.type';
+
+type HomeScreen = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const { Item } = List;
 
 export default function Settings() {
+  const navigation = useNavigation<HomeScreen>();
   const [notifications, setNotifications] = useState(true);
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-100">
-
+    <>
       <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
-        <TouchableOpacity className="p-1.5">
+        <TouchableOpacity className="p-1.5" onPress={() => {navigation.replace('Home')}}>
           <Icon name="left" size={20} color="#1e293b" />
         </TouchableOpacity>
         <Text className="text-base font-bold text-slate-800">Settings</Text>
-        <TouchableOpacity className="p-1.5">
-          <Icon name="setting" size={20} color="#1e3a5f" />
-        </TouchableOpacity>
+        <Icon name="setting" size={20} color="#1e3a5f" />
       </View>
 
       <ScrollView className="flex-1 px-4 pt-5">
-
         <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-2 ml-1">
           PROFILE
         </Text>
@@ -116,11 +117,11 @@ export default function Settings() {
           </List>
         </View>
 
-        <TouchableOpacity className="items-center py-4 mb-6" onPress={() => {}}>
+        <TouchableOpacity className="items-center py-4 mb-6" onPress={() => {navigation.replace('Login')}}>
           <Text className="text-red-500 text-base font-semibold">Sign Out</Text>
         </TouchableOpacity>
 
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }

@@ -38,7 +38,7 @@ export default function Home() {
   }, [selectedDate]);
 
   return (
-    <View className="flex-1 bg-slate-50" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-slate-50">
 
       <Header
         name={CURRENT_USER.name.split(' ')[0] + "'s"}
