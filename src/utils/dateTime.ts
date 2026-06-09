@@ -1,4 +1,4 @@
-export type { JournalEntry, Mood } from '../../models/users.model';
+export type { JournalEntry, Mood } from '../models/interfaces/users.model';
 
 const MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 

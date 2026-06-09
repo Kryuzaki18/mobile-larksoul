@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import JournalCard from './JournalCard';
-import type { JournalEntry } from './types';
+import type { JournalEntry } from '../../utils/dateTime';
 
 interface ListViewProps {
   entries: JournalEntry[];

@@ -1,4 +1,4 @@
-import type { User, JournalEntry } from '../models/users.model';
+import type { User, JournalEntry } from '../models/interfaces/users.model';
 
 export const CURRENT_USER: User = {
   id: 'u-001',

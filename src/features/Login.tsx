@@ -6,13 +6,15 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Input } from '@ant-design/react-native';
+import type { RootStackParamList } from '../models/types/navigation.type';
 
-interface LoginProps {
-  onGuestLogin?: () => void;
-}
+type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
-export default function Login({ onGuestLogin }: LoginProps) {
+export default function Login() {
+  const navigation = useNavigation<LoginNav>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -37,7 +39,7 @@ export default function Login({ onGuestLogin }: LoginProps) {
         <View className="w-full border border-gray-200 rounded-2xl p-5">
 
           <View className="mb-3">
-            <Button type="primary" size="large" onPress={onGuestLogin}>
+            <Button type="primary" size="large" onPress={() => navigation.replace('Home')}>
               Continue as Guest  →
             </Button>
           </View>

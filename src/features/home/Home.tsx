@@ -9,7 +9,7 @@ import DateSeparator from './DateSeparator';
 import JournalCard from './JournalCard';
 import ListView from './ListView';
 import GridView from './GridView';
-import { toEntryDates } from './types';
+import { toEntryDates } from '../../utils/dateTime';
 import { JOURNAL_ENTRIES, CURRENT_USER } from '../../constants/users.data';
 
 const MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];

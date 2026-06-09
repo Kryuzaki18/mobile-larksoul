@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Icon } from '@ant-design/react-native';
-import type { JournalEntry } from './types';
-import { formatEntryTime, getEntryIcon } from './types';
+import type { JournalEntry } from '../../utils/dateTime';
+import { formatEntryTime, getEntryIcon } from '../../utils/dateTime';
 
 interface GridViewProps {
   entries: JournalEntry[];
