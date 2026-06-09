@@ -46,14 +46,9 @@ export default function Settings() {
               }
               extra={
                 <TouchableOpacity>
-                  <View className="p-3">
-                    <Text className="text-sky-600 font-semibold text-base">
-                      Edit
-                    </Text>
-                  </View>
+                  <Icon name="edit" size={30} color="#94a3b8" />
                 </TouchableOpacity>
               }
-              multipleLine
             >
               <Text className="text-base font-semibold text-slate-800">
                 Krystian John Dumapit
