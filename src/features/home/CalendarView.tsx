@@ -64,7 +64,6 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
   return (
     <View className="bg-white rounded-2xl mx-4 mt-4 p-4">
 
-      {/* Month navigation */}
       <View className="flex-row items-center justify-between mb-4">
         <TouchableOpacity
           className="p-2"
@@ -83,7 +82,6 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
         </TouchableOpacity>
       </View>
 
-      {/* Day-of-week headers */}
       <View className="flex-row mb-1">
         {WEEK_DAYS.map((d, i) => (
           <View key={i} className="flex-1 items-center py-1">
@@ -92,7 +90,6 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
         ))}
       </View>
 
-      {/* Calendar rows */}
       {rows.map((row, rowIdx) => (
         <View key={rowIdx} className="flex-row">
           {row.map((cell, colIdx) => {

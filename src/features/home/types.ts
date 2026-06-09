@@ -1,40 +1,29 @@
-export interface JournalEntry {
-  id: string;
-  iconType: 'clock-circle' | 'calendar';
-  time: string;
-  title: string;
-  preview: string;
-  hasImage?: boolean;
-  tags: string[];
+export type { JournalEntry, Mood } from '../../models/users.model';
+
+const MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+export function formatEntryTime(createdAt: string): string {
+  const date = new Date(createdAt);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const h = hours % 12 || 12;
+  const timeStr = `${String(h).padStart(2, '0')}:${minutes} ${ampm}`;
+
+  if (isToday) return `TODAY, ${timeStr}`;
+
+  const m = MONTHS_SHORT[date.getMonth()];
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${m} ${d}, ${timeStr}`;
 }
 
-export const MOCK_ENTRIES: JournalEntry[] = [
-  {
-    id: '1',
-    iconType: 'clock-circle',
-    time: 'TODAY, 08:30 AM',
-    title: 'Morning Dew & Clarity',
-    preview:
-      'The world felt particularly quiet this morning. I sat by the window and...',
-    tags: ['#meditation', '#peace'],
-  },
-  {
-    id: '2',
-    iconType: 'calendar',
-    time: 'TODAY, 09:15 PM',
-    title: 'The Silent Mountains',
-    preview:
-      "There is a specific kind of silence found only at high altitudes. It's not an absence of sound, but a...",
-    hasImage: true,
-    tags: ['#nature', '#reflection'],
-  },
-];
+export function getEntryIcon(createdAt: string): 'clock-circle' | 'calendar' {
+  return new Date(createdAt).getHours() < 17 ? 'clock-circle' : 'calendar';
+}
 
-// ISO date strings (YYYY-MM-DD) that have journal entries
-export const MOCK_ENTRY_DATES: string[] = [
-  '2026-06-01',
-  '2026-06-05',
-  '2026-06-09',
-  '2026-06-15',
-  '2026-06-20',
-];
+export function toEntryDates(entries: { createdAt: string }[]): string[] {
+  return [...new Set(entries.map(e => e.createdAt.slice(0, 10)))];
+}

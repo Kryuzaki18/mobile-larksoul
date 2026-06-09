@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Icon } from '@ant-design/react-native';
 import Header from '../../components/commons/Header';
 import ViewTabs, { ViewMode } from './ViewTabs';
@@ -8,7 +8,8 @@ import DateSeparator from './DateSeparator';
 import JournalCard from './JournalCard';
 import ListView from './ListView';
 import GridView from './GridView';
-import { MOCK_ENTRIES, MOCK_ENTRY_DATES } from './types';
+import { toEntryDates } from './types';
+import { JOURNAL_ENTRIES, CURRENT_USER } from '../../constants/users.data';
 
 const MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 
@@ -19,14 +20,28 @@ function formatDateLabel(date: Date): string {
   return `${m} ${d}, ${y}`;
 }
 
+function toDateStr(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<ViewMode>('calendar');
   const [selectedDate, setSelectedDate] = useState(() => new Date());
 
+  const entryDates = useMemo(() => toEntryDates(JOURNAL_ENTRIES), []);
+
+  const entriesForDay = useMemo(() => {
+    const dateStr = toDateStr(selectedDate);
+    return JOURNAL_ENTRIES.filter(e => e.createdAt.startsWith(dateStr));
+  }, [selectedDate]);
+
   return (
     <SafeAreaView className="flex-1 bg-slate-50">
 
-      <Header />
+      <Header
+        name={CURRENT_USER.name.split(' ')[0] + "'s"}
+        subtitle="Jornal"
+      />
       <ViewTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <View className="flex-1">
@@ -35,28 +50,35 @@ export default function Home() {
           {activeTab === 'calendar' && (
             <>
               <CalendarView
-                entryDates={MOCK_ENTRY_DATES}
+                entryDates={entryDates}
                 onDayPress={setSelectedDate}
               />
               <DateSeparator label={formatDateLabel(selectedDate)} />
-              {MOCK_ENTRIES.map(entry => (
-                <JournalCard key={entry.id} entry={entry} />
-              ))}
+
+              {entriesForDay.length > 0 ? (
+                entriesForDay.map(entry => (
+                  <JournalCard key={entry.id} entry={entry} />
+                ))
+              ) : (
+                <View className="items-center py-14">
+                  <Icon name="book" size={44} color="#cbd5e1" />
+                  <Text className="text-gray-400 text-sm mt-3">No entries for this day</Text>
+                </View>
+              )}
             </>
           )}
 
           {activeTab === 'list' && (
-            <ListView entries={MOCK_ENTRIES} />
+            <ListView entries={JOURNAL_ENTRIES} />
           )}
 
           {activeTab === 'grid' && (
-            <GridView entries={MOCK_ENTRIES} />
+            <GridView entries={JOURNAL_ENTRIES} />
           )}
 
           <View className="h-24" />
         </ScrollView>
 
-        {/* FAB */}
         <TouchableOpacity
           className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-blue-800 items-center justify-center"
           onPress={() => {}}

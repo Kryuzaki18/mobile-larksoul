@@ -17,7 +17,7 @@ export interface JournalEntry {
   mood: Mood;
   tags: string[];
   hasImage: boolean;
-  imageColor?: string; // placeholder bg color for demo
-  createdAt: string;   // ISO 8601
+  imageColor?: string;
+  createdAt: string;
   updatedAt: string;
 }
