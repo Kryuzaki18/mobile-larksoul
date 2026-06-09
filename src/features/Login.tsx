@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  Image,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Input } from '@ant-design/react-native';
 import type { RootStackParamList } from '../models/types/navigation.type';
+import GmailIcon from '../assets/gmail.svg';
+import XIcon from '../assets/x.svg';
+import FbIcon from '../assets/fb.svg';
+import InstagramIcon from '../assets/instagram.svg';
 
 type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -19,25 +23,25 @@ export default function Login() {
   const [password, setPassword] = useState('');
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <>
       <ScrollView
-        className="flex-1"
+        className="flex-1 bg-white"
         contentContainerClassName="items-center px-6 pt-10 pb-8"
       >
-        <View className="w-24 h-24 bg-sky-700 rounded-[20px] items-center justify-center mb-5 shadow-md">
-          <Text className="text-white text-5xl">📖</Text>
-          <Text className="text-white text-xs font-bold tracking-widest">LARKSOUL</Text>
-        </View>
+        <Image
+          source={require('../assets/logo.png')}
+          className="w-24 h-24 mb-5"
+          resizeMode="contain"
+        />
 
-        <Text className="text-4xl font-bold text-slate-800 mb-2">
+        <Text className="text-4xl font-bold text-slate-800 mb-2 w-full text-center">
           Welcome Back
         </Text>
-        <Text className="text-gray-400 text-base mb-8">
+        <Text className="text-gray-400 text-base mb-3 w-full text-center">
           Continue your reflective journey.
         </Text>
 
         <View className="w-full border border-gray-200 rounded-2xl p-5">
-
           <View className="mb-3">
             <Button type="primary" size="large" onPress={() => navigation.replace('Home')}>
               Continue as Guest  →
@@ -76,7 +80,7 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
           </View>
-          <View className="bg-blue-50 rounded-xl overflow-hidden mb-5">
+          <View className="bg-blue-50 rounded-xl mb-5">
             <Input
               value={password}
               onChangeText={setPassword}
@@ -97,24 +101,24 @@ export default function Login() {
           </Text>
           <View className="flex-row justify-center gap-4">
             <TouchableOpacity className="w-14 h-14 rounded-full border border-gray-100 bg-white items-center justify-center shadow-sm">
-              <Text className="text-2xl font-bold text-red-500">M</Text>
+              <GmailIcon width={28} height={28} />
             </TouchableOpacity>
 
-            <TouchableOpacity className="w-14 h-14 rounded-full bg-black items-center justify-center">
-              <Text className="text-white text-xl font-bold">✕</Text>
+            <TouchableOpacity className="w-14 h-14 rounded-full border border-gray-100 bg-white items-center justify-center shadow-sm">
+              <XIcon width={28} height={28} />
             </TouchableOpacity>
 
-            <TouchableOpacity className="w-14 h-14 rounded-full bg-blue-600 items-center justify-center">
-              <Text className="text-white text-2xl font-bold">f</Text>
+            <TouchableOpacity className="w-14 h-14 rounded-full border border-gray-100 bg-white items-center justify-center shadow-sm">
+              <FbIcon width={28} height={28} />
             </TouchableOpacity>
 
-            <TouchableOpacity className="w-14 h-14 rounded-full bg-gradient-to-br bg-pink-500 items-center justify-center">
-              <Text className="text-white text-xl">📷</Text>
+            <TouchableOpacity className="w-14 h-14 rounded-full border border-gray-100 bg-white items-center justify-center shadow-sm">
+              <InstagramIcon width={28} height={28} />
             </TouchableOpacity>
           </View>
 
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }
