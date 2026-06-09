@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { PanResponder, View, Text, TouchableOpacity } from 'react-native';
 import { Icon } from '@ant-design/react-native';
 
 const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -43,6 +43,16 @@ interface CalendarViewProps {
 export default function CalendarView({ entryDates = [], onDayPress }: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
 
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, { dx, dy }) => Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10,
+      onPanResponderRelease: (_, { dx }) => {
+        if (dx < -50) setCurrent(c => new Date(c.getFullYear(), c.getMonth() + 1, 1));
+        else if (dx > 50) setCurrent(c => new Date(c.getFullYear(), c.getMonth() - 1, 1));
+      },
+    })
+  ).current;
+
   const year = current.getFullYear();
   const month = current.getMonth();
 
@@ -62,7 +72,7 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
     `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
   return (
-    <View className="bg-white rounded-2xl mx-4 mt-4 p-4">
+    <View className="bg-white rounded-2xl mx-4 mt-4 p-4" {...panResponder.panHandlers}>
 
       <View className="flex-row items-center justify-between mb-4">
         <TouchableOpacity
