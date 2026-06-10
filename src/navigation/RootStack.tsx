@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LoginScreen from '../features/auth/LoginScreen';
 import HomeScreen from '../features/home/HomeScreen';
 import SettingsScreen from '../features/settings/SettingsScreen';
+import AddEntryScreen from '../features/journal/AddEntryScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -22,6 +23,7 @@ export default function RootStack() {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="AddEntry" component={AddEntryScreen} />
         </Stack.Navigator>
       </SafeAreaView>
     </SafeAreaProvider>

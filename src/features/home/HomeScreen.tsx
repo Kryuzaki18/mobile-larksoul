@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { BookOpen, Plus } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Header from '../../components/commons/Header';
 import ViewTabs, { ViewMode } from './components/ViewTabs';
 import CalendarView from './components/CalendarView';
@@ -9,16 +12,32 @@ import JournalCard from './components/JournalCard';
 import ListView from './components/ListView';
 import GridView from './components/GridView';
 import { useHomeState } from '../../hooks/useHomeState';
-import { formatDateLabel } from '../../utils/dateTime';
-import { JOURNAL_ENTRIES, CURRENT_USER } from '../../constants/users.data';
+import { formatDateLabel, toDateStr } from '../../utils/dateTime';
+import { useAuthStore } from '../../store/authStore';
+import type { RootStackParamList } from '../../models/types/navigation.type';
+
+type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export default function HomeScreen() {
+  const navigation = useNavigation<Nav>();
+  const { currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<ViewMode>('calendar');
-  const { selectedDate, setSelectedDate, entryDates, entriesForDay } = useHomeState();
+
+  const userId = currentUser?.id ?? '';
+  const { selectedDate, setSelectedDate, entryDates, entriesForDay, entries, refetch } =
+    useHomeState(userId);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
+  const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
 
   return (
     <View className="flex-1 bg-slate-50">
-      <Header name={`${CURRENT_USER.name.split(' ')[0]}'s`} subtitle="Journal" />
+      <Header name={`${firstName}'s`} subtitle="Journal" />
       <ViewTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <View className="flex-1">
@@ -42,15 +61,15 @@ export default function HomeScreen() {
             </>
           )}
 
-          {activeTab === 'list' && <ListView entries={JOURNAL_ENTRIES} />}
-          {activeTab === 'grid' && <GridView entries={JOURNAL_ENTRIES} />}
+          {activeTab === 'list' && <ListView entries={entries} />}
+          {activeTab === 'grid' && <GridView entries={entries} />}
 
           <View className="h-24" />
         </ScrollView>
 
         <TouchableOpacity
           className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-lg shadow-blue-900"
-          onPress={() => {}}
+          onPress={() => navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })}
         >
           <Plus size={26} color="#ffffff" />
         </TouchableOpacity>

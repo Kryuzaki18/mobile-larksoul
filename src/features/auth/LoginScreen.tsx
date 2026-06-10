@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowRight } from 'lucide-react-native';
 import type { RootStackParamList } from '../../models/types/navigation.type';
+import { signInAsGuest } from '../../services/AuthService';
+import { useAuthStore } from '../../store/authStore';
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 
@@ -11,8 +20,21 @@ type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function LoginScreen() {
   const navigation = useNavigation<LoginNav>();
+  const { setUser } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleGuestLogin() {
+    setLoading(true);
+    try {
+      const user = await signInAsGuest();
+      setUser(user, true);
+      navigation.replace('Home');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <ScrollView
@@ -35,12 +57,19 @@ export default function LoginScreen() {
       <View className="w-full border border-gray-200 rounded-2xl p-5">
         <TouchableOpacity
           className="bg-blue-800 rounded-xl py-3.5 items-center justify-center mb-3"
-          onPress={() => navigation.replace('Home')}
+          onPress={handleGuestLogin}
+          disabled={loading}
           activeOpacity={0.85}
         >
           <View className="flex-row items-center gap-2">
-            <Text className="text-white text-xl font-medium">Continue as Guest</Text>
-            <ArrowRight size={16} color="#fff" />
+            {loading ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : (
+              <>
+                <Text className="text-white text-xl font-medium">Continue as Guest</Text>
+                <ArrowRight size={16} color="#fff" />
+              </>
+            )}
           </View>
         </TouchableOpacity>
 

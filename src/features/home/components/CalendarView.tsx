@@ -136,8 +136,8 @@ export default function CalendarView({
                 activeOpacity={cell.type === 'current' ? 0.7 : 1}
               >
                 <View
-                  className={`w-8 h-8 rounded-full items-center justify-center ${
-                    isSelected ? 'bg-blue-800' : isToday ? 'bg-sky-200' : ''
+                  className={`w-8 h-8 rounded-full overflow-hidden items-center justify-center ${
+                    isSelected ? 'bg-blue-800' : isToday ? 'bg-sky-200' : 'bg-transparent'
                   }`}
                 >
                   <Text

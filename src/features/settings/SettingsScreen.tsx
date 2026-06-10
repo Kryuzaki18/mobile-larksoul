@@ -13,6 +13,7 @@ import {
   CloudUpload,
 } from 'lucide-react-native';
 import { RootStackParamList } from '../../models/types/navigation.type';
+import { useAuthStore } from '../../store/authStore';
 import SettingsSection from './components/SettingsSection';
 import SettingsItem from './components/SettingsItem';
 
@@ -20,7 +21,13 @@ type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export default function SettingsScreen() {
   const navigation = useNavigation<HomeNav>();
+  const { currentUser, isGuest, clearUser } = useAuthStore();
   const [notifications, setNotifications] = useState(true);
+
+  function handleSignOut() {
+    clearUser();
+    navigation.replace('Login');
+  }
 
   return (
     <>
@@ -37,20 +44,24 @@ export default function SettingsScreen() {
           <SettingsItem
             icon={
               <View className="w-14 h-14 rounded-full bg-sky-200 items-center justify-center overflow-hidden">
-                <Text className="text-3xl">🧑</Text>
+                <Text className="text-3xl">{isGuest ? '👤' : '🧑'}</Text>
               </View>
             }
             extra={
-              <TouchableOpacity>
-                <Pencil size={22} color="#94a3b8" />
-              </TouchableOpacity>
+              !isGuest ? (
+                <TouchableOpacity>
+                  <Pencil size={22} color="#94a3b8" />
+                </TouchableOpacity>
+              ) : undefined
             }
           >
             <View>
               <Text className="text-base font-semibold text-slate-800">
-                Krystian John Dumapit
+                {currentUser?.name ?? 'Guest'}
               </Text>
-              <Text className="text-sm text-gray-500">kjedumapit@gmail.com</Text>
+              <Text className="text-sm text-gray-500">
+                {isGuest ? 'Browsing as guest' : (currentUser?.email ?? '')}
+              </Text>
             </View>
           </SettingsItem>
         </SettingsSection>
@@ -104,12 +115,14 @@ export default function SettingsScreen() {
           </SettingsItem>
         </SettingsSection>
 
-        <TouchableOpacity
-          className="items-center py-4 mb-6"
-          onPress={() => navigation.replace('Login')}
-        >
-          <Text className="text-red-500 text-base font-semibold">Sign Out</Text>
-        </TouchableOpacity>
+        {!isGuest && (
+          <TouchableOpacity
+            className="items-center py-4 mb-6"
+            onPress={handleSignOut}
+          >
+            <Text className="text-red-500 text-base font-semibold">Sign Out</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </>
   );
