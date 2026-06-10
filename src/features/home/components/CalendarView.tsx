@@ -4,8 +4,18 @@ import { Icon } from '@ant-design/react-native';
 
 const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 type DayCell = { day: number; type: 'prev' | 'current' | 'next' };
@@ -36,21 +46,29 @@ function buildCalendarCells(year: number, month: number): DayCell[] {
 }
 
 interface CalendarViewProps {
+  selectedDate?: Date;
   entryDates?: string[];
   onDayPress?: (date: Date) => void;
 }
 
-export default function CalendarView({ entryDates = [], onDayPress }: CalendarViewProps) {
+export default function CalendarView({
+  selectedDate,
+  entryDates = [],
+  onDayPress,
+}: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
 
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (_, { dx, dy }) => Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10,
+      onMoveShouldSetPanResponder: (_, { dx, dy }) =>
+        Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10,
       onPanResponderRelease: (_, { dx }) => {
-        if (dx < -50) setCurrent(c => new Date(c.getFullYear(), c.getMonth() + 1, 1));
-        else if (dx > 50) setCurrent(c => new Date(c.getFullYear(), c.getMonth() - 1, 1));
+        if (dx < -50)
+          setCurrent(c => new Date(c.getFullYear(), c.getMonth() + 1, 1));
+        else if (dx > 50)
+          setCurrent(c => new Date(c.getFullYear(), c.getMonth() - 1, 1));
       },
-    })
+    }),
   ).current;
 
   const year = current.getFullYear();
@@ -69,18 +87,30 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
   }
 
   const getDateStr = (day: number) =>
-    `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(
+      2,
+      '0',
+    )}`;
 
   return (
-    <View className="bg-white rounded-2xl mx-4 mt-4 p-4" {...panResponder.panHandlers}>
+    <View
+      className="bg-white rounded-2xl mx-4 mt-4 p-4"
+      {...panResponder.panHandlers}
+    >
       <View className="flex-row items-center justify-between mb-4">
-        <TouchableOpacity className="p-2" onPress={() => setCurrent(new Date(year, month - 1, 1))}>
+        <TouchableOpacity
+          className="p-2"
+          onPress={() => setCurrent(new Date(year, month - 1, 1))}
+        >
           <Icon name="left" size={16} color="#1e293b" />
         </TouchableOpacity>
         <Text className="text-base font-semibold text-slate-800">
           {MONTH_NAMES[month]} {year}
         </Text>
-        <TouchableOpacity className="p-2" onPress={() => setCurrent(new Date(year, month + 1, 1))}>
+        <TouchableOpacity
+          className="p-2"
+          onPress={() => setCurrent(new Date(year, month + 1, 1))}
+        >
           <Icon name="right" size={16} color="#1e293b" />
         </TouchableOpacity>
       </View>
@@ -91,13 +121,22 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
             <Text className="text-xs text-gray-400 font-medium">{d}</Text>
           </View>
         ))}
-      </View>
+      </View> 
 
       {rows.map((row, rowIdx) => (
         <View key={rowIdx} className="flex-row">
           {row.map((cell, colIdx) => {
-            const isToday = isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
-            const hasEntry = cell.type === 'current' && entrySet.has(getDateStr(cell.day));
+            const isToday =
+              isCurrentMonth &&
+              cell.type === 'current' &&
+              cell.day === todayDay;
+            const isSelected =
+              cell.type === 'current' &&
+              !!selectedDate &&
+              selectedDate.toDateString() ===
+                new Date(year, month, cell.day).toDateString();
+            const hasEntry =
+              cell.type === 'current' && entrySet.has(getDateStr(cell.day));
 
             return (
               <TouchableOpacity
@@ -111,11 +150,15 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
                 activeOpacity={cell.type === 'current' ? 0.7 : 1}
               >
                 <View
-                  className={`w-8 h-8 rounded-full items-center justify-center ${isToday ? 'bg-sky-200' : ''}`}
+                  className={`w-8 h-8 rounded-full items-center justify-center ${
+                    isSelected ? 'bg-blue-800' : isToday ? 'bg-sky-200' : ''
+                  }`}
                 >
                   <Text
                     className={`text-sm ${
-                      isToday
+                      isSelected
+                        ? 'text-white font-semibold'
+                        : isToday
                         ? 'text-blue-800 font-semibold'
                         : cell.type === 'current'
                         ? 'text-slate-700'

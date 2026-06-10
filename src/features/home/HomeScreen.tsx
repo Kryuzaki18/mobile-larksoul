@@ -25,7 +25,7 @@ export default function HomeScreen() {
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {activeTab === 'calendar' && (
             <>
-              <CalendarView entryDates={entryDates} onDayPress={setSelectedDate} />
+              <CalendarView selectedDate={selectedDate} entryDates={entryDates} onDayPress={setSelectedDate} />
               <DateSeparator label={formatDateLabel(selectedDate)} />
               {entriesForDay.length > 0 ? (
                 entriesForDay.map(entry => <JournalCard key={entry.id} entry={entry} />)
