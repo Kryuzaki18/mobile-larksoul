@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Icon } from '@ant-design/react-native';
+import { Clock, Calendar, Image } from 'lucide-react-native';
 import type { JournalEntry } from '../../../utils/dateTime';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
@@ -11,12 +11,13 @@ interface GridCardProps {
 function GridCard({ entry }: GridCardProps) {
   const timeLabel = formatEntryTime(entry.createdAt);
   const iconName = getEntryIcon(entry.createdAt);
+  const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
 
   return (
     <TouchableOpacity className="w-1/2 p-1.5" activeOpacity={0.85}>
       <View className="bg-white rounded-2xl p-3">
         <View className="flex-row items-center gap-1 mb-2">
-          <Icon name={iconName} size={11} color="#9ca3af" />
+          <TimeIcon size={11} color="#9ca3af" />
           <Text className="text-xs text-gray-400 flex-1" numberOfLines={1}>
             {timeLabel}
           </Text>
@@ -27,7 +28,7 @@ function GridCard({ entry }: GridCardProps) {
             className="h-20 rounded-xl mb-2 items-center justify-center"
             style={{ backgroundColor: entry.imageColor ?? '#334155' }}
           >
-            <Icon name="picture" size={22} color="#94a3b8" />
+            <Image size={22} color="#94a3b8" />
           </View>
         )}
 

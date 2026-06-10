@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Icon } from '@ant-design/react-native';
+import { Clock, Calendar, MoreHorizontal, Image } from 'lucide-react-native';
 import type { JournalEntry } from '../../../utils/dateTime';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
@@ -13,6 +13,7 @@ interface JournalCardProps {
 export default function JournalCard({ entry, onMenuPress, onPress }: JournalCardProps) {
   const timeLabel = formatEntryTime(entry.createdAt);
   const iconName = getEntryIcon(entry.createdAt);
+  const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
 
   return (
     <TouchableOpacity
@@ -22,11 +23,11 @@ export default function JournalCard({ entry, onMenuPress, onPress }: JournalCard
     >
       <View className="flex-row items-center justify-between mb-2">
         <View className="flex-row items-center gap-1.5">
-          <Icon name={iconName} size={13} color="#9ca3af" />
+          <TimeIcon size={13} color="#9ca3af" />
           <Text className="text-xs text-gray-400 font-medium tracking-wider">{timeLabel}</Text>
         </View>
         <TouchableOpacity className="p-1" onPress={onMenuPress}>
-          <Icon name="ellipsis" size={18} color="#9ca3af" />
+          <MoreHorizontal size={18} color="#9ca3af" />
         </TouchableOpacity>
       </View>
 
@@ -43,7 +44,7 @@ export default function JournalCard({ entry, onMenuPress, onPress }: JournalCard
           className="h-36 rounded-xl mb-3 items-center justify-center overflow-hidden"
           style={{ backgroundColor: entry.imageColor ?? '#334155' }}
         >
-          <Icon name="picture" size={36} color="#94a3b8" />
+          <Image size={36} color="#94a3b8" />
         </View>
       )}
 

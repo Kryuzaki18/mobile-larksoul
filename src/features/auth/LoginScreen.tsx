@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Button, Icon } from '@ant-design/react-native';
+import { ArrowRight } from 'lucide-react-native';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
@@ -33,22 +33,24 @@ export default function LoginScreen() {
       </Text>
 
       <View className="w-full border border-gray-200 rounded-2xl p-5">
-        <View className="mb-3">
-          <Button type="primary" size="large" onPress={() => navigation.replace('Home')}>
-            <View className="flex-row items-center">
-              <Text className="text-white text-xl font-medium">Continue as Guest</Text>
-              <View className="ml-2">
-                <Icon name="arrow-right" size={16} color="#fff" />
-              </View>
-            </View>
-          </Button>
-        </View>
+        <TouchableOpacity
+          className="bg-blue-800 rounded-xl py-3.5 items-center justify-center mb-3"
+          onPress={() => navigation.replace('Home')}
+          activeOpacity={0.85}
+        >
+          <View className="flex-row items-center gap-2">
+            <Text className="text-white text-xl font-medium">Continue as Guest</Text>
+            <ArrowRight size={16} color="#fff" />
+          </View>
+        </TouchableOpacity>
 
-        <View className="mb-6">
-          <Button size="large" onPress={() => {}}>
-            🔢  Login with PIN
-          </Button>
-        </View>
+        <TouchableOpacity
+          className="border border-gray-300 rounded-xl py-3.5 items-center justify-center mb-6"
+          onPress={() => {}}
+          activeOpacity={0.85}
+        >
+          <Text className="text-base text-gray-700">🔢  Login with PIN</Text>
+        </TouchableOpacity>
 
         <LoginForm
           email={email}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { List } from '@ant-design/react-native';
 
 interface SettingsSectionProps {
   title: string;
@@ -13,8 +12,8 @@ export default function SettingsSection({ title, children }: SettingsSectionProp
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-2 ml-1">
         {title}
       </Text>
-      <View className="rounded-2xl overflow-hidden">
-        <List>{children}</List>
+      <View className="rounded-2xl overflow-hidden bg-white">
+        {children}
       </View>
     </View>
   );

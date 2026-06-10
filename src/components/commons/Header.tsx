@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Icon } from '@ant-design/react-native';
+import { Settings } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../models/types/navigation.type';
@@ -30,7 +30,7 @@ export default function Header({
         </View>
       </View>
       <TouchableOpacity className="p-1.5" onPress={() => navigation.replace('Settings')}>
-        <Icon name="setting" size={22} color="#1e3a5f" />
+        <Settings size={22} color="#1e3a5f" />
       </TouchableOpacity>
     </View>
   );

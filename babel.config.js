@@ -4,6 +4,7 @@ module.exports = {
     'nativewind/babel',
   ],
   plugins: [
+    '@babel/plugin-transform-class-static-block',
     'react-native-worklets/plugin',
   ],
 };

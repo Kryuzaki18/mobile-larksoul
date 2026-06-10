@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { PanResponder, View, Text, TouchableOpacity } from 'react-native';
-import { Icon } from '@ant-design/react-native';
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 
 const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const MONTH_NAMES = [
@@ -87,31 +87,19 @@ export default function CalendarView({
   }
 
   const getDateStr = (day: number) =>
-    `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(
-      2,
-      '0',
-    )}`;
+    `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
   return (
-    <View
-      className="bg-white rounded-2xl mx-4 mt-4 p-4"
-      {...panResponder.panHandlers}
-    >
+    <View className="bg-white rounded-2xl mx-4 mt-4 p-4" {...panResponder.panHandlers}>
       <View className="flex-row items-center justify-between mb-4">
-        <TouchableOpacity
-          className="p-2"
-          onPress={() => setCurrent(new Date(year, month - 1, 1))}
-        >
-          <Icon name="left" size={16} color="#1e293b" />
+        <TouchableOpacity className="p-2" onPress={() => setCurrent(new Date(year, month - 1, 1))}>
+          <ChevronLeft size={16} color="#1e293b" />
         </TouchableOpacity>
         <Text className="text-base font-semibold text-slate-800">
           {MONTH_NAMES[month]} {year}
         </Text>
-        <TouchableOpacity
-          className="p-2"
-          onPress={() => setCurrent(new Date(year, month + 1, 1))}
-        >
-          <Icon name="right" size={16} color="#1e293b" />
+        <TouchableOpacity className="p-2" onPress={() => setCurrent(new Date(year, month + 1, 1))}>
+          <ChevronRight size={16} color="#1e293b" />
         </TouchableOpacity>
       </View>
 
@@ -121,15 +109,13 @@ export default function CalendarView({
             <Text className="text-xs text-gray-400 font-medium">{d}</Text>
           </View>
         ))}
-      </View> 
+      </View>
 
       {rows.map((row, rowIdx) => (
         <View key={rowIdx} className="flex-row">
           {row.map((cell, colIdx) => {
             const isToday =
-              isCurrentMonth &&
-              cell.type === 'current' &&
-              cell.day === todayDay;
+              isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
             const isSelected =
               cell.type === 'current' &&
               !!selectedDate &&

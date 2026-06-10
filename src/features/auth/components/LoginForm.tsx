@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Button, Icon, Input } from '@ant-design/react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ArrowRight } from 'lucide-react-native';
 
 interface LoginFormProps {
   email: string;
@@ -27,13 +27,14 @@ export default function LoginForm({
 
       <Text className="text-sm font-medium text-gray-700 mb-2">Email</Text>
       <View className="bg-blue-50 rounded-xl overflow-hidden mb-4">
-        <Input
+        <TextInput
           value={email}
           onChangeText={onEmailChange}
           placeholder="john@sample.com"
           placeholderTextColor="#9ca3af"
           autoCapitalize="none"
           keyboardType="email-address"
+          className="px-4 py-3 text-sm text-slate-800"
         />
       </View>
 
@@ -43,26 +44,27 @@ export default function LoginForm({
           <Text className="text-sm text-sky-600 font-semibold">Forgot Password?</Text>
         </TouchableOpacity>
       </View>
-      <View className="bg-blue-50 rounded-xl mb-5">
-        <Input
+      <View className="bg-blue-50 rounded-xl overflow-hidden mb-5">
+        <TextInput
           value={password}
           onChangeText={onPasswordChange}
           placeholder="• • • • • • • •"
           placeholderTextColor="#9ca3af"
-          type="password"
+          secureTextEntry
+          className="px-4 py-3 text-sm text-slate-800"
         />
       </View>
 
-      <View className="mb-6">
-        <Button type="primary" size="large" onPress={onLogin}>
-          <View className="flex-row items-center">
-            <Text className="text-white text-xl font-medium">Login</Text>
-            <View className="ml-2">
-              <Icon name="arrow-right" size={16} color="#fff" />
-            </View>
-          </View>
-        </Button>
-      </View>
+      <TouchableOpacity
+        className="bg-blue-800 rounded-xl py-3.5 items-center justify-center mb-6"
+        onPress={onLogin}
+        activeOpacity={0.85}
+      >
+        <View className="flex-row items-center gap-2">
+          <Text className="text-white text-xl font-medium">Login</Text>
+          <ArrowRight size={16} color="#fff" />
+        </View>
+      </TouchableOpacity>
     </>
   );
 }

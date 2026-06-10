@@ -1,19 +1,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Icon } from '@ant-design/react-native';
+import { Calendar, Menu, LayoutGrid } from 'lucide-react-native';
 
 export type ViewMode = 'calendar' | 'list' | 'grid';
 
 interface Tab {
   mode: ViewMode;
   label: string;
-  icon: string;
+  Icon: React.FC<{ size: number; color: string }>;
 }
 
 const TABS: Tab[] = [
-  { mode: 'calendar', label: 'Calendar', icon: 'calendar' },
-  { mode: 'list', label: 'List', icon: 'bars' },
-  { mode: 'grid', label: 'Grid', icon: 'appstore' },
+  { mode: 'calendar', label: 'Calendar', Icon: Calendar },
+  { mode: 'list', label: 'List', Icon: Menu },
+  { mode: 'grid', label: 'Grid', Icon: LayoutGrid },
 ];
 
 interface ViewTabsProps {
@@ -24,7 +24,7 @@ interface ViewTabsProps {
 export default function ViewTabs({ activeTab, onTabChange }: ViewTabsProps) {
   return (
     <View className="flex-row items-center gap-1 px-4 py-2 bg-white border-b border-gray-100">
-      {TABS.map(({ mode, label, icon }) => {
+      {TABS.map(({ mode, label, Icon }) => {
         const isActive = activeTab === mode;
         return (
           <TouchableOpacity
@@ -32,7 +32,7 @@ export default function ViewTabs({ activeTab, onTabChange }: ViewTabsProps) {
             className={`flex-row items-center gap-1.5 px-4 py-2 rounded-full ${isActive ? 'bg-blue-800' : ''}`}
             onPress={() => onTabChange(mode)}
           >
-            <Icon name={icon} size={14} color={isActive ? '#ffffff' : '#6b7280'} />
+            <Icon size={14} color={isActive ? '#ffffff' : '#6b7280'} />
             <Text className={`text-sm font-medium ${isActive ? 'text-white' : 'text-gray-500'}`}>
               {label}
             </Text>
