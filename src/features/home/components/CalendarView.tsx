@@ -73,21 +73,14 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
 
   return (
     <View className="bg-white rounded-2xl mx-4 mt-4 p-4" {...panResponder.panHandlers}>
-
       <View className="flex-row items-center justify-between mb-4">
-        <TouchableOpacity
-          className="p-2"
-          onPress={() => setCurrent(new Date(year, month - 1, 1))}
-        >
+        <TouchableOpacity className="p-2" onPress={() => setCurrent(new Date(year, month - 1, 1))}>
           <Icon name="left" size={16} color="#1e293b" />
         </TouchableOpacity>
         <Text className="text-base font-semibold text-slate-800">
           {MONTH_NAMES[month]} {year}
         </Text>
-        <TouchableOpacity
-          className="p-2"
-          onPress={() => setCurrent(new Date(year, month + 1, 1))}
-        >
+        <TouchableOpacity className="p-2" onPress={() => setCurrent(new Date(year, month + 1, 1))}>
           <Icon name="right" size={16} color="#1e293b" />
         </TouchableOpacity>
       </View>
@@ -118,9 +111,7 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
                 activeOpacity={cell.type === 'current' ? 0.7 : 1}
               >
                 <View
-                  className={`w-8 h-8 rounded-full items-center justify-center ${
-                    isToday ? 'bg-sky-200' : ''
-                  }`}
+                  className={`w-8 h-8 rounded-full items-center justify-center ${isToday ? 'bg-sky-200' : ''}`}
                 >
                   <Text
                     className={`text-sm ${
@@ -144,7 +135,6 @@ export default function CalendarView({ entryDates = [], onDayPress }: CalendarVi
           })}
         </View>
       ))}
-
     </View>
   );
 }

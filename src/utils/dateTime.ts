@@ -27,3 +27,14 @@ export function getEntryIcon(createdAt: string): 'clock-circle' | 'calendar' {
 export function toEntryDates(entries: { createdAt: string }[]): string[] {
   return [...new Set(entries.map(e => e.createdAt.slice(0, 10)))];
 }
+
+export function toDateStr(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+export function formatDateLabel(date: Date): string {
+  const m = MONTHS_SHORT[date.getMonth()];
+  const d = String(date.getDate()).padStart(2, '0');
+  const y = date.getFullYear();
+  return `${m} ${d}, ${y}`;
+}

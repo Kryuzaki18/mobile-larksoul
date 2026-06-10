@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../models/types/navigation.type';
 
-type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 interface HeaderProps {
   name?: string;
@@ -14,9 +14,9 @@ interface HeaderProps {
 
 export default function Header({
   name = "Krystian's",
-  subtitle = 'Jornal',
+  subtitle = 'Journal',
 }: HeaderProps) {
-  const navigation = useNavigation<LoginNav>();
+  const navigation = useNavigation<HomeNav>();
 
   return (
     <View className="flex-row items-center justify-between px-4 py-3 bg-white">
