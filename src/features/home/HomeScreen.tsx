@@ -1,11 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { BookOpen, Plus } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Header from '../../components/commons/Header';
-import ViewTabs, { ViewMode } from './components/ViewTabs';
 import CalendarView from './components/CalendarView';
 import DateSeparator from './components/DateSeparator';
 import JournalCard from './components/JournalCard';
@@ -24,7 +23,6 @@ export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const { currentUser } = useAuthStore();
   const { defaultLayout } = useSettingsStore();
-  const [activeTab, setActiveTab] = useState<ViewMode>(defaultLayout);
 
   const userId = currentUser?.id ?? '';
   const { selectedDate, setSelectedDate, entryDates, entriesForDay, entries, refetch } =
@@ -41,11 +39,10 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-slate-50">
       <Header name={`${firstName}'s`} subtitle="Journal" />
-      <ViewTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <View className="flex-1">
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          {activeTab === 'calendar' && (
+          {defaultLayout === 'calendar' && (
             <>
               <CalendarView
                 entryDates={entryDates}
@@ -80,8 +77,8 @@ export default function HomeScreen() {
             </>
           )}
 
-          {activeTab === 'list' && <ListView entries={entries} />}
-          {activeTab === 'grid' && <GridView entries={entries} />}
+          {defaultLayout === 'list' && <ListView entries={entries} />}
+          {defaultLayout === 'grid' && <GridView entries={entries} />}
 
           <View className="h-24" />
         </ScrollView>
