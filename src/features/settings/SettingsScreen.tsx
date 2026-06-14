@@ -82,19 +82,19 @@ export default function SettingsScreen() {
         </SettingsSection>
 
         <SettingsSection title="APP SETTINGS">
-          <SettingsItem icon={<LayoutGrid size={22} color="#374151" />}>
-            <View>
-              <Text className="text-sm text-slate-800 mb-2.5">Layout</Text>
+          <SettingsItem
+            icon={<LayoutGrid size={22} color="#374151" />}
+            extra={
               <View className="flex-row gap-2">
                 {LAYOUT_OPTIONS.map(({ mode, label, Icon }) => {
                   const isActive = defaultLayout === mode;
                   return (
                     <TouchableOpacity
                       key={mode}
-                      className={`flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg ${isActive ? 'bg-blue-800' : 'bg-slate-100'}`}
+                      className={`flex-row items-center gap-1 px-2 py-1 rounded-lg ${isActive ? 'bg-blue-800' : 'bg-slate-100'}`}
                       onPress={() => setDefaultLayout(mode)}
                     >
-                      <Icon size={13} color={isActive ? '#ffffff' : '#6b7280'} />
+                      <Icon size={12} color={isActive ? '#ffffff' : '#6b7280'} />
                       <Text className={`text-xs font-medium ${isActive ? 'text-white' : 'text-gray-500'}`}>
                         {label}
                       </Text>
@@ -102,7 +102,9 @@ export default function SettingsScreen() {
                   );
                 })}
               </View>
-            </View>
+            }
+          >
+            Layout
           </SettingsItem>
           <SettingsItem
             icon={<Palette size={22} color="#374151" />}
