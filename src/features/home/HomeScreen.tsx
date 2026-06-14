@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { BookOpen, Plus } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,6 +14,7 @@ import GridView from './components/GridView';
 import { useHomeState } from '../../hooks/useHomeState';
 import { formatDateLabel, toDateStr } from '../../utils/dateTime';
 import { useAuthStore } from '../../store/authStore';
+import { deleteEntry } from '../../database/functions/journal';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -51,7 +52,23 @@ export default function HomeScreen() {
               />
               <DateSeparator label={formatDateLabel(selectedDate)} />
               {entriesForDay.length > 0 ? (
-                entriesForDay.map(entry => <JournalCard key={entry.id} entry={entry} />)
+                entriesForDay.map(entry => (
+                  <JournalCard
+                    key={entry.id}
+                    entry={entry}
+                    onEdit={() => navigation.navigate('AddEntry', { entryId: entry.id })}
+                    onDelete={() =>
+                      Alert.alert('Delete Entry', 'Are you sure you want to delete this entry?', [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                          text: 'Delete',
+                          style: 'destructive',
+                          onPress: () => deleteEntry(entry.id).then(refetch).catch(console.error),
+                        },
+                      ])
+                    }
+                  />
+                ))
               ) : (
                 <View className="items-center py-14">
                   <BookOpen size={44} color="#cbd5e1" />

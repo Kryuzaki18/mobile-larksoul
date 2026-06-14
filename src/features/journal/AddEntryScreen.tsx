@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import type { RouteProp } from '@react-navigation/native';
 import { ChevronLeft } from 'lucide-react-native';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { Mood } from '../../models/interfaces/users.model';
-import { createEntry } from '../../database/functions/journal';
+import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 import { useAuthStore } from '../../store/authStore';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
@@ -35,6 +35,7 @@ function formatEntryDate(dateStr: string): string {
 export default function AddEntryScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
+  const entryId = route.params?.entryId;
   const date = route.params?.date ?? new Date().toISOString().slice(0, 10);
   const { currentUser } = useAuthStore();
 
@@ -48,28 +49,43 @@ export default function AddEntryScreen() {
   const contentRef = useRef<TextInput>(null);
   const canSave = title.trim().length > 0 && content.trim().length > 0;
 
+  useEffect(() => {
+    if (!entryId) return;
+    getEntryById(entryId).then(entry => {
+      if (!entry) return;
+      setTitle(entry.title);
+      setContent(entry.content);
+      setMood(entry.mood);
+      setTags(entry.tags);
+    }).catch(console.error);
+  }, [entryId]);
+
   async function handleSave() {
     if (!canSave || saving) return;
     setSaving(true);
     setError(null);
     try {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      const createdAt = new Date(`${date}T${h}:${m}:${s}`).toISOString();
       const preview = content.trim().replace(/\n+/g, ' ').slice(0, 150);
 
-      await createEntry({
-        userId: currentUser?.id ?? '',
-        title: title.trim(),
-        content: content.trim(),
-        preview,
-        mood,
-        tags,
-        hasImage: false,
-        createdAt,
-      });
+      if (entryId) {
+        await updateEntry(entryId, { title: title.trim(), content: content.trim(), preview, mood, tags });
+      } else {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        const createdAt = new Date(`${date}T${h}:${m}:${s}`).toISOString();
+        await createEntry({
+          userId: currentUser?.id ?? '',
+          title: title.trim(),
+          content: content.trim(),
+          preview,
+          mood,
+          tags,
+          hasImage: false,
+          createdAt,
+        });
+      }
 
       navigation.goBack();
     } catch (e) {
@@ -87,7 +103,7 @@ export default function AddEntryScreen() {
         <TouchableOpacity className="p-1.5 -ml-1" onPress={() => navigation.goBack()}>
           <ChevronLeft size={22} color="#1e293b" />
         </TouchableOpacity>
-        <Text className="text-base font-bold text-slate-800">New Entry</Text>
+        <Text className="text-base font-bold text-slate-800">{entryId ? 'Edit Entry' : 'New Entry'}</Text>
         <TouchableOpacity
           className={`px-4 py-1.5 rounded-full overflow-hidden ${canSave ? 'bg-blue-800' : 'bg-gray-100'}`}
           onPress={handleSave}
