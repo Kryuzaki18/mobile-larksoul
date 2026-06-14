@@ -15,6 +15,15 @@ type RawEntry = {
   updated_at: string;
 };
 
+function parseMoods(raw: string): Mood[] {
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as Mood[]) : [parsed as Mood];
+  } catch {
+    return [raw as Mood];
+  }
+}
+
 function toEntry(raw: RawEntry): JournalEntry {
   return {
     id: raw.id,
@@ -22,7 +31,7 @@ function toEntry(raw: RawEntry): JournalEntry {
     title: raw.title,
     content: raw.content,
     preview: raw.preview,
-    mood: raw.mood as Mood,
+    moods: parseMoods(raw.mood),
     tags: JSON.parse(raw.tags) as string[],
     hasImage: raw.has_image === 1,
     imageColor: raw.image_color ?? undefined,
@@ -80,7 +89,7 @@ export async function createEntry(
       entry.title,
       entry.content,
       entry.preview,
-      entry.mood,
+      JSON.stringify(entry.moods),
       JSON.stringify(entry.tags),
       entry.hasImage ? 1 : 0,
       entry.imageColor ?? null,
@@ -94,7 +103,7 @@ export async function createEntry(
 
 export async function updateEntry(
   id: string,
-  patch: Partial<Pick<JournalEntry, 'title' | 'content' | 'preview' | 'mood' | 'tags' | 'hasImage' | 'imageColor'>>,
+  patch: Partial<Pick<JournalEntry, 'title' | 'content' | 'preview' | 'moods' | 'tags' | 'hasImage' | 'imageColor'>>,
 ): Promise<void> {
   const fields: string[] = [];
   const values: (string | number | null)[] = [];
@@ -102,7 +111,7 @@ export async function updateEntry(
   if (patch.title !== undefined) { fields.push('title = ?'); values.push(patch.title); }
   if (patch.content !== undefined) { fields.push('content = ?'); values.push(patch.content); }
   if (patch.preview !== undefined) { fields.push('preview = ?'); values.push(patch.preview); }
-  if (patch.mood !== undefined) { fields.push('mood = ?'); values.push(patch.mood); }
+  if (patch.moods !== undefined) { fields.push('mood = ?'); values.push(JSON.stringify(patch.moods)); }
   if (patch.tags !== undefined) { fields.push('tags = ?'); values.push(JSON.stringify(patch.tags)); }
   if (patch.hasImage !== undefined) { fields.push('has_image = ?'); values.push(patch.hasImage ? 1 : 0); }
   if (patch.imageColor !== undefined) { fields.push('image_color = ?'); values.push(patch.imageColor ?? null); }

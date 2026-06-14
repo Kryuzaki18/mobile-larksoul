@@ -14,7 +14,7 @@ export interface JournalEntry {
   title: string;
   content: string;
   preview: string;
-  mood: Mood;
+  moods: Mood[];
   tags: string[];
   hasImage: boolean;
   imageColor?: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import type { Mood } from '../../../models/interfaces/users.model';
 
 const MOODS: { value: Mood; emoji: string; label: string }[] = [
@@ -13,11 +13,19 @@ const MOODS: { value: Mood; emoji: string; label: string }[] = [
 ];
 
 interface MoodSelectorProps {
-  selected: Mood;
-  onSelect: (mood: Mood) => void;
+  selected: Mood[];
+  onSelect: (moods: Mood[]) => void;
 }
 
 export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) {
+  function toggle(value: Mood) {
+    if (selected.includes(value)) {
+      onSelect(selected.filter(m => m !== value));
+    } else {
+      onSelect([...selected, value]);
+    }
+  }
+
   return (
     <ScrollView
       horizontal
@@ -25,12 +33,12 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
       className="-mx-1 pb-1"
     >
       {MOODS.map(({ value, emoji, label }) => {
-        const isActive = selected === value;
+        const isActive = selected.includes(value);
         return (
           <TouchableOpacity
             key={value}
             className={`items-center mx-1 px-3 py-2 rounded-xl ${isActive ? 'bg-blue-800' : 'bg-slate-50'}`}
-            onPress={() => onSelect(value)}
+            onPress={() => toggle(value)}
             activeOpacity={0.75}
           >
             <Text className="text-2xl mb-1">{emoji}</Text>

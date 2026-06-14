@@ -41,7 +41,7 @@ export default function AddEntryScreen() {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [mood, setMood] = useState<Mood>('neutral');
+  const [moods, setMoods] = useState<Mood[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +55,7 @@ export default function AddEntryScreen() {
       if (!entry) return;
       setTitle(entry.title);
       setContent(entry.content);
-      setMood(entry.mood);
+      setMoods(entry.moods);
       setTags(entry.tags);
     }).catch(console.error);
   }, [entryId]);
@@ -68,7 +68,7 @@ export default function AddEntryScreen() {
       const preview = content.trim().replace(/\n+/g, ' ').slice(0, 150);
 
       if (entryId) {
-        await updateEntry(entryId, { title: title.trim(), content: content.trim(), preview, mood, tags });
+        await updateEntry(entryId, { title: title.trim(), content: content.trim(), preview, moods, tags });
       } else {
         const now = new Date();
         const h = String(now.getHours()).padStart(2, '0');
@@ -80,7 +80,7 @@ export default function AddEntryScreen() {
           title: title.trim(),
           content: content.trim(),
           preview,
-          mood,
+          moods,
           tags,
           hasImage: false,
           createdAt,
@@ -133,7 +133,7 @@ export default function AddEntryScreen() {
           <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">
             HOW ARE YOU FEELING?
           </Text>
-          <MoodSelector selected={mood} onSelect={setMood} />
+          <MoodSelector selected={moods} onSelect={setMoods} />
         </View>
 
         <View className="bg-white rounded-2xl px-4 py-3.5 mb-3">
