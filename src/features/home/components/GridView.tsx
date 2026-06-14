@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Clock, Calendar, ImageIcon } from 'lucide-react-native';
-import type { JournalEntry } from '../../../utils/dateTime';
+import type { JournalEntry } from '../../../models/interfaces/users.model';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
 const MOOD_COLORS: Record<string, string> = {

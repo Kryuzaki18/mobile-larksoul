@@ -1,6 +1,13 @@
-export type { JournalEntry, Mood } from '../models/interfaces/users.model';
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-const MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+export const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+export const WEEK_DAYS = DAY_NAMES.map(m => m.slice(0, 1)); // 'S', 'M', 'T', 'W', 'T', 'F', 'S'
+
+const MONTHS_ABBR = MONTH_NAMES.map(m => m.slice(0, 3));          // 'Jan', 'Feb', ...
+const MONTHS_ABBR_UPPER = MONTHS_ABBR.map(m => m.toUpperCase());  // 'JAN', 'FEB', ...
 
 export function formatEntryTime(createdAt: string): string {
   const date = new Date(createdAt);
@@ -15,7 +22,7 @@ export function formatEntryTime(createdAt: string): string {
 
   if (isToday) return `TODAY, ${timeStr}`;
 
-  const m = MONTHS_SHORT[date.getMonth()];
+  const m = MONTHS_ABBR_UPPER[date.getMonth()];
   const d = String(date.getDate()).padStart(2, '0');
   return `${m} ${d}, ${timeStr}`;
 }
@@ -24,17 +31,19 @@ export function getEntryIcon(createdAt: string): 'clock-circle' | 'calendar' {
   return new Date(createdAt).getHours() < 17 ? 'clock-circle' : 'calendar';
 }
 
-export function toEntryDates(entries: { createdAt: string }[]): string[] {
-  return [...new Set(entries.map(e => e.createdAt.slice(0, 10)))];
-}
-
 export function toDateStr(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 export function formatDateLabel(date: Date): string {
-  const m = MONTHS_SHORT[date.getMonth()];
+  const m = MONTHS_ABBR_UPPER[date.getMonth()];
   const d = String(date.getDate()).padStart(2, '0');
   const y = date.getFullYear();
   return `${m} ${d}, ${y}`;
+}
+
+export function formatEntryDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+  return `${DAY_NAMES[d.getDay()]}, ${MONTHS_ABBR[month - 1]} ${String(day).padStart(2, '0')} · ${year}`;
 }

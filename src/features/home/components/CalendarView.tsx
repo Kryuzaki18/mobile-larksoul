@@ -1,12 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { PanResponder, View, Text, TouchableOpacity } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
-
-const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
+import { MONTH_NAMES, WEEK_DAYS } from '../../../utils/dateTime';
 
 type DayCell = { day: number; type: 'prev' | 'current' | 'next' };
 

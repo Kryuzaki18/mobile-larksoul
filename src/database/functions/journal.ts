@@ -131,13 +131,3 @@ export async function deleteEntry(id: string): Promise<void> {
   await getDatabase().execute('DELETE FROM journal_entries WHERE id = ?', [id]);
 }
 
-export async function getEntryDates(userId: string): Promise<string[]> {
-  const { rows } = await getDatabase().execute(
-    `SELECT DISTINCT substr(created_at, 1, 10) AS date
-     FROM journal_entries
-     WHERE user_id = ?
-     ORDER BY date DESC`,
-    [userId],
-  );
-  return (rows as { date: string }[]).map(r => r.date);
-}

@@ -4,7 +4,7 @@ import { BookOpen, Plus } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Header from '../../components/commons/Header';
+import Header from '../commons/Header';
 import CalendarView from './components/CalendarView';
 import DateSeparator from './components/DateSeparator';
 import JournalCard from './components/JournalCard';

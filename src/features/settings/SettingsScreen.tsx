@@ -16,7 +16,7 @@ import {
   Sun,
   UserPlus,
 } from 'lucide-react-native';
-import type { ViewMode } from '../home/components/ViewTabs';
+import type { ViewMode } from '../../models/types/ui.type';
 import { useSettingsStore } from '../../store/settingsStore';
 import { clearSession } from '../../services/sessionService';
 import { RootStackParamList } from '../../models/types/navigation.type';
@@ -48,7 +48,6 @@ export default function SettingsScreen() {
 
   return (
     <View className="flex-1 bg-slate-50">
-      {/* Header */}
       <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50">
         <TouchableOpacity
           className="w-9 h-9 rounded-full bg-white items-center justify-center mr-3"
@@ -62,7 +61,6 @@ export default function SettingsScreen() {
 
       <ScrollView className="flex-1 px-4 pt-1" showsVerticalScrollIndicator={false}>
 
-        {/* Profile Card */}
         <View className="bg-white rounded-2xl p-4 mb-4">
           <View className="flex-row items-center">
             <View className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center mr-4">
@@ -95,7 +93,6 @@ export default function SettingsScreen() {
           )}
         </View>
 
-        {/* App Settings */}
         <SettingsSection title="App Settings">
           <SettingsItem
             icon={<LayoutGrid size={17} color="#fff" />}
@@ -165,7 +162,6 @@ export default function SettingsScreen() {
           </SettingsItem>
         </SettingsSection>
 
-        {/* Data */}
         <SettingsSection title="Data">
           <SettingsItem
             icon={<Download size={17} color="#fff" />}
@@ -187,7 +183,6 @@ export default function SettingsScreen() {
           </SettingsItem>
         </SettingsSection>
 
-        {/* Sign Out */}
         {!isGuest && (
           <SettingsSection>
             <SettingsItem

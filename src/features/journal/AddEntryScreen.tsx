@@ -17,20 +17,12 @@ import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { Mood } from '../../models/interfaces/users.model';
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 import { useAuthStore } from '../../store/authStore';
+import { formatEntryDate } from '../../utils/dateTime';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'AddEntry'>;
 type Route = RouteProp<RootStackParamList, 'AddEntry'>;
-
-const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-function formatEntryDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  const d = new Date(year, month - 1, day);
-  return `${DAY_NAMES[d.getDay()]}, ${MONTH_NAMES[month - 1]} ${String(day).padStart(2, '0')} · ${year}`;
-}
 
 export default function AddEntryScreen() {
   const navigation = useNavigation<Nav>();

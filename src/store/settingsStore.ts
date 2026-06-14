@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ViewMode } from '../features/home/components/ViewTabs';
+import type { ViewMode } from '../models/types/ui.type';
 
 interface SettingsState {
   defaultLayout: ViewMode;

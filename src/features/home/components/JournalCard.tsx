@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, Animated, PanResponder } from 'react-native';
 import { Clock, Calendar, Image, Pencil, Trash2 } from 'lucide-react-native';
-import type { JournalEntry } from '../../../utils/dateTime';
+import type { JournalEntry } from '../../../models/interfaces/users.model';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
 interface JournalCardProps {

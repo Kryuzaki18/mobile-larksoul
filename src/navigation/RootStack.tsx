@@ -13,11 +13,6 @@ import { getUserById } from '../database/functions/users';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function SafeAreaProvider({ children }: { children: React.ReactNode }) {
-  const Provider = require('react-native-safe-area-context').SafeAreaProvider;
-  return <Provider>{children}</Provider>;
-}
-
 export default function RootStack() {
   const { currentUser, setUser } = useAuthStore();
   const [isReady, setIsReady] = useState(false);
@@ -46,18 +41,16 @@ export default function RootStack() {
   if (!isReady) return null;
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView className="flex-1">
-        <Stack.Navigator
-          initialRouteName={currentUser ? 'Home' : 'Login'}
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-          <Stack.Screen name="AddEntry" component={AddEntryScreen} />
-        </Stack.Navigator>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <SafeAreaView className="flex-1">
+      <Stack.Navigator
+        initialRouteName={currentUser ? 'Home' : 'Login'}
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="AddEntry" component={AddEntryScreen} />
+      </Stack.Navigator>
+    </SafeAreaView>
   );
 }
