@@ -11,7 +11,12 @@ import {
   Lock,
   Download,
   CloudUpload,
+  Calendar,
+  Menu,
+  LayoutGrid,
 } from 'lucide-react-native';
+import type { ViewMode } from '../home/components/ViewTabs';
+import { useSettingsStore } from '../../store/settingsStore';
 import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
 import SettingsSection from './components/SettingsSection';
@@ -23,6 +28,13 @@ export default function SettingsScreen() {
   const navigation = useNavigation<HomeNav>();
   const { currentUser, isGuest, clearUser } = useAuthStore();
   const [notifications, setNotifications] = useState(true);
+  const { defaultLayout, setDefaultLayout } = useSettingsStore();
+
+  const LAYOUT_OPTIONS: { mode: ViewMode; label: string; Icon: React.FC<{ size: number; color: string }> }[] = [
+    { mode: 'calendar', label: 'Calendar', Icon: Calendar },
+    { mode: 'list', label: 'List', Icon: Menu },
+    { mode: 'grid', label: 'Grid', Icon: LayoutGrid },
+  ];
 
   function handleSignOut() {
     clearUser();
@@ -32,7 +44,10 @@ export default function SettingsScreen() {
   return (
     <>
       <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
-        <TouchableOpacity className="p-1.5" onPress={() => navigation.replace('Home')}>
+        <TouchableOpacity
+          className="p-1.5"
+          onPress={() => navigation.replace('Home')}
+        >
           <ChevronLeft size={20} color="#1e293b" />
         </TouchableOpacity>
         <Text className="text-base font-bold text-slate-800">Settings</Text>
@@ -60,13 +75,35 @@ export default function SettingsScreen() {
                 {currentUser?.name ?? 'Guest'}
               </Text>
               <Text className="text-sm text-gray-500">
-                {isGuest ? 'Browsing as guest' : (currentUser?.email ?? '')}
+                {isGuest ? 'Browsing as guest' : currentUser?.email ?? ''}
               </Text>
             </View>
           </SettingsItem>
         </SettingsSection>
 
         <SettingsSection title="APP SETTINGS">
+          <SettingsItem icon={<LayoutGrid size={22} color="#374151" />}>
+            <View>
+              <Text className="text-sm text-slate-800 mb-2.5">Layout</Text>
+              <View className="flex-row gap-2">
+                {LAYOUT_OPTIONS.map(({ mode, label, Icon }) => {
+                  const isActive = defaultLayout === mode;
+                  return (
+                    <TouchableOpacity
+                      key={mode}
+                      className={`flex-1 flex-row items-center justify-center gap-1.5 py-2 rounded-lg ${isActive ? 'bg-blue-800' : 'bg-slate-100'}`}
+                      onPress={() => setDefaultLayout(mode)}
+                    >
+                      <Icon size={13} color={isActive ? '#ffffff' : '#6b7280'} />
+                      <Text className={`text-xs font-medium ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                        {label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          </SettingsItem>
           <SettingsItem
             icon={<Palette size={22} color="#374151" />}
             extra={<Text className="text-sm text-gray-500">Light</Text>}
@@ -101,14 +138,20 @@ export default function SettingsScreen() {
         <SettingsSection title="DATA">
           <SettingsItem
             icon={<Download size={22} color="#374151" />}
-            extra={<Text className="text-sm font-semibold text-gray-600">PDF, JSON</Text>}
+            extra={
+              <Text className="text-sm font-semibold text-gray-600">
+                PDF, JSON
+              </Text>
+            }
             onPress={() => {}}
           >
             Export Journal
           </SettingsItem>
           <SettingsItem
             icon={<CloudUpload size={22} color="#374151" />}
-            extra={<Text className="text-sm text-gray-500">Last sync: 2h ago</Text>}
+            extra={
+              <Text className="text-sm text-gray-500">Last sync: 2h ago</Text>
+            }
             onPress={() => {}}
           >
             Cloud Backup
@@ -120,7 +163,9 @@ export default function SettingsScreen() {
             className="items-center py-4 mb-6"
             onPress={handleSignOut}
           >
-            <Text className="text-red-500 text-base font-semibold">Sign Out</Text>
+            <Text className="text-red-500 text-base font-semibold">
+              Sign Out
+            </Text>
           </TouchableOpacity>
         )}
       </ScrollView>

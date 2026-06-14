@@ -14,6 +14,7 @@ import GridView from './components/GridView';
 import { useHomeState } from '../../hooks/useHomeState';
 import { formatDateLabel, toDateStr } from '../../utils/dateTime';
 import { useAuthStore } from '../../store/authStore';
+import { useSettingsStore } from '../../store/settingsStore';
 import { deleteEntry } from '../../database/functions/journal';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 
@@ -22,7 +23,8 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const { currentUser } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<ViewMode>('calendar');
+  const { defaultLayout } = useSettingsStore();
+  const [activeTab, setActiveTab] = useState<ViewMode>(defaultLayout);
 
   const userId = currentUser?.id ?? '';
   const { selectedDate, setSelectedDate, entryDates, entriesForDay, entries, refetch } =
