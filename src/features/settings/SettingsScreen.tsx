@@ -17,6 +17,7 @@ import {
 } from 'lucide-react-native';
 import type { ViewMode } from '../home/components/ViewTabs';
 import { useSettingsStore } from '../../store/settingsStore';
+import { clearSession } from '../../services/sessionService';
 import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
 import SettingsSection from './components/SettingsSection';
@@ -36,7 +37,8 @@ export default function SettingsScreen() {
     { mode: 'grid', label: 'Grid', Icon: LayoutGrid },
   ];
 
-  function handleSignOut() {
+  async function handleSignOut() {
+    await clearSession();
     clearUser();
     navigation.replace('Login');
   }

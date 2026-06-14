@@ -12,6 +12,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowRight } from 'lucide-react-native';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import { signInAsGuest } from '../../services/AuthService';
+import { saveSession } from '../../services/sessionService';
 import { useAuthStore } from '../../store/authStore';
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
@@ -30,6 +31,7 @@ export default function LoginScreen() {
     try {
       const user = await signInAsGuest();
       setUser(user, true);
+      await saveSession(user.id, true);
       navigation.replace('Home');
     } finally {
       setLoading(false);
