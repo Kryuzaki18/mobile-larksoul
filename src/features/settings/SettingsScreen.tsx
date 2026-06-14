@@ -4,9 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ChevronLeft,
-  Settings,
   Pencil,
-  Palette,
   Bell,
   Lock,
   Download,
@@ -14,6 +12,9 @@ import {
   Calendar,
   Menu,
   LayoutGrid,
+  LogOut,
+  Sun,
+  UserPlus,
 } from 'lucide-react-native';
 import type { ViewMode } from '../home/components/ViewTabs';
 import { useSettingsStore } from '../../store/settingsStore';
@@ -25,17 +26,17 @@ import SettingsItem from './components/SettingsItem';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
+const LAYOUT_OPTIONS: { mode: ViewMode; label: string; Icon: React.FC<{ size: number; color: string }> }[] = [
+  { mode: 'calendar', label: 'Calendar', Icon: Calendar },
+  { mode: 'list', label: 'List', Icon: Menu },
+  { mode: 'grid', label: 'Grid', Icon: LayoutGrid },
+];
+
 export default function SettingsScreen() {
   const navigation = useNavigation<HomeNav>();
   const { currentUser, isGuest, clearUser } = useAuthStore();
   const [notifications, setNotifications] = useState(true);
   const { defaultLayout, setDefaultLayout } = useSettingsStore();
-
-  const LAYOUT_OPTIONS: { mode: ViewMode; label: string; Icon: React.FC<{ size: number; color: string }> }[] = [
-    { mode: 'calendar', label: 'Calendar', Icon: Calendar },
-    { mode: 'list', label: 'List', Icon: Menu },
-    { mode: 'grid', label: 'Grid', Icon: LayoutGrid },
-  ];
 
   async function handleSignOut() {
     await clearSession();
@@ -43,61 +44,82 @@ export default function SettingsScreen() {
     navigation.replace('Login');
   }
 
+  const initial = currentUser?.name?.[0]?.toUpperCase() ?? 'G';
+
   return (
-    <>
-      <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
+    <View className="flex-1 bg-slate-50">
+      {/* Header */}
+      <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50">
         <TouchableOpacity
-          className="p-1.5"
+          className="w-9 h-9 rounded-full bg-white items-center justify-center mr-3"
+          style={{ shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 2 }}
           onPress={() => navigation.replace('Home')}
         >
-          <ChevronLeft size={20} color="#1e293b" />
+          <ChevronLeft size={18} color="#1e293b" />
         </TouchableOpacity>
-        <Text className="text-base font-bold text-slate-800">Settings</Text>
-        <Settings size={20} color="#1e3a5f" />
+        <Text className="text-xl font-bold text-slate-800">Settings</Text>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-5">
-        <SettingsSection title="PROFILE">
-          <SettingsItem
-            icon={
-              <View className="w-14 h-14 rounded-full bg-sky-200 items-center justify-center overflow-hidden">
-                <Text className="text-3xl">{isGuest ? '👤' : '🧑'}</Text>
-              </View>
-            }
-            extra={
-              !isGuest ? (
-                <TouchableOpacity>
-                  <Pencil size={22} color="#94a3b8" />
-                </TouchableOpacity>
-              ) : undefined
-            }
-          >
-            <View>
-              <Text className="text-base font-semibold text-slate-800">
+      <ScrollView className="flex-1 px-4 pt-1" showsVerticalScrollIndicator={false}>
+
+        {/* Profile Card */}
+        <View className="bg-white rounded-2xl p-4 mb-4">
+          <View className="flex-row items-center">
+            <View className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center mr-4">
+              <Text className="text-2xl font-bold text-white">{initial}</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-bold text-slate-800">
                 {currentUser?.name ?? 'Guest'}
               </Text>
-              <Text className="text-sm text-gray-500">
-                {isGuest ? 'Browsing as guest' : currentUser?.email ?? ''}
+              <Text className="text-sm text-gray-400 mt-0.5">
+                {isGuest ? 'Browsing as guest' : (currentUser?.email ?? '')}
               </Text>
             </View>
-          </SettingsItem>
-        </SettingsSection>
+            {!isGuest && (
+              <TouchableOpacity className="w-8 h-8 rounded-full bg-slate-100 items-center justify-center">
+                <Pencil size={14} color="#64748b" />
+              </TouchableOpacity>
+            )}
+          </View>
+          {isGuest && (
+            <TouchableOpacity
+              className="mt-3 bg-blue-50 rounded-xl py-2.5 items-center"
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center gap-2">
+                <UserPlus size={14} color="#1d4ed8" />
+                <Text className="text-sm font-semibold text-blue-700">Create an Account</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
 
-        <SettingsSection title="APP SETTINGS">
+        {/* App Settings */}
+        <SettingsSection title="App Settings">
           <SettingsItem
-            icon={<LayoutGrid size={22} color="#374151" />}
+            icon={<LayoutGrid size={17} color="#fff" />}
+            iconBg="#6366f1"
             extra={
-              <View className="flex-row gap-2">
+              <View className="flex-row gap-1.5">
                 {LAYOUT_OPTIONS.map(({ mode, label, Icon }) => {
                   const isActive = defaultLayout === mode;
                   return (
                     <TouchableOpacity
                       key={mode}
-                      className={`flex-row items-center gap-1 px-2 py-1 rounded-lg ${isActive ? 'bg-blue-800' : 'bg-slate-100'}`}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        paddingHorizontal: 8,
+                        paddingVertical: 5,
+                        borderRadius: 8,
+                        backgroundColor: isActive ? '#1e40af' : '#f1f5f9',
+                      }}
                       onPress={() => setDefaultLayout(mode)}
                     >
-                      <Icon size={12} color={isActive ? '#ffffff' : '#6b7280'} />
-                      <Text className={`text-xs font-medium ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                      <Icon size={11} color={isActive ? '#fff' : '#6b7280'} />
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? '#fff' : '#6b7280' }}>
                         {label}
                       </Text>
                     </TouchableOpacity>
@@ -109,29 +131,33 @@ export default function SettingsScreen() {
             Layout
           </SettingsItem>
           <SettingsItem
-            icon={<Palette size={22} color="#374151" />}
-            extra={<Text className="text-sm text-gray-500">Light</Text>}
+            icon={<Sun size={17} color="#fff" />}
+            iconBg="#f59e0b"
+            extra={<Text className="text-xs font-medium text-gray-400">Light</Text>}
             arrow
             onPress={() => {}}
           >
             Theme
           </SettingsItem>
           <SettingsItem
-            icon={<Bell size={22} color="#374151" />}
+            icon={<Bell size={17} color="#fff" />}
+            iconBg="#3b82f6"
             extra={
               <Switch
                 value={notifications}
                 onValueChange={setNotifications}
-                trackColor={{ false: '#d1d5db', true: '#2563eb' }}
+                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
                 thumbColor="#ffffff"
+                style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }}
               />
             }
           >
             Notifications
           </SettingsItem>
           <SettingsItem
-            icon={<Lock size={22} color="#374151" />}
-            extra={<Text className="text-sm text-gray-500">Enabled</Text>}
+            icon={<Lock size={17} color="#fff" />}
+            iconBg="#10b981"
+            extra={<Text className="text-xs font-medium text-gray-400">Enabled</Text>}
             arrow
             onPress={() => {}}
           >
@@ -139,40 +165,43 @@ export default function SettingsScreen() {
           </SettingsItem>
         </SettingsSection>
 
-        <SettingsSection title="DATA">
+        {/* Data */}
+        <SettingsSection title="Data">
           <SettingsItem
-            icon={<Download size={22} color="#374151" />}
-            extra={
-              <Text className="text-sm font-semibold text-gray-600">
-                PDF, JSON
-              </Text>
-            }
+            icon={<Download size={17} color="#fff" />}
+            iconBg="#8b5cf6"
+            extra={<Text className="text-xs font-medium text-gray-400">PDF, JSON</Text>}
+            arrow
             onPress={() => {}}
           >
             Export Journal
           </SettingsItem>
           <SettingsItem
-            icon={<CloudUpload size={22} color="#374151" />}
-            extra={
-              <Text className="text-sm text-gray-500">Last sync: 2h ago</Text>
-            }
+            icon={<CloudUpload size={17} color="#fff" />}
+            iconBg="#0ea5e9"
+            extra={<Text className="text-xs font-medium text-gray-400">2h ago</Text>}
+            arrow
             onPress={() => {}}
           >
             Cloud Backup
           </SettingsItem>
         </SettingsSection>
 
+        {/* Sign Out */}
         {!isGuest && (
-          <TouchableOpacity
-            className="items-center py-4 mb-6"
-            onPress={handleSignOut}
-          >
-            <Text className="text-red-500 text-base font-semibold">
-              Sign Out
-            </Text>
-          </TouchableOpacity>
+          <SettingsSection>
+            <SettingsItem
+              icon={<LogOut size={17} color="#ef4444" />}
+              iconBg="#fef2f2"
+              onPress={handleSignOut}
+            >
+              <Text className="text-sm font-medium text-red-500">Sign Out</Text>
+            </SettingsItem>
+          </SettingsSection>
         )}
+
+        <View className="h-10" />
       </ScrollView>
-    </>
+    </View>
   );
 }
