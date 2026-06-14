@@ -19,30 +19,44 @@ interface MoodSelectorProps {
 
 export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) {
   function toggle(value: Mood) {
-    if (selected.includes(value)) {
-      onSelect(selected.filter(m => m !== value));
-    } else {
-      onSelect([...selected, value]);
-    }
+    onSelect(
+      selected.includes(value)
+        ? selected.filter(m => m !== value)
+        : [...selected, value],
+    );
   }
 
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      className="-mx-1 pb-1"
+      contentContainerStyle={{ gap: 8, paddingHorizontal: 2 }}
     >
       {MOODS.map(({ value, emoji, label }) => {
         const isActive = selected.includes(value);
         return (
           <TouchableOpacity
             key={value}
-            className={`items-center mx-1 px-3 py-2 rounded-xl ${isActive ? 'bg-blue-800' : 'bg-slate-50'}`}
             onPress={() => toggle(value)}
             activeOpacity={0.75}
+            style={{
+              alignItems: 'center',
+              paddingHorizontal: 12,
+              paddingVertical: 10,
+              borderRadius: 16,
+              backgroundColor: isActive ? '#1e3a8a' : '#f8fafc',
+              borderWidth: 1.5,
+              borderColor: isActive ? '#1e40af' : '#f1f5f9',
+              minWidth: 66,
+            }}
           >
-            <Text className="text-2xl mb-1">{emoji}</Text>
-            <Text className={`text-xs font-medium ${isActive ? 'text-white' : 'text-gray-400'}`}>
+            <Text style={{ fontSize: 24, marginBottom: 4 }}>{emoji}</Text>
+            <Text style={{
+              fontSize: 10,
+              fontWeight: '600',
+              color: isActive ? '#ffffff' : '#94a3b8',
+              letterSpacing: 0.3,
+            }}>
               {label}
             </Text>
           </TouchableOpacity>

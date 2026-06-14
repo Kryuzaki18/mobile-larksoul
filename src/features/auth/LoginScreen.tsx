@@ -39,63 +39,72 @@ export default function LoginScreen() {
   }
 
   return (
-    <ScrollView
-      className="flex-1 bg-white"
-      contentContainerClassName="items-center px-6 pt-10 pb-8"
-    >
-      <Image
-        source={require('../../assets/logo.png')}
-        className="w-24 h-24 mb-5"
-        resizeMode="contain"
-      />
+    <View className="flex-1 bg-slate-50">
+      <View className="items-center pt-14 pb-8 px-6">
+        <Image
+          source={require('../../assets/logo.png')}
+          style={{ width: 72, height: 72, marginBottom: 16 }}
+          resizeMode="contain"
+        />
+        <Text className="text-3xl font-bold text-slate-800 mb-1.5">Welcome back</Text>
+        <Text className="text-sm text-gray-400 text-center">
+          Your personal space for reflection
+        </Text>
+      </View>
 
-      <Text className="text-4xl font-bold text-slate-800 mb-2 w-full text-center">
-        Welcome Back
-      </Text>
-      <Text className="text-gray-400 text-base mb-3 w-full text-center">
-        Continue your reflective journey.
-      </Text>
-
-      <View className="w-full border border-gray-200 rounded-2xl p-5">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <TouchableOpacity
-          className="bg-blue-800 rounded-xl py-3.5 items-center justify-center mb-3"
+          className="bg-blue-800 rounded-2xl py-4 items-center mb-3"
           onPress={handleGuestLogin}
           disabled={loading}
           activeOpacity={0.85}
         >
-          <View className="flex-row items-center gap-2">
-            {loading ? (
-              <ActivityIndicator size="small" color="#ffffff" />
-            ) : (
-              <>
-                <Text className="text-white text-xl font-medium">Continue as Guest</Text>
-                <ArrowRight size={16} color="#fff" />
-              </>
-            )}
-          </View>
+          {loading ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <View className="flex-row items-center gap-2">
+              <Text className="text-white text-base font-semibold">Continue as Guest</Text>
+              <ArrowRight size={16} color="#fff" />
+            </View>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="border border-gray-300 rounded-xl py-3.5 items-center justify-center mb-6"
+          className="bg-white border border-gray-100 rounded-2xl py-4 items-center mb-6"
           onPress={() => {}}
-          activeOpacity={0.85}
+          activeOpacity={0.7}
         >
-          <Text className="text-base text-gray-700">🔢  Login with PIN</Text>
+          <Text className="text-sm font-medium text-slate-700">🔢  Login with PIN</Text>
         </TouchableOpacity>
 
-        <LoginForm
-          email={email}
-          password={password}
-          onEmailChange={setEmail}
-          onPasswordChange={setPassword}
-          onLogin={() => {}}
-        />
+        <View className="flex-row items-center mb-5">
+          <View className="flex-1 h-px bg-gray-200" />
+          <Text className="mx-4 text-xs font-medium text-gray-400 tracking-wider">OR</Text>
+          <View className="flex-1 h-px bg-gray-200" />
+        </View>
 
-        <Text className="text-center text-gray-500 text-sm mb-4">
-          Continue with social
-        </Text>
+        <View className="bg-white rounded-2xl px-5 py-5 mb-5">
+          <LoginForm
+            email={email}
+            password={password}
+            onEmailChange={setEmail}
+            onPasswordChange={setPassword}
+            onLogin={() => {}}
+          />
+        </View>
+
+        <View className="flex-row items-center mb-4">
+          <View className="flex-1 h-px bg-gray-200" />
+          <Text className="mx-4 text-xs font-medium text-gray-400">or continue with</Text>
+          <View className="flex-1 h-px bg-gray-200" />
+        </View>
         <SocialLoginButtons />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

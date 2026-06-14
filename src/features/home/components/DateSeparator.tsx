@@ -7,10 +7,11 @@ interface DateSeparatorProps {
 
 export default function DateSeparator({ label }: DateSeparatorProps) {
   return (
-    <View className="flex-row items-center px-4 my-3">
-      <View className="flex-1 h-px bg-gray-200" />
-      <Text className="mx-3 text-xs text-gray-400 font-medium tracking-widest">{label}</Text>
-      <View className="flex-1 h-px bg-gray-200" />
+    <View className="flex-row items-center px-4 mt-4 mb-1">
+      <Text className="text-xs font-bold text-gray-400 tracking-widest uppercase mr-3">
+        {label}
+      </Text>
+      <View className="flex-1 h-px" style={{ backgroundColor: '#e9edf2' }} />
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { X, Plus } from 'lucide-react-native';
+import { X, Hash } from 'lucide-react-native';
 
 interface TagInputProps {
   tags: string[];
@@ -29,36 +29,37 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
       {tags.length > 0 && (
         <View className="flex-row flex-wrap gap-2 mb-3">
           {tags.map(tag => (
-            <View key={tag} className="flex-row items-center bg-blue-50 rounded-full px-3 py-1">
-              <Text className="text-xs text-blue-700 font-medium mr-1">{tag}</Text>
-              <TouchableOpacity className="pl-0.5 py-0.5" onPress={() => remove(tag)}>
-                <X size={11} color="#1d4ed8" />
+            <View key={tag} className="flex-row items-center gap-1 bg-blue-50 rounded-full px-3 py-1.5">
+              <Text className="text-xs font-semibold text-blue-700">{tag}</Text>
+              <TouchableOpacity onPress={() => remove(tag)} hitSlop={8}>
+                <X size={10} color="#3b82f6" />
               </TouchableOpacity>
             </View>
           ))}
         </View>
       )}
 
-      <View className="flex-row items-center bg-slate-50 rounded-xl overflow-hidden border border-gray-100">
+      <View className="flex-row items-center rounded-xl border border-gray-100 bg-slate-50 overflow-hidden">
+        <View className="pl-3">
+          <Hash size={14} color="#94a3b8" />
+        </View>
         <TextInput
           value={value}
           onChangeText={setValue}
           onSubmitEditing={commit}
-          placeholder="Add a tag..."
-          placeholderTextColor="#9ca3af"
-          className="flex-1 px-3 py-2.5 text-sm text-slate-800"
+          placeholder="Add a tag…"
+          placeholderTextColor="#94a3b8"
+          className="flex-1 px-2 py-3 text-sm text-slate-800"
           autoCapitalize="none"
           returnKeyType="done"
           maxLength={30}
           blurOnSubmit={false}
         />
-        <TouchableOpacity
-          className="px-3 py-2.5"
-          onPress={commit}
-          disabled={!value.trim()}
-        >
-          <Plus size={18} color={value.trim() ? '#1e40af' : '#9ca3af'} />
-        </TouchableOpacity>
+        {value.trim().length > 0 && (
+          <TouchableOpacity className="px-3 py-3" onPress={commit}>
+            <Text className="text-xs font-bold text-blue-700">Add</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
