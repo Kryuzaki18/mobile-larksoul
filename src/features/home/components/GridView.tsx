@@ -53,7 +53,7 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
               </View>
 
               <TouchableOpacity
-                className="w-7 h-7 rounded-full bg-white items-center justify-center"
+                className="w-7 h-7 rounded-full items-center justify-center"
                 onPress={onToggleMenu}
               >
                 <MoreVertical size={14} color="#475569" />
@@ -91,30 +91,37 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
 
         {isMenuOpen && (
           <View
-            className="absolute bg-white rounded-xl overflow-hidden"
+            pointerEvents="none"
+            className="absolute top-0 left-0 right-0 bottom-0 bg-black/30 rounded-2xl"
+          />
+        )}
+
+        {isMenuOpen && (
+          <View
+            className="absolute bg-white rounded-2xl overflow-hidden"
             style={{
-              right: 6,
-              marginTop: 25,
+              right: 10,
+              top: 25,
+              minWidth: 80,
               elevation: 6,
               shadowColor: '#000',
-              shadowOpacity: 0.15,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.2,
+              shadowRadius: 10,
             }}
           >
             <TouchableOpacity
-              className="flex-row items-center gap-2 px-3 py-2"
+              className="flex-row items-center gap-1 px-4 py-3"
               onPress={() => { onToggleMenu(); onEdit(); }}
             >
-              <Pencil size={13} color="#475569" />
+              <Pencil size={12} color="#475569" />
               <Text className="text-xs font-medium text-slate-700">Edit</Text>
             </TouchableOpacity>
             <View className="h-px bg-slate-100" />
             <TouchableOpacity
-              className="flex-row items-center gap-2 px-3 py-2"
+              className="flex-row items-center gap-1 px-4 py-3"
               onPress={() => { onToggleMenu(); onDelete(); }}
             >
-              <Trash2 size={13} color="#ef4444" />
+              <Trash2 size={12} color="#ef4444" />
               <Text className="text-xs font-medium text-red-500">Delete</Text>
             </TouchableOpacity>
           </View>
