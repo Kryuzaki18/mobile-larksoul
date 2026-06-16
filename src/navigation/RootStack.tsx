@@ -6,6 +6,7 @@ import type { RootStackParamList } from '../models/types/navigation.type';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LoginScreen from '../features/auth/LoginScreen';
+import SignUpScreen from '../features/auth/SignUpScreen';
 import PinLockScreen from '../features/auth/PinLockScreen';
 import HomeScreen from '../features/home/HomeScreen';
 import SettingsScreen from '../features/settings/SettingsScreen';
@@ -82,6 +83,7 @@ export default function RootStack() {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="AddEntry" component={AddEntryScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />

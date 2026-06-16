@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ChevronLeft,
   Pencil,
-  Bell,
   Lock,
   Download,
   CloudUpload,
@@ -37,7 +36,6 @@ const LAYOUT_OPTIONS: { mode: ViewMode; label: string; Icon: React.FC<{ size: nu
 export default function SettingsScreen() {
   const navigation = useNavigation<HomeNav>();
   const { currentUser, isGuest, clearUser } = useAuthStore();
-  const [notifications, setNotifications] = useState(true);
   const { defaultLayout, setDefaultLayout } = useSettingsStore();
   const { isPinEnabled } = useSecurityStore();
 
@@ -90,6 +88,7 @@ export default function SettingsScreen() {
             <TouchableOpacity
               className="mt-3 bg-blue-50 rounded-xl py-2.5 items-center"
               activeOpacity={0.7}
+              onPress={() => navigation.navigate('SignUp')}
             >
               <View className="flex-row items-center gap-2">
                 <UserPlus size={14} color="#1d4ed8" />
@@ -141,21 +140,6 @@ export default function SettingsScreen() {
             onPress={() => {}}
           >
             Theme
-          </SettingsItem>
-          <SettingsItem
-            icon={<Bell size={17} color="#fff" />}
-            iconBg="#3b82f6"
-            extra={
-              <Switch
-                value={notifications}
-                onValueChange={setNotifications}
-                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-                thumbColor="#ffffff"
-                style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }}
-              />
-            }
-          >
-            Notifications
           </SettingsItem>
           <SettingsItem
             icon={<Lock size={17} color="#fff" />}

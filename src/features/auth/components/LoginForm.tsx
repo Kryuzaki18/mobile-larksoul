@@ -20,7 +20,7 @@ export default function LoginForm({
   return (
     <>
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">EMAIL</Text>
-      <View className="bg-slate-50 rounded-xl px-4 mb-4 border border-gray-100">
+      <View className="bg-white rounded-xl px-4 mb-4 border border-gray-100">
         <TextInput
           value={email}
           onChangeText={onEmailChange}
@@ -38,7 +38,7 @@ export default function LoginForm({
           <Text className="text-xs font-semibold text-blue-700">Forgot?</Text>
         </TouchableOpacity>
       </View>
-      <View className="bg-slate-50 rounded-xl px-4 mb-5 border border-gray-100">
+      <View className="bg-white rounded-xl px-4 mb-5 border border-gray-100">
         <TextInput
           value={password}
           onChangeText={onPasswordChange}

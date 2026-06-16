@@ -87,7 +87,7 @@ export default function PinLockScreen({
     <View className="flex-1 bg-white items-center justify-center px-6">
       <Image
         source={require('../../assets/logo.png')}
-        style={{ width: 100, height: 100, marginBottom: 10 }}
+        style={{ width: 120, height: 120, marginBottom: 5 }}
         resizeMode="contain"
       />
 

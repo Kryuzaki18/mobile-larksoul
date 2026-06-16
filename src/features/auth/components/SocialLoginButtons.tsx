@@ -1,27 +1,33 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import GmailIcon from '../../../assets/gmail.svg';
-import XIcon from '../../../assets/x.svg';
-import FbIcon from '../../../assets/fb.svg';
-import InstagramIcon from '../../../assets/instagram.svg';
+import AppleIcon from '../../../assets/apple.svg';
 
-const SOCIAL_PROVIDERS = [
-  { SvgIcon: GmailIcon, key: 'gmail' },
-  { SvgIcon: XIcon, key: 'x' },
-  { SvgIcon: FbIcon, key: 'fb' },
-  { SvgIcon: InstagramIcon, key: 'instagram' },
-] as const;
+export type SocialProvider = 'google' | 'apple';
 
-export default function SocialLoginButtons() {
+interface SocialLoginButtonsProps {
+  providers?: SocialProvider[];
+  onSelect?: (provider: SocialProvider) => void;
+}
+
+export default function SocialLoginButtons({
+  providers = ['google'],
+  onSelect,
+}: SocialLoginButtonsProps) {
   return (
     <View className="flex-row justify-center gap-4">
-      {SOCIAL_PROVIDERS.map(({ SvgIcon, key }) => (
+      {providers.map(provider => (
         <TouchableOpacity
-          key={key}
+          key={provider}
           className="w-14 h-14 rounded-full border border-gray-100 bg-white items-center justify-center shadow-sm"
-          onPress={() => {}}
+          onPress={() => onSelect?.(provider)}
+          activeOpacity={0.7}
         >
-          <SvgIcon width={28} height={28} />
+          {provider === 'google' ? (
+            <GmailIcon width={28} height={28} />
+          ) : (
+            <AppleIcon width={28} height={28} />
+          )}
         </TouchableOpacity>
       ))}
     </View>
