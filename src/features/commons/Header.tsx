@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
+import NetworkStatusDot from './NetworkStatusDot';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -21,8 +22,11 @@ export default function Header({ name = "Your", subtitle = 'Journal' }: HeaderPr
   return (
     <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
       <View className="flex-row items-center gap-3">
-        <View className="w-10 h-10 rounded-full bg-blue-800 items-center justify-center">
-          <Text className="text-base font-bold text-white">{initial}</Text>
+        <View className="relative">
+          <View className="w-10 h-10 rounded-full bg-blue-800 items-center justify-center">
+            <Text className="text-base font-bold text-white">{initial}</Text>
+          </View>
+          <NetworkStatusDot style={{ position: 'absolute', bottom: -1, right: -1 }} />
         </View>
         <View>
           <Text className="text-base font-bold text-slate-800">{name}</Text>

@@ -1,0 +1,36 @@
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+
+interface NetworkStatusDotProps {
+  size?: number;
+  style?: StyleProp<ViewStyle>;
+}
+
+export default function NetworkStatusDot({ size = 10, style }: NetworkStatusDotProps) {
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsActive(Boolean(state.isConnected && state.isInternetReachable !== false));
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <View
+      style={[
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: isActive ? '#22c55e' : '#ef4444',
+          borderWidth: 1.5,
+          borderColor: '#ffffff',
+        },
+        style,
+      ]}
+    />
+  );
+}

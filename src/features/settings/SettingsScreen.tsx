@@ -24,6 +24,7 @@ import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
 import SettingsSection from './components/SettingsSection';
 import SettingsItem from './components/SettingsItem';
+import NetworkStatusDot from '../commons/NetworkStatusDot';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -65,8 +66,11 @@ export default function SettingsScreen() {
 
         <View className="bg-white rounded-2xl p-4 mb-4">
           <View className="flex-row items-center">
-            <View className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center mr-4">
-              <Text className="text-2xl font-bold text-white">{initial}</Text>
+            <View className="relative mr-4">
+              <View className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center">
+                <Text className="text-2xl font-bold text-white">{initial}</Text>
+              </View>
+              <NetworkStatusDot size={12} style={{ position: 'absolute', bottom: -1, right: -1 }} />
             </View>
             <View className="flex-1">
               <Text className="text-base font-bold text-slate-800">
