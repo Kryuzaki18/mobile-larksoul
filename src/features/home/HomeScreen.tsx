@@ -12,6 +12,7 @@ import JournalCard from './components/JournalCard';
 import ListView from './components/ListView';
 import GridView from './components/GridView';
 import EmptyEntry from './components/EmptyEntry';
+import HomeLoader from './components/HomeLoader';
 
 import { useHomeState } from '../../hooks/useHomeState';
 
@@ -38,6 +39,7 @@ export default function HomeScreen() {
     entryDates,
     entriesForDay,
     entries,
+    isLoading,
     refetch,
   } = useHomeState(userId);
 
@@ -54,62 +56,66 @@ export default function HomeScreen() {
       <Header name={`${firstName}'s`} subtitle="Journal" />
 
       <View className="flex-1">
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          {defaultLayout === 'calendar' && (
-            <>
-              <CalendarView
-                entryDates={entryDates}
-                selectedDate={selectedDate}
-                onDayPress={setSelectedDate}
-              />
-              <DateSeparator label={formatDateLabel(selectedDate)} />
-              {entriesForDay.map(entry => (
-                <JournalCard
-                  key={entry.id}
-                  entry={entry}
-                  onEdit={() =>
-                    navigation.navigate('AddEntry', { entryId: entry.id })
-                  }
-                  onDelete={() =>
-                    Alert.alert(
-                      'Delete Entry',
-                      'Are you sure you want to delete this entry?',
-                      [
-                        { text: 'Cancel', style: 'cancel' },
-                        {
-                          text: 'Delete',
-                          style: 'destructive',
-                          onPress: () =>
-                            deleteEntry(entry.id)
-                              .then(refetch)
-                              .catch(console.error),
-                        },
-                      ],
-                    )
-                  }
+        {isLoading ? (
+          <HomeLoader />
+        ) : (
+          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            {defaultLayout === 'calendar' && (
+              <>
+                <CalendarView
+                  entryDates={entryDates}
+                  selectedDate={selectedDate}
+                  onDayPress={setSelectedDate}
                 />
+                <DateSeparator label={formatDateLabel(selectedDate)} />
+                {entriesForDay.map(entry => (
+                  <JournalCard
+                    key={entry.id}
+                    entry={entry}
+                    onEdit={() =>
+                      navigation.navigate('AddEntry', { entryId: entry.id })
+                    }
+                    onDelete={() =>
+                      Alert.alert(
+                        'Delete Entry',
+                        'Are you sure you want to delete this entry?',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Delete',
+                            style: 'destructive',
+                            onPress: () =>
+                              deleteEntry(entry.id)
+                                .then(refetch)
+                                .catch(console.error),
+                          },
+                        ],
+                      )
+                    }
+                  />
+                ))}
+
+                {entriesForDay.length === 0 && <EmptyEntry />}
+              </>
+            )}
+
+            {defaultLayout === 'list' &&
+              (entries.length > 0 ? (
+                <ListView entries={entries} />
+              ) : (
+                <EmptyEntry />
               ))}
 
-              {entriesForDay.length === 0 && <EmptyEntry />}
-            </>
-          )}
+            {defaultLayout === 'grid' &&
+              (entries.length > 0 ? (
+                <GridView entries={entries} />
+              ) : (
+                <EmptyEntry />
+              ))}
 
-          {defaultLayout === 'list' &&
-            (entries.length > 0 ? (
-              <ListView entries={entries} />
-            ) : (
-              <EmptyEntry />
-            ))}
-
-          {defaultLayout === 'grid' &&
-            (entries.length > 0 ? (
-              <GridView entries={entries} />
-            ) : (
-              <EmptyEntry />
-            ))}
-
-          <View className="h-24" />
-        </ScrollView>
+            <View className="h-24" />
+          </ScrollView>
+        )}
 
         <TouchableOpacity
           className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-lg shadow-blue-900"
