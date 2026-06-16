@@ -18,6 +18,7 @@ import {
 } from 'lucide-react-native';
 import type { ViewMode } from '../../models/types/ui.type';
 import { useSettingsStore } from '../../store/settingsStore';
+import { useSecurityStore } from '../../store/securityStore';
 import { clearSession } from '../../services/sessionService';
 import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
@@ -37,6 +38,7 @@ export default function SettingsScreen() {
   const { currentUser, isGuest, clearUser } = useAuthStore();
   const [notifications, setNotifications] = useState(true);
   const { defaultLayout, setDefaultLayout } = useSettingsStore();
+  const { isPinEnabled } = useSecurityStore();
 
   async function handleSignOut() {
     await clearSession();
@@ -154,9 +156,13 @@ export default function SettingsScreen() {
           <SettingsItem
             icon={<Lock size={17} color="#fff" />}
             iconBg="#10b981"
-            extra={<Text className="text-xs font-medium text-gray-400">Enabled</Text>}
+            extra={
+              <Text className="text-xs font-medium text-gray-400">
+                {isPinEnabled ? 'Enabled' : 'Disabled'}
+              </Text>
+            }
             arrow
-            onPress={() => {}}
+            onPress={() => navigation.navigate('Security')}
           >
             Security & PIN Lock
           </SettingsItem>

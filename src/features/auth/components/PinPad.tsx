@@ -1,0 +1,77 @@
+import React, { useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { Delete } from 'lucide-react-native';
+
+const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'back'];
+
+interface PinPadProps {
+  length?: number;
+  value: string;
+  onChange: (value: string) => void;
+  error?: boolean;
+}
+
+export default function PinPad({ length = 4, value, onChange, error }: PinPadProps) {
+  const shake = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!error) return;
+    Animated.sequence([
+      Animated.timing(shake, { toValue: 1, duration: 60, useNativeDriver: true }),
+      Animated.timing(shake, { toValue: -1, duration: 60, useNativeDriver: true }),
+      Animated.timing(shake, { toValue: 1, duration: 60, useNativeDriver: true }),
+      Animated.timing(shake, { toValue: 0, duration: 60, useNativeDriver: true }),
+    ]).start();
+  }, [error, shake]);
+
+  function handlePress(key: string) {
+    if (key === '') return;
+    if (key === 'back') {
+      onChange(value.slice(0, -1));
+      return;
+    }
+    if (value.length < length) {
+      onChange(value + key);
+    }
+  }
+
+  return (
+    <View>
+      <Animated.View
+        className="flex-row justify-center gap-3 mb-10"
+        style={{ transform: [{ translateX: shake.interpolate({ inputRange: [-1, 1], outputRange: [-8, 8] }) }] }}
+      >
+        {Array.from({ length }).map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: 7,
+              backgroundColor: i < value.length ? (error ? '#ef4444' : '#1e40af') : '#e2e8f0',
+            }}
+          />
+        ))}
+      </Animated.View>
+
+      <View className="flex-row flex-wrap justify-center" style={{ width: 264 }}>
+        {KEYS.map((key, i) => (
+          <TouchableOpacity
+            key={i}
+            disabled={key === ''}
+            onPress={() => handlePress(key)}
+            activeOpacity={0.6}
+            className="items-center justify-center"
+            style={{ width: 88, height: 72 }}
+          >
+            {key === 'back' ? (
+              <Delete size={22} color="#475569" />
+            ) : key !== '' ? (
+              <Text className="text-2xl font-semibold text-slate-800">{key}</Text>
+            ) : null}
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+}
