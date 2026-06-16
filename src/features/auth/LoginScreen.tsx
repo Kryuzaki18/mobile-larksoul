@@ -84,7 +84,7 @@ export default function LoginScreen() {
           style={{ width: 72, height: 72, marginBottom: 16 }}
           resizeMode="contain"
         />
-        <Text className="text-3xl font-bold text-slate-800 mb-1.5">Welcome back</Text>
+        <Text className="text-3xl font-bold text-slate-800 mb-1">Welcome back!</Text>
         <Text className="text-sm text-gray-400 text-center">
           Your personal space for reflection
         </Text>

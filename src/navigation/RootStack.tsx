@@ -14,13 +14,13 @@ import AddEntryScreen from '../features/journal/AddEntryScreen';
 import { useAuthStore } from '../store/authStore';
 import { useSecurityStore } from '../store/securityStore';
 import { loadSession, clearSession } from '../services/sessionService';
-import { hasPinLock, removePinLock } from '../services/securityService';
+import { hasPinLock } from '../services/securityService';
 import { getUserById } from '../database/functions/users';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootStack() {
-  const { currentUser, setUser, clearUser } = useAuthStore();
+  const { currentUser, setUser } = useAuthStore();
   const { isPinEnabled, isLocked, setPinEnabled, lock, unlock } = useSecurityStore();
   const [isReady, setIsReady] = useState(false);
   const appState = useRef<AppStateStatus>(AppState.currentState);
@@ -61,24 +61,15 @@ export default function RootStack() {
     return () => subscription.remove();
   }, [isPinEnabled, currentUser, lock]);
 
-  async function handleForgotPin() {
-    await clearSession();
-    await removePinLock();
-    clearUser();
-    setPinEnabled(false);
-    unlock();
-  }
-
   if (!isReady) return null;
 
   if (currentUser && isPinEnabled && isLocked) {
     return (
       <SafeAreaView className="flex-1">
         <PinLockScreen
-          title="Welcome back"
+          title="Welcome back!"
           subtitle="Enter your PIN to continue"
           onSuccess={unlock}
-          onForgotPin={handleForgotPin}
         />
       </SafeAreaView>
     );
