@@ -6,7 +6,7 @@ import {
   Animated,
   PanResponder,
 } from 'react-native';
-import { Clock, Calendar, Image, Pencil, Trash2 } from 'lucide-react-native';
+import { Clock, Calendar, Pencil, Trash2 } from 'lucide-react-native';
 import type { JournalEntry } from '../../../models/interfaces/users.model';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
@@ -146,17 +146,8 @@ export default function JournalCard({
             className="text-sm text-gray-500 leading-relaxed mb-3"
             numberOfLines={3}
           >
-            {entry.preview}
+            {entry.content}
           </Text>
-
-          {entry.hasImage && (
-            <View
-              className="h-36 rounded-xl mb-3 items-center justify-center overflow-hidden"
-              style={{ backgroundColor: entry.imageColor ?? '#334155' }}
-            >
-              <Image size={36} color="#94a3b8" />
-            </View>
-          )}
 
           <View className="flex-row flex-wrap gap-2">
             {entry.tags.map(tag => (

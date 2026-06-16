@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Pressable, View, Text, TouchableOpacity } from 'react-native';
-import { Clock, Calendar, ImageIcon, Pencil, Trash2, MoreVertical } from 'lucide-react-native';
+import { Clock, Calendar, Pencil, Trash2, MoreVertical } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { JournalEntry } from '../../../models/interfaces/users.model';
@@ -60,21 +60,12 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
               </TouchableOpacity>
             </View>
 
-            {entry.hasImage && (
-              <View
-                className="h-16 rounded-xl mb-2 items-center justify-center"
-                style={{ backgroundColor: entry.imageColor ?? '#334155' }}
-              >
-                <ImageIcon size={18} color="#94a3b8" />
-              </View>
-            )}
-
             <Text className="text-sm font-bold text-slate-800 mb-1.5" numberOfLines={2}>
               {entry.title}
             </Text>
 
             <Text className="text-xs text-gray-500 leading-relaxed mb-2" numberOfLines={3}>
-              {entry.preview}
+              {entry.content}
             </Text>
 
             {entry.tags.length > 0 && (

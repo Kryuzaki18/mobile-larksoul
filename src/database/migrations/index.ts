@@ -34,11 +34,43 @@ export function runMigrations(db: DB): void {
     );
   }
 
-  // Add future migrations below:
-  // if (current < 2) {
-  //   db.executeSync(`ALTER TABLE journal_entries ADD COLUMN ...`);
-  //   db.executeSync('INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)', ['version', '2']);
-  // }
+  if (current < 2) {
+    db.executeSync('ALTER TABLE users ADD COLUMN deleted_at TEXT');
+    db.executeSync('ALTER TABLE journal_entries ADD COLUMN deleted_at TEXT');
+    db.executeSync(
+      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
+      ['version', '2'],
+    );
+  }
+
+  if (current < 3) {
+    db.executeSync('ALTER TABLE users ADD COLUMN avatar TEXT');
+    db.executeSync('ALTER TABLE users ADD COLUMN password TEXT');
+    db.executeSync("ALTER TABLE users ADD COLUMN social TEXT NOT NULL DEFAULT '[]'");
+    db.executeSync('ALTER TABLE users ADD COLUMN is_verified INTEGER NOT NULL DEFAULT 0');
+    db.executeSync('ALTER TABLE users ADD COLUMN verified_at TEXT');
+    db.executeSync('ALTER TABLE users ADD COLUMN pin TEXT');
+    db.executeSync(
+      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
+      ['version', '3'],
+    );
+  }
+
+  if (current < 4) {
+    db.executeSync('ALTER TABLE journal_entries DROP COLUMN has_image');
+    db.executeSync(
+      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
+      ['version', '4'],
+    );
+  }
+
+  if (current < 5) {
+    db.executeSync('ALTER TABLE journal_entries DROP COLUMN preview');
+    db.executeSync(
+      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
+      ['version', '5'],
+    );
+  }
 
   if (current < DB_VERSION) {
     db.executeSync(

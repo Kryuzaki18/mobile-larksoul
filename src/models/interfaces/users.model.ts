@@ -5,6 +5,11 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
+  password?: string;
+  social: string[];
+  isVerified: boolean;
+  verifiedAt?: string;
+  pin?: string;
   createdAt: string;
 }
 
@@ -13,11 +18,8 @@ export interface JournalEntry {
   userId: string;
   title: string;
   content: string;
-  preview: string;
   moods: Mood[];
   tags: string[];
-  hasImage: boolean;
-  imageColor?: string;
   createdAt: string;
   updatedAt: string;
 }

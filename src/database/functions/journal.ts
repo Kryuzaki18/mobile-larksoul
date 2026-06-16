@@ -6,11 +6,8 @@ type RawEntry = {
   user_id: string;
   title: string;
   content: string;
-  preview: string;
   mood: string;
   tags: string;
-  has_image: number;
-  image_color: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -30,11 +27,8 @@ function toEntry(raw: RawEntry): JournalEntry {
     userId: raw.user_id,
     title: raw.title,
     content: raw.content,
-    preview: raw.preview,
     moods: parseMoods(raw.mood),
     tags: JSON.parse(raw.tags) as string[],
-    hasImage: raw.has_image === 1,
-    imageColor: raw.image_color ?? undefined,
     createdAt: raw.created_at,
     updatedAt: raw.updated_at,
   };
@@ -46,7 +40,7 @@ function generateEntryId(): string {
 
 export async function getEntriesByUser(userId: string): Promise<JournalEntry[]> {
   const { rows } = await getDatabase().execute(
-    'SELECT * FROM journal_entries WHERE user_id = ? ORDER BY created_at DESC',
+    'SELECT * FROM journal_entries WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at DESC',
     [userId],
   );
   return (rows as RawEntry[]).map(toEntry);
@@ -58,7 +52,7 @@ export async function getEntriesByDate(
 ): Promise<JournalEntry[]> {
   const { rows } = await getDatabase().execute(
     `SELECT * FROM journal_entries
-     WHERE user_id = ? AND created_at LIKE ?
+     WHERE user_id = ? AND created_at LIKE ? AND deleted_at IS NULL
      ORDER BY created_at DESC`,
     [userId, `${dateStr}%`],
   );
@@ -67,7 +61,7 @@ export async function getEntriesByDate(
 
 export async function getEntryById(id: string): Promise<JournalEntry | null> {
   const { rows } = await getDatabase().execute(
-    'SELECT * FROM journal_entries WHERE id = ?',
+    'SELECT * FROM journal_entries WHERE id = ? AND deleted_at IS NULL',
     [id],
   );
   return rows.length > 0 ? toEntry(rows[0] as RawEntry) : null;
@@ -81,18 +75,15 @@ export async function createEntry(
 
   await getDatabase().execute(
     `INSERT INTO journal_entries
-       (id, user_id, title, content, preview, mood, tags, has_image, image_color, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id, user_id, title, content, mood, tags, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       id,
       entry.userId,
       entry.title,
       entry.content,
-      entry.preview,
       JSON.stringify(entry.moods),
       JSON.stringify(entry.tags),
-      entry.hasImage ? 1 : 0,
-      entry.imageColor ?? null,
       entry.createdAt,
       now,
     ],
@@ -103,18 +94,15 @@ export async function createEntry(
 
 export async function updateEntry(
   id: string,
-  patch: Partial<Pick<JournalEntry, 'title' | 'content' | 'preview' | 'moods' | 'tags' | 'hasImage' | 'imageColor'>>,
+  patch: Partial<Pick<JournalEntry, 'title' | 'content' | 'moods' | 'tags'>>,
 ): Promise<void> {
   const fields: string[] = [];
-  const values: (string | number | null)[] = [];
+  const values: string[] = [];
 
   if (patch.title !== undefined) { fields.push('title = ?'); values.push(patch.title); }
   if (patch.content !== undefined) { fields.push('content = ?'); values.push(patch.content); }
-  if (patch.preview !== undefined) { fields.push('preview = ?'); values.push(patch.preview); }
   if (patch.moods !== undefined) { fields.push('mood = ?'); values.push(JSON.stringify(patch.moods)); }
   if (patch.tags !== undefined) { fields.push('tags = ?'); values.push(JSON.stringify(patch.tags)); }
-  if (patch.hasImage !== undefined) { fields.push('has_image = ?'); values.push(patch.hasImage ? 1 : 0); }
-  if (patch.imageColor !== undefined) { fields.push('image_color = ?'); values.push(patch.imageColor ?? null); }
 
   if (fields.length === 0) return;
 
@@ -128,6 +116,8 @@ export async function updateEntry(
 }
 
 export async function deleteEntry(id: string): Promise<void> {
-  await getDatabase().execute('DELETE FROM journal_entries WHERE id = ?', [id]);
+  await getDatabase().execute(
+    'UPDATE journal_entries SET deleted_at = ? WHERE id = ?',
+    [new Date().toISOString(), id],
+  );
 }
-

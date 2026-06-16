@@ -66,9 +66,8 @@ export default function AddEntryScreen() {
     setSaving(true);
     setError(null);
     try {
-      const preview = content.trim().replace(/\n+/g, ' ');
       if (entryId) {
-        await updateEntry(entryId, { title: title.trim(), content: content.trim(), preview, moods, tags });
+        await updateEntry(entryId, { title: title.trim(), content: content.trim(), moods, tags });
       } else {
         const now = new Date();
         const h = String(now.getHours()).padStart(2, '0');
@@ -79,10 +78,8 @@ export default function AddEntryScreen() {
           userId: currentUser?.id ?? '',
           title: title.trim(),
           content: content.trim(),
-          preview,
           moods,
           tags,
-          hasImage: false,
           createdAt,
         });
       }
