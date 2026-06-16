@@ -9,11 +9,14 @@ interface NetworkStatusDotProps {
 }
 
 export default function NetworkStatusDot({ size = 10, style }: NetworkStatusDotProps) {
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      setIsActive(Boolean(state.isConnected && state.isInternetReachable !== false));
+      setIsActive(state.isConnected === true && state.isInternetReachable === true);
+    });
+    NetInfo.fetch().then(state => {
+      setIsActive(state.isConnected === true && state.isInternetReachable === true);
     });
     return () => unsubscribe();
   }, []);
