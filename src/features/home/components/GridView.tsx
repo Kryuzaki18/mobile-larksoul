@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, Pressable, View, Text, TouchableOpacity } from 'react-native';
 import { Clock, Calendar, Pencil, Trash2, MoreVertical } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { JournalEntry } from '../../../models/interfaces/users.model';
@@ -33,12 +34,14 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
   const iconName = getEntryIcon(entry.createdAt);
   const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
   const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? '#f1f5f9';
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   return (
     <View style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}>
       <View className="relative">
         <View
-          className="bg-white rounded-2xl overflow-hidden"
+          className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden"
           style={{ elevation: 1, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
         >
           <View style={{ height: 4, backgroundColor: accentColor }} />
@@ -56,23 +59,23 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
                 className="w-7 h-7 rounded-full items-center justify-center"
                 onPress={onToggleMenu}
               >
-                <MoreVertical size={14} color="#475569" />
+                <MoreVertical size={14} color={isDark ? '#cbd5e1' : '#475569'} />
               </TouchableOpacity>
             </View>
 
-            <Text className="text-sm font-bold text-slate-800 mb-1.5" numberOfLines={2}>
+            <Text className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1.5" numberOfLines={2}>
               {entry.title}
             </Text>
 
-            <Text className="text-xs text-gray-500 leading-relaxed mb-2" numberOfLines={3}>
+            <Text className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed mb-2" numberOfLines={3}>
               {entry.content}
             </Text>
 
             {entry.tags.length > 0 && (
               <View className="flex-row flex-wrap gap-1">
                 {entry.tags.slice(0, 2).map(tag => (
-                  <View key={tag} className="bg-blue-50 rounded-full px-2 py-0.5">
-                    <Text className="text-xs text-blue-500 font-medium">{tag}</Text>
+                  <View key={tag} className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-2 py-0.5">
+                    <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">{tag}</Text>
                   </View>
                 ))}
               </View>
@@ -89,7 +92,7 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
 
         {isMenuOpen && (
           <View
-            className="absolute bg-white rounded-2xl overflow-hidden"
+            className="absolute bg-white dark:bg-slate-800 rounded-2xl overflow-hidden"
             style={{
               right: 10,
               top: 25,
@@ -104,10 +107,10 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
               className="flex-row items-center gap-1 px-4 py-3"
               onPress={() => { onToggleMenu(); onEdit(); }}
             >
-              <Pencil size={12} color="#475569" />
-              <Text className="text-xs font-medium text-slate-700">Edit</Text>
+              <Pencil size={12} color={isDark ? '#cbd5e1' : '#475569'} />
+              <Text className="text-xs font-medium text-slate-700 dark:text-slate-200">Edit</Text>
             </TouchableOpacity>
-            <View className="h-px bg-slate-100" />
+            <View className="h-px bg-slate-100 dark:bg-slate-700" />
             <TouchableOpacity
               className="flex-row items-center gap-1 px-4 py-3"
               onPress={() => { onToggleMenu(); onDelete(); }}

@@ -10,6 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChevronLeft } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { User } from '../../models/interfaces/users.model';
 import { signUp, signInWithProvider } from '../../services/AuthService';
@@ -28,6 +29,7 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { colorScheme } = useColorScheme();
 
   async function completeSignIn(user: User) {
     setUser(user, false);
@@ -68,10 +70,10 @@ export default function SignUpScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-white dark:bg-slate-950">
       <View className="flex-row items-center px-4 pt-3 pb-3">
         <TouchableOpacity
-          className="w-9 h-9 rounded-full bg-white items-center justify-center mr-3"
+          className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 items-center justify-center mr-3"
           style={{
             shadowColor: '#000',
             shadowOpacity: 0.06,
@@ -81,9 +83,9 @@ export default function SignUpScreen() {
           }}
           onPress={() => navigation.goBack()}
         >
-          <ChevronLeft size={18} color="#1e293b" />
+          <ChevronLeft size={18} color={colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'} />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-800">Create Account</Text>
+        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">Create Account</Text>
       </View>
 
       <ScrollView
@@ -108,7 +110,7 @@ export default function SignUpScreen() {
           Start your personal journal in seconds
         </Text>
 
-        <View className="bg-white rounded-2xl px-5 py-5 mb-5">
+        <View className="bg-slate-50 dark:bg-slate-900 rounded-2xl px-5 py-5 mb-5">
           <SignUpForm
             name={name}
             email={email}
@@ -122,11 +124,11 @@ export default function SignUpScreen() {
         </View>
 
         <View className="flex-row items-center mb-4">
-          <View className="flex-1 h-px bg-gray-200" />
+          <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
           <Text className="mx-4 text-xs font-medium text-gray-400">
             or continue with
           </Text>
-          <View className="flex-1 h-px bg-gray-200" />
+          <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
         </View>
         <SocialLoginButtons
           providers={['google', 'apple']}

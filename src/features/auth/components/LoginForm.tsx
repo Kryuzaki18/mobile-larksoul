@@ -20,7 +20,7 @@ export default function LoginForm({
   return (
     <>
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">EMAIL</Text>
-      <View className="bg-white rounded-xl px-4 mb-4 border border-gray-100">
+      <View className="bg-white dark:bg-slate-800 rounded-xl px-4 mb-4 border border-gray-100 dark:border-slate-700">
         <TextInput
           value={email}
           onChangeText={onEmailChange}
@@ -28,24 +28,24 @@ export default function LoginForm({
           placeholderTextColor="#9ca3af"
           autoCapitalize="none"
           keyboardType="email-address"
-          className="py-3.5 text-sm text-slate-800"
+          className="py-3.5 text-sm text-slate-800 dark:text-slate-100"
         />
       </View>
 
       <View className="flex-row justify-between items-center mb-3">
         <Text className="text-xs font-semibold text-gray-400 tracking-widest">PASSWORD</Text>
         <TouchableOpacity activeOpacity={0.7}>
-          <Text className="text-xs font-semibold text-blue-700">Forgot?</Text>
+          <Text className="text-xs font-semibold text-blue-700 dark:text-blue-400">Forgot?</Text>
         </TouchableOpacity>
       </View>
-      <View className="bg-white rounded-xl px-4 mb-5 border border-gray-100">
+      <View className="bg-white dark:bg-slate-800 rounded-xl px-4 mb-5 border border-gray-100 dark:border-slate-700">
         <TextInput
           value={password}
           onChangeText={onPasswordChange}
           placeholder="• • • • • • • •"
           placeholderTextColor="#9ca3af"
           secureTextEntry
-          className="py-3.5 text-sm text-slate-800"
+          className="py-3.5 text-sm text-slate-800 dark:text-slate-100"
         />
       </View>
 

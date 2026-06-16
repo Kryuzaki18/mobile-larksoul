@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Switch, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChevronLeft, ShieldCheck } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import { setPinLock, removePinLock } from '../../services/securityService';
 import { useSecurityStore } from '../../store/securityStore';
@@ -15,6 +16,8 @@ type Step = 'idle' | 'create' | 'confirm';
 export default function SecurityScreen() {
   const navigation = useNavigation<Nav>();
   const { isPinEnabled, setPinEnabled } = useSecurityStore();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const [step, setStep] = useState<Step>('idle');
   const [pin, setPin] = useState('');
   const [firstPin, setFirstPin] = useState('');
@@ -75,11 +78,11 @@ export default function SecurityScreen() {
 
   if (step !== 'idle') {
     return (
-      <View className="flex-1 bg-slate-50 items-center justify-center px-6">
-        <View className="w-16 h-16 rounded-full bg-blue-50 items-center justify-center mb-5">
-          <ShieldCheck size={26} color="#1e40af" />
+      <View className="flex-1 bg-slate-50 dark:bg-slate-950 items-center justify-center px-6">
+        <View className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 items-center justify-center mb-5">
+          <ShieldCheck size={26} color="#3b82f6" />
         </View>
-        <Text className="text-xl font-bold text-slate-800 mb-1.5">
+        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5">
           {step === 'create' ? 'Create a PIN' : 'Confirm your PIN'}
         </Text>
         <Text className="text-sm text-gray-400 mb-10 text-center">
@@ -96,23 +99,23 @@ export default function SecurityScreen() {
   }
 
   return (
-    <View className="flex-1 bg-slate-50">
-      <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50">
+    <View className="flex-1 bg-slate-50 dark:bg-slate-950">
+      <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50 dark:bg-slate-950">
         <TouchableOpacity
-          className="w-9 h-9 rounded-full bg-white items-center justify-center mr-3"
+          className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 items-center justify-center mr-3"
           style={{ shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 2 }}
           onPress={() => navigation.goBack()}
         >
-          <ChevronLeft size={18} color="#1e293b" />
+          <ChevronLeft size={18} color={isDark ? '#e2e8f0' : '#1e293b'} />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-800">Security & PIN Lock</Text>
+        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">Security & PIN Lock</Text>
       </View>
 
       <View className="px-4 pt-1">
-        <View className="rounded-2xl overflow-hidden bg-white">
+        <View className="rounded-2xl overflow-hidden bg-white dark:bg-slate-900">
           <View className="flex-row items-center px-4 py-3.5">
             <View className="flex-1">
-              <Text className="text-sm font-medium text-slate-800">PIN Lock</Text>
+              <Text className="text-sm font-medium text-slate-800 dark:text-slate-100">PIN Lock</Text>
               <Text className="text-xs text-gray-400 mt-0.5">
                 Require a PIN to open the app
               </Text>
@@ -128,11 +131,11 @@ export default function SecurityScreen() {
 
           {isPinEnabled && (
             <TouchableOpacity
-              className="flex-row items-center px-4 py-3.5 border-t border-gray-100"
+              className="flex-row items-center px-4 py-3.5 border-t border-gray-100 dark:border-slate-800"
               onPress={startSetPin}
               activeOpacity={0.65}
             >
-              <Text className="text-sm font-medium text-slate-800 flex-1">Change PIN</Text>
+              <Text className="text-sm font-medium text-slate-800 dark:text-slate-100 flex-1">Change PIN</Text>
             </TouchableOpacity>
           )}
         </View>

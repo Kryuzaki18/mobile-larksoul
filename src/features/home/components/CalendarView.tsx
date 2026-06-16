@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { PanResponder, View, Text, TouchableOpacity } from 'react-native';
+import { useColorScheme } from 'nativewind';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { MONTH_NAMES, WEEK_DAYS } from '../../../utils/dateTime';
 
@@ -36,6 +37,8 @@ interface CalendarViewProps {
 
 export default function CalendarView({ selectedDate, entryDates = [], onDayPress }: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -73,27 +76,27 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
 
   return (
     <View
-      className="bg-white rounded-2xl mx-4 mt-4 pb-3"
+      className="bg-white dark:bg-slate-900 rounded-2xl mx-4 mt-4 pb-3"
       style={{ elevation: 1, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } }}
       {...panResponder.panHandlers}
     >
       <View className="flex-row items-center justify-between px-4 pt-4 pb-3">
         <TouchableOpacity
-          className="w-8 h-8 rounded-full bg-slate-100 items-center justify-center"
+          className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
           onPress={() => setCurrent(new Date(year, month - 1, 1))}
         >
-          <ChevronLeft size={14} color="#475569" />
+          <ChevronLeft size={14} color={isDark ? '#cbd5e1' : '#475569'} />
         </TouchableOpacity>
-        <Text className="text-sm font-bold text-slate-800">
+        <Text className="text-sm font-bold text-slate-800 dark:text-slate-100">
           {MONTH_NAMES[month]} {year}
         </Text>
         <TouchableOpacity
-          className="w-8 h-8 rounded-full bg-slate-100 items-center justify-center"
+          className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
           onPress={goToNextMonth}
           disabled={isCurrentMonth}
           activeOpacity={isCurrentMonth ? 1 : 0.65}
         >
-          <ChevronRight size={14} color={isCurrentMonth ? '#cbd5e1' : '#475569'} />
+          <ChevronRight size={14} color={isCurrentMonth ? (isDark ? '#475569' : '#cbd5e1') : (isDark ? '#cbd5e1' : '#475569')} />
         </TouchableOpacity>
       </View>
 
@@ -130,7 +133,7 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
                     overflow: 'hidden',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: isSelected ? '#1e40af' : isToday ? '#eff6ff' : 'transparent',
+                    backgroundColor: isSelected ? '#1e40af' : isToday ? (isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff') : 'transparent',
                   }}
                 >
                   <Text
@@ -138,12 +141,12 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
                       isSelected
                         ? 'text-white font-bold'
                         : isToday
-                        ? 'text-blue-700 font-bold'
+                        ? 'text-blue-700 dark:text-blue-400 font-bold'
                         : isFuture
-                        ? 'text-gray-200'
+                        ? 'text-gray-200 dark:text-slate-700'
                         : cell.type === 'current'
-                        ? 'text-slate-700'
-                        : 'text-gray-300'
+                        ? 'text-slate-700 dark:text-slate-200'
+                        : 'text-gray-300 dark:text-slate-700'
                     }`}
                   >
                     {cell.day}

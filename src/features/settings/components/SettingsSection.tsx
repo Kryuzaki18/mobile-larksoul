@@ -15,7 +15,7 @@ export default function SettingsSection({ title, children }: SettingsSectionProp
           {title}
         </Text>
       )}
-      <View className="rounded-2xl overflow-hidden bg-white">
+      <View className="rounded-2xl overflow-hidden bg-white dark:bg-slate-900">
         {childArray.map((child, i) =>
           React.isValidElement(child)
             ? React.cloneElement(child as React.ReactElement<{ isLast?: boolean }>, {

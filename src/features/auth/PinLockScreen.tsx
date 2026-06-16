@@ -84,22 +84,22 @@ export default function PinLockScreen({
   const isLocked = lockedUntil !== null;
 
   return (
-    <View className="flex-1 bg-white items-center justify-center px-6">
+    <View className="flex-1 bg-white dark:bg-slate-950 items-center justify-center px-6">
       <Image
         source={require('../../assets/logo.png')}
         style={{ width: 120, height: 120, marginBottom: 5 }}
         resizeMode="contain"
       />
 
-      <View className="w-16 h-16 rounded-full bg-blue-50 items-center justify-center mb-5">
+      <View className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 items-center justify-center mb-5">
         {isLocked ? (
-          <Clock size={26} color="#dc2626" />
+          <Clock size={26} color="#ef4444" />
         ) : (
-          <Lock size={26} color="#1e40af" />
+          <Lock size={26} color="#3b82f6" />
         )}
       </View>
 
-      <Text className="text-xl font-bold text-slate-800 mb-1">
+      <Text className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1">
         {isLocked ? 'Too many attempts' : title}
       </Text>
 

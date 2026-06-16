@@ -19,7 +19,7 @@ export default function SocialLoginButtons({
       {providers.map(provider => (
         <TouchableOpacity
           key={provider}
-          className="w-14 h-14 rounded-full border border-gray-100 bg-white items-center justify-center shadow-sm"
+          className="w-14 h-14 rounded-full border border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800 items-center justify-center shadow-sm"
           onPress={() => onSelect?.(provider)}
           activeOpacity={0.7}
         >

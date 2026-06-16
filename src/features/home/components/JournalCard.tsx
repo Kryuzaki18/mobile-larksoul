@@ -7,6 +7,7 @@ import {
   PanResponder,
 } from 'react-native';
 import { Clock, Calendar, Pencil, Trash2 } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import type { JournalEntry } from '../../../models/interfaces/users.model';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
@@ -31,6 +32,8 @@ export default function JournalCard({
   const timeLabel = formatEntryTime(entry.createdAt);
   const iconName = getEntryIcon(entry.createdAt);
   const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   function snap(open: boolean) {
     Animated.spring(translateX, {
@@ -92,8 +95,8 @@ export default function JournalCard({
             onEdit?.();
           }}
         >
-          <Pencil size={13} color="#475569" />
-          <Text className="text-xs font-medium text-slate-700">Edit</Text>
+          <Pencil size={13} color={isDark ? '#cbd5e1' : '#475569'} />
+          <Text className="text-xs font-medium text-slate-700 dark:text-slate-300">Edit</Text>
         </TouchableOpacity>
         
         <TouchableOpacity
@@ -114,7 +117,7 @@ export default function JournalCard({
       </View>
 
       <Animated.View
-        className="bg-white rounded-2xl p-4"
+        className="bg-white dark:bg-slate-900 rounded-2xl p-4"
         style={{ transform: [{ translateX }] }}
         {...panResponder.panHandlers}
       >
@@ -136,14 +139,14 @@ export default function JournalCard({
           </View>
 
           <Text
-            className="text-xl font-bold text-slate-800 mb-1.5"
+            className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5"
             numberOfLines={2}
           >
             {entry.title}
           </Text>
 
           <Text
-            className="text-sm text-gray-500 leading-relaxed mb-3"
+            className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed mb-3"
             numberOfLines={3}
           >
             {entry.content}
@@ -151,8 +154,8 @@ export default function JournalCard({
 
           <View className="flex-row flex-wrap gap-2">
             {entry.tags.map(tag => (
-              <View key={tag} className="bg-blue-50 rounded-full px-3 py-1">
-                <Text className="text-xs text-blue-500 font-medium">{tag}</Text>
+              <View key={tag} className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1">
+                <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">{tag}</Text>
               </View>
             ))}
           </View>

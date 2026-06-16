@@ -26,18 +26,18 @@ export default function SignUpForm({
   return (
     <>
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">NAME</Text>
-      <View className="bg-slate-50 rounded-xl px-4 mb-4 border border-gray-100">
+      <View className="bg-white dark:bg-slate-800 rounded-xl px-4 mb-4 border border-gray-100 dark:border-slate-700">
         <TextInput
           value={name}
           onChangeText={onNameChange}
           placeholder="Jane Doe"
           placeholderTextColor="#9ca3af"
-          className="py-3.5 text-sm text-slate-800"
+          className="py-3.5 text-sm text-slate-800 dark:text-slate-100"
         />
       </View>
 
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">EMAIL</Text>
-      <View className="bg-slate-50 rounded-xl px-4 mb-4 border border-gray-100">
+      <View className="bg-white dark:bg-slate-800 rounded-xl px-4 mb-4 border border-gray-100 dark:border-slate-700">
         <TextInput
           value={email}
           onChangeText={onEmailChange}
@@ -45,19 +45,19 @@ export default function SignUpForm({
           placeholderTextColor="#9ca3af"
           autoCapitalize="none"
           keyboardType="email-address"
-          className="py-3.5 text-sm text-slate-800"
+          className="py-3.5 text-sm text-slate-800 dark:text-slate-100"
         />
       </View>
 
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">PASSWORD</Text>
-      <View className="bg-slate-50 rounded-xl px-4 mb-5 border border-gray-100">
+      <View className="bg-white dark:bg-slate-800 rounded-xl px-4 mb-5 border border-gray-100 dark:border-slate-700">
         <TextInput
           value={password}
           onChangeText={onPasswordChange}
           placeholder="• • • • • • • •"
           placeholderTextColor="#9ca3af"
           secureTextEntry
-          className="py-3.5 text-sm text-slate-800"
+          className="py-3.5 text-sm text-slate-800 dark:text-slate-100"
         />
       </View>
 

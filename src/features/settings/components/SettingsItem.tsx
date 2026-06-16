@@ -23,7 +23,7 @@ export default function SettingsItem({
 }: SettingsItemProps) {
   return (
     <TouchableOpacity
-      className={`flex-row items-center px-4 py-3.5 ${!isLast ? 'border-b border-gray-100' : ''}`}
+      className={`flex-row items-center px-4 py-3.5 ${!isLast ? 'border-b border-gray-100 dark:border-slate-800' : ''}`}
       onPress={onPress}
       activeOpacity={onPress ? 0.65 : 1}
       disabled={!onPress}
@@ -45,7 +45,7 @@ export default function SettingsItem({
       )}
       <View className="flex-1">
         {typeof children === 'string' ? (
-          <Text className="text-sm font-medium text-slate-800">{children}</Text>
+          <Text className="text-sm font-medium text-slate-800 dark:text-slate-100">{children}</Text>
         ) : (
           children
         )}

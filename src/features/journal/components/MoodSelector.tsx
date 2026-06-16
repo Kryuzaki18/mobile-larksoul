@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity } from 'react-native';
+import { useColorScheme } from 'nativewind';
 import type { Mood } from '../../../models/interfaces/users.model';
 
 const MOODS: { value: Mood; emoji: string; label: string }[] = [
@@ -18,6 +19,9 @@ interface MoodSelectorProps {
 }
 
 export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
   function toggle(value: Mood) {
     onSelect(
       selected.includes(value)
@@ -44,9 +48,9 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
               paddingHorizontal: 12,
               paddingVertical: 10,
               borderRadius: 16,
-              backgroundColor: isActive ? '#1e3a8a' : '#f8fafc',
+              backgroundColor: isActive ? '#1e3a8a' : isDark ? '#1e293b' : '#f8fafc',
               borderWidth: 1.5,
-              borderColor: isActive ? '#1e40af' : '#f1f5f9',
+              borderColor: isActive ? '#1e40af' : isDark ? '#334155' : '#f1f5f9',
               minWidth: 66,
             }}
           >
@@ -54,7 +58,7 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
             <Text style={{
               fontSize: 10,
               fontWeight: '600',
-              color: isActive ? '#ffffff' : '#94a3b8',
+              color: isActive ? '#ffffff' : isDark ? '#64748b' : '#94a3b8',
               letterSpacing: 0.3,
             }}>
               {label}

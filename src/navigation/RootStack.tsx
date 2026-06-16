@@ -14,6 +14,7 @@ import SecurityScreen from '../features/settings/SecurityScreen';
 import AddEntryScreen from '../features/journal/AddEntryScreen';
 import { useAuthStore } from '../store/authStore';
 import { useSecurityStore } from '../store/securityStore';
+import { useThemeStore } from '../store/themeStore';
 import { loadSession, clearSession } from '../services/sessionService';
 import { hasPinLock } from '../services/securityService';
 import { getUserById } from '../database/functions/users';
@@ -23,12 +24,15 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function RootStack() {
   const { currentUser, setUser } = useAuthStore();
   const { isPinEnabled, isLocked, setPinEnabled, lock, unlock } = useSecurityStore();
+  const hydrateTheme = useThemeStore(state => state.hydrate);
   const [isReady, setIsReady] = useState(false);
   const appState = useRef<AppStateStatus>(AppState.currentState);
 
   useEffect(() => {
     async function restoreSession() {
       try {
+        await hydrateTheme();
+
         const pinEnabled = await hasPinLock();
         setPinEnabled(pinEnabled);
 
@@ -49,7 +53,7 @@ export default function RootStack() {
       }
     }
     restoreSession();
-  }, [setUser, setPinEnabled, lock]);
+  }, [setUser, setPinEnabled, lock, hydrateTheme]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextState => {

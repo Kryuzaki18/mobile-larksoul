@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
@@ -13,11 +14,14 @@ import {
   LayoutGrid,
   LogOut,
   Sun,
+  Moon,
+  MonitorSmartphone,
   UserPlus,
 } from 'lucide-react-native';
-import type { ViewMode } from '../../models/types/ui.type';
+import type { ViewMode, ThemePreference } from '../../models/types/ui.type';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useSecurityStore } from '../../store/securityStore';
+import { useThemeStore } from '../../store/themeStore';
 import { clearSession } from '../../services/sessionService';
 import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
@@ -33,11 +37,22 @@ const LAYOUT_OPTIONS: { mode: ViewMode; label: string; Icon: React.FC<{ size: nu
   { mode: 'grid', label: 'Grid', Icon: LayoutGrid },
 ];
 
+const THEME_OPTIONS: { mode: ThemePreference; label: string; Icon: React.FC<{ size: number; color: string }> }[] = [
+  { mode: 'light', label: 'Light', Icon: Sun },
+  { mode: 'dark', label: 'Dark', Icon: Moon },
+  { mode: 'system', label: 'Auto', Icon: MonitorSmartphone },
+];
+
 export default function SettingsScreen() {
   const navigation = useNavigation<HomeNav>();
   const { currentUser, isGuest, clearUser } = useAuthStore();
   const { defaultLayout, setDefaultLayout } = useSettingsStore();
   const { isPinEnabled } = useSecurityStore();
+  const { theme, setTheme } = useThemeStore();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const chipInactiveBg = isDark ? '#1e293b' : '#f1f5f9';
+  const chipInactiveColor = isDark ? '#94a3b8' : '#6b7280';
 
   async function handleSignOut() {
     await clearSession();
@@ -48,21 +63,21 @@ export default function SettingsScreen() {
   const initial = currentUser?.name?.[0]?.toUpperCase() ?? 'G';
 
   return (
-    <View className="flex-1 bg-slate-50">
-      <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50">
+    <View className="flex-1 bg-slate-50 dark:bg-slate-950">
+      <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50 dark:bg-slate-950">
         <TouchableOpacity
-          className="w-9 h-9 rounded-full bg-white items-center justify-center mr-3"
+          className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 items-center justify-center mr-3"
           style={{ shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 2 }}
           onPress={() => navigation.replace('Home')}
         >
-          <ChevronLeft size={18} color="#1e293b" />
+          <ChevronLeft size={18} color={isDark ? '#e2e8f0' : '#1e293b'} />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-800">Settings</Text>
+        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">Settings</Text>
       </View>
 
       <ScrollView className="flex-1 px-4 pt-1" showsVerticalScrollIndicator={false}>
 
-        <View className="bg-white rounded-2xl p-4 mb-4">
+        <View className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-4">
           <View className="flex-row items-center">
             <View className="relative mr-4">
               <View className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center">
@@ -71,7 +86,7 @@ export default function SettingsScreen() {
               <NetworkStatusDot size={12} style={{ position: 'absolute', bottom: -1, right: -1 }} />
             </View>
             <View className="flex-1">
-              <Text className="text-base font-bold text-slate-800">
+              <Text className="text-base font-bold text-slate-800 dark:text-slate-100">
                 {currentUser?.name ?? 'Guest'}
               </Text>
               <Text className="text-sm text-gray-400 mt-0.5">
@@ -79,20 +94,20 @@ export default function SettingsScreen() {
               </Text>
             </View>
             {!isGuest && (
-              <TouchableOpacity className="w-8 h-8 rounded-full bg-slate-100 items-center justify-center">
+              <TouchableOpacity className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
                 <Pencil size={14} color="#64748b" />
               </TouchableOpacity>
             )}
           </View>
           {isGuest && (
             <TouchableOpacity
-              className="mt-3 bg-blue-50 rounded-xl py-2.5 items-center"
+              className="mt-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl py-2.5 items-center"
               activeOpacity={0.7}
               onPress={() => navigation.navigate('SignUp')}
             >
               <View className="flex-row items-center gap-2">
-                <UserPlus size={14} color="#1d4ed8" />
-                <Text className="text-sm font-semibold text-blue-700">Create an Account</Text>
+                <UserPlus size={14} color={isDark ? '#60a5fa' : '#1d4ed8'} />
+                <Text className="text-sm font-semibold text-blue-700 dark:text-blue-400">Create an Account</Text>
               </View>
             </TouchableOpacity>
           )}
@@ -116,12 +131,12 @@ export default function SettingsScreen() {
                         paddingHorizontal: 8,
                         paddingVertical: 5,
                         borderRadius: 8,
-                        backgroundColor: isActive ? '#1e40af' : '#f1f5f9',
+                        backgroundColor: isActive ? '#1e40af' : chipInactiveBg,
                       }}
                       onPress={() => setDefaultLayout(mode)}
                     >
-                      <Icon size={11} color={isActive ? '#fff' : '#6b7280'} />
-                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? '#fff' : '#6b7280' }}>
+                      <Icon size={11} color={isActive ? '#fff' : chipInactiveColor} />
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? '#fff' : chipInactiveColor }}>
                         {label}
                       </Text>
                     </TouchableOpacity>
@@ -135,9 +150,33 @@ export default function SettingsScreen() {
           <SettingsItem
             icon={<Sun size={17} color="#fff" />}
             iconBg="#f59e0b"
-            extra={<Text className="text-xs font-medium text-gray-400">Light</Text>}
-            arrow
-            onPress={() => {}}
+            extra={
+              <View className="flex-row gap-1.5">
+                {THEME_OPTIONS.map(({ mode, label, Icon }) => {
+                  const isActive = theme === mode;
+                  return (
+                    <TouchableOpacity
+                      key={mode}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        paddingHorizontal: 8,
+                        paddingVertical: 5,
+                        borderRadius: 8,
+                        backgroundColor: isActive ? '#1e40af' : chipInactiveBg,
+                      }}
+                      onPress={() => setTheme(mode)}
+                    >
+                      <Icon size={11} color={isActive ? '#fff' : chipInactiveColor} />
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? '#fff' : chipInactiveColor }}>
+                        {label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            }
           >
             Theme
           </SettingsItem>

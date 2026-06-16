@@ -1,5 +1,6 @@
 import { Modal, Pressable, View } from 'react-native';
 import { X } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CalendarView from '../../home/components/CalendarView';
 
@@ -17,6 +18,7 @@ export default function DatePickerModal({
   onClose,
 }: DatePickerModalProps) {
   const insets = useSafeAreaInsets();
+  const { colorScheme } = useColorScheme();
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -33,9 +35,9 @@ export default function DatePickerModal({
           <View className="absolute bottom-0 left-0 right-0 items-center" style={{ marginBottom: -20 }}>
             <Pressable
               onPress={onClose}
-              className="w-10 h-10 rounded-full bg-white items-center justify-center"
+              className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center"
             >
-              <X size={16} color="#475569" />
+              <X size={16} color={colorScheme === 'dark' ? '#cbd5e1' : '#475569'} />
             </Pressable>
           </View>
         </View>

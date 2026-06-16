@@ -42,9 +42,9 @@ export default function HomeLoader() {
     <View className="flex-1 items-center justify-center py-24">
       <Animated.View
         style={animatedStyle}
-        className="w-16 h-16 rounded-full bg-blue-100 items-center justify-center mb-4"
+        className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-500/15 items-center justify-center mb-4"
       >
-        <BookOpen size={28} color="#1e40af" />
+        <BookOpen size={28} color="#3b82f6" />
       </Animated.View>
       <Text className="text-sm font-semibold text-gray-400">
         Loading your journal...

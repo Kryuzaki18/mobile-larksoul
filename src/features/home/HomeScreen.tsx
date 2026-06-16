@@ -52,7 +52,7 @@ export default function HomeScreen() {
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
 
   return (
-    <View className="flex-1 bg-slate-50">
+    <View className="flex-1 bg-slate-50 dark:bg-slate-950">
       <Header name={`${firstName}'s`} subtitle="Journal" />
 
       <View className="flex-1">
