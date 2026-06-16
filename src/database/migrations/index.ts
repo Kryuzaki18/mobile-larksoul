@@ -19,6 +19,23 @@ function getVersion(db: DB): number {
   }
 }
 
+function setVersion(db: DB, version: number): void {
+  db.executeSync(
+    'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
+    ['version', String(version)],
+  );
+}
+
+// Tolerates re-running ALTER TABLE steps against a DB that's already
+// partway migrated (e.g. a previous run crashed between steps).
+// function tryExec(db: DB, sql: string): void {
+//   try {
+//     db.executeSync(sql);
+//   } catch {
+//     // column already added/dropped — safe to ignore
+//   }
+// }
+
 export function runMigrations(db: DB): void {
   db.executeSync(SQL_CREATE_DB_LARKSOUL);
 
@@ -28,54 +45,16 @@ export function runMigrations(db: DB): void {
     db.executeSync(SQL_CREATE_USERS);
     db.executeSync(SQL_CREATE_JOURNAL_ENTRIES);
     db.executeSync(SQL_CREATE_INDEX_ENTRIES_USER);
-    db.executeSync(
-      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
-      ['version', '1'],
-    );
+    setVersion(db, 1);
   }
 
-  if (current < 2) {
-    db.executeSync('ALTER TABLE users ADD COLUMN deleted_at TEXT');
-    db.executeSync('ALTER TABLE journal_entries ADD COLUMN deleted_at TEXT');
-    db.executeSync(
-      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
-      ['version', '2'],
-    );
-  }
-
-  if (current < 3) {
-    db.executeSync('ALTER TABLE users ADD COLUMN avatar TEXT');
-    db.executeSync('ALTER TABLE users ADD COLUMN password TEXT');
-    db.executeSync("ALTER TABLE users ADD COLUMN social TEXT NOT NULL DEFAULT '[]'");
-    db.executeSync('ALTER TABLE users ADD COLUMN is_verified INTEGER NOT NULL DEFAULT 0');
-    db.executeSync('ALTER TABLE users ADD COLUMN verified_at TEXT');
-    db.executeSync('ALTER TABLE users ADD COLUMN pin TEXT');
-    db.executeSync(
-      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
-      ['version', '3'],
-    );
-  }
-
-  if (current < 4) {
-    db.executeSync('ALTER TABLE journal_entries DROP COLUMN has_image');
-    db.executeSync(
-      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
-      ['version', '4'],
-    );
-  }
-
-  if (current < 5) {
-    db.executeSync('ALTER TABLE journal_entries DROP COLUMN preview');
-    db.executeSync(
-      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
-      ['version', '5'],
-    );
-  }
+  // if (current < 2) {
+  //   tryExec(db, 'ALTER TABLE users ADD COLUMN deleted_at TEXT');
+  //   tryExec(db, 'ALTER TABLE journal_entries ADD COLUMN deleted_at TEXT');
+  //   setVersion(db, 2);
+  // }
 
   if (current < DB_VERSION) {
-    db.executeSync(
-      'INSERT OR REPLACE INTO db_larksoul (key, value) VALUES (?, ?)',
-      ['version', String(DB_VERSION)],
-    );
+    setVersion(db, DB_VERSION);
   }
 }
