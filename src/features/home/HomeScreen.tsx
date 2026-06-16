@@ -25,8 +25,14 @@ export default function HomeScreen() {
   const { defaultLayout } = useSettingsStore();
 
   const userId = currentUser?.id ?? '';
-  const { selectedDate, setSelectedDate, entryDates, entriesForDay, entries, refetch } =
-    useHomeState(userId);
+  const {
+    selectedDate,
+    setSelectedDate,
+    entryDates,
+    entriesForDay,
+    entries,
+    refetch,
+  } = useHomeState(userId);
 
   useFocusEffect(
     useCallback(() => {
@@ -42,53 +48,69 @@ export default function HomeScreen() {
 
       <View className="flex-1">
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          {defaultLayout === 'calendar' && (
+          {entries.length > 0 ? (
             <>
-              <CalendarView
-                entryDates={entryDates}
-                selectedDate={selectedDate}
-                onDayPress={setSelectedDate}
-              />
-              <DateSeparator label={formatDateLabel(selectedDate)} />
-              {entriesForDay.length > 0 ? (
-                entriesForDay.map(entry => (
-                  <JournalCard
-                    key={entry.id}
-                    entry={entry}
-                    onEdit={() => navigation.navigate('AddEntry', { entryId: entry.id })}
-                    onDelete={() =>
-                      Alert.alert('Delete Entry', 'Are you sure you want to delete this entry?', [
-                        { text: 'Cancel', style: 'cancel' },
-                        {
-                          text: 'Delete',
-                          style: 'destructive',
-                          onPress: () => deleteEntry(entry.id).then(refetch).catch(console.error),
-                        },
-                      ])
-                    }
+              {defaultLayout === 'calendar' && (
+                <>
+                  <CalendarView
+                    entryDates={entryDates}
+                    selectedDate={selectedDate}
+                    onDayPress={setSelectedDate}
                   />
-                ))
-              ) : (
-                <View className="items-center py-16">
-                  <View className="w-16 h-16 rounded-full bg-slate-100 items-center justify-center mb-4">
-                    <BookOpen size={28} color="#cbd5e1" />
-                  </View>
-                  <Text className="text-sm font-semibold text-gray-400">Nothing here yet</Text>
-                  <Text className="text-xs text-gray-300 mt-1">Tap + to write your first entry</Text>
-                </View>
+                  <DateSeparator label={formatDateLabel(selectedDate)} />
+                  {entriesForDay.map(entry => (
+                    <JournalCard
+                      key={entry.id}
+                      entry={entry}
+                      onEdit={() =>
+                        navigation.navigate('AddEntry', { entryId: entry.id })
+                      }
+                      onDelete={() =>
+                        Alert.alert(
+                          'Delete Entry',
+                          'Are you sure you want to delete this entry?',
+                          [
+                            { text: 'Cancel', style: 'cancel' },
+                            {
+                              text: 'Delete',
+                              style: 'destructive',
+                              onPress: () =>
+                                deleteEntry(entry.id)
+                                  .then(refetch)
+                                  .catch(console.error),
+                            },
+                          ],
+                        )
+                      }
+                    />
+                  ))}
+                </>
               )}
+              {defaultLayout === 'list' && <ListView entries={entries} />}
+              {defaultLayout === 'grid' && <GridView entries={entries} />}
             </>
+          ) : (
+            <View className="items-center py-16">
+              <View className="w-16 h-16 rounded-full bg-slate-100 items-center justify-center mb-4">
+                <BookOpen size={28} color="#cbd5e1" />
+              </View>
+              <Text className="text-sm font-semibold text-gray-400">
+                Nothing here yet
+              </Text>
+              <Text className="text-xs text-gray-300 mt-1">
+                Tap + to write your first entry
+              </Text>
+            </View>
           )}
-
-          {defaultLayout === 'list' && <ListView entries={entries} />}
-          {defaultLayout === 'grid' && <GridView entries={entries} />}
 
           <View className="h-24" />
         </ScrollView>
 
         <TouchableOpacity
           className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-lg shadow-blue-900"
-          onPress={() => navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })}
+          onPress={() =>
+            navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })
+          }
         >
           <Plus size={26} color="#ffffff" />
         </TouchableOpacity>
