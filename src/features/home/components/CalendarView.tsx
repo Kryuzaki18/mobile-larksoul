@@ -118,17 +118,20 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
             const isSelectable = cell.type === 'current' && !isFuture;
 
             return (
-              <TouchableOpacity
-                key={colIdx}
-                className="flex-1 items-center py-0.5"
-                onPress={() => isSelectable && onDayPress?.(new Date(year, month, cell.day))}
-                disabled={!isSelectable}
-                activeOpacity={isSelectable ? 0.65 : 1}
-              >
-                <View
-                  className={`w-8 h-8 rounded-full items-center justify-center ${
-                    isSelected ? 'bg-blue-800' : isToday ? 'bg-blue-50' : ''
-                  }`}
+              <View key={colIdx} className="flex-1 items-center py-0.5">
+                <TouchableOpacity
+                  onPress={() => isSelectable && onDayPress?.(new Date(year, month, cell.day))}
+                  disabled={!isSelectable}
+                  activeOpacity={isSelectable ? 0.65 : 1}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: isSelected ? '#1e40af' : isToday ? '#eff6ff' : 'transparent',
+                  }}
                 >
                   <Text
                     className={`text-sm ${
@@ -145,7 +148,7 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
                   >
                     {cell.day}
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <View className="h-1.5 items-center justify-center mt-0.5">
                   {hasEntry && !isSelected && (
                     <View
@@ -154,7 +157,7 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
                     />
                   )}
                 </View>
-              </TouchableOpacity>
+              </View>
             );
           })}
         </View>
