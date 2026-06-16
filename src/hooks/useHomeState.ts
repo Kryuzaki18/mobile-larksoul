@@ -3,7 +3,7 @@ import { toDateStr } from '../utils/dateTime';
 import type { JournalEntry } from '../models/interfaces/users.model';
 import { getEntriesByUser } from '../database/functions/journal';
 
-const MIN_LOADER_DURATION_MS = 1500;
+const MIN_LOADER_DURATION_MS = 1000;
 
 export function useHomeState(userId: string) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());

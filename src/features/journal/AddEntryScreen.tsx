@@ -12,14 +12,20 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
-import { ChevronLeft } from 'lucide-react-native';
+import { ChevronLeft, Calendar } from 'lucide-react-native';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { Mood } from '../../models/interfaces/users.model';
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 import { useAuthStore } from '../../store/authStore';
-import { formatEntryDate } from '../../utils/dateTime';
+import { formatEntryDate, toDateStr } from '../../utils/dateTime';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
+import DatePickerModal from './components/DatePickerModal';
+
+function parseDateStr(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'AddEntry'>;
 type Route = RouteProp<RootStackParamList, 'AddEntry'>;
@@ -28,7 +34,7 @@ export default function AddEntryScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const entryId = route.params?.entryId;
-  const date = route.params?.date ?? new Date().toISOString().slice(0, 10);
+  const initialDate = route.params?.date ?? toDateStr(new Date());
   const { currentUser } = useAuthStore();
 
   const [title, setTitle] = useState('');
@@ -37,6 +43,9 @@ export default function AddEntryScreen() {
   const [tags, setTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(() => parseDateStr(initialDate));
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const date = toDateStr(selectedDate);
 
   const contentRef = useRef<TextInput>(null);
   const canSave = title.trim().length > 0 && content.trim().length > 0;
@@ -102,7 +111,18 @@ export default function AddEntryScreen() {
           <Text className="text-sm font-bold text-slate-800">
             {entryId ? 'Edit Entry' : 'New Entry'}
           </Text>
-          <Text className="text-xs text-gray-400">{formatEntryDate(date)}</Text>
+          {entryId ? (
+            <Text className="text-xs text-gray-400">{formatEntryDate(date)}</Text>
+          ) : (
+            <TouchableOpacity
+              className="flex-row items-center mt-0.5"
+              onPress={() => setShowDatePicker(true)}
+              activeOpacity={0.65}
+            >
+              <Calendar size={11} color="#94a3b8" />
+              <Text className="text-xs text-gray-400 ml-1">{formatEntryDate(date)}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <TouchableOpacity
@@ -173,6 +193,13 @@ export default function AddEntryScreen() {
           <Text className="text-red-500 text-xs text-center mt-1">{error}</Text>
         )}
       </ScrollView>
+
+      <DatePickerModal
+        visible={showDatePicker}
+        selectedDate={selectedDate}
+        onSelect={setSelectedDate}
+        onClose={() => setShowDatePicker(false)}
+      />
     </KeyboardAvoidingView>
   );
 }
