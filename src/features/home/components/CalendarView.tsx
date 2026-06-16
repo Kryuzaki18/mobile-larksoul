@@ -37,12 +37,23 @@ interface CalendarViewProps {
 export default function CalendarView({ selectedDate, entryDates = [], onDayPress }: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
 
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const isCurrentMonth = current.getFullYear() === now.getFullYear() && current.getMonth() === now.getMonth();
+
+  const goToNextMonth = () => {
+    setCurrent(c => {
+      if (c.getFullYear() === now.getFullYear() && c.getMonth() === now.getMonth()) return c;
+      return new Date(c.getFullYear(), c.getMonth() + 1, 1);
+    });
+  };
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, { dx, dy }) =>
         Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10,
       onPanResponderRelease: (_, { dx }) => {
-        if (dx < -50) setCurrent(c => new Date(c.getFullYear(), c.getMonth() + 1, 1));
+        if (dx < -50) goToNextMonth();
         else if (dx > 50) setCurrent(c => new Date(c.getFullYear(), c.getMonth() - 1, 1));
       },
     }),
@@ -50,8 +61,6 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
 
   const year = current.getFullYear();
   const month = current.getMonth();
-  const now = new Date();
-  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
   const todayDay = now.getDate();
   const entrySet = new Set(entryDates);
 
@@ -80,9 +89,11 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
         </Text>
         <TouchableOpacity
           className="w-8 h-8 rounded-full bg-slate-100 items-center justify-center"
-          onPress={() => setCurrent(new Date(year, month + 1, 1))}
+          onPress={goToNextMonth}
+          disabled={isCurrentMonth}
+          activeOpacity={isCurrentMonth ? 1 : 0.65}
         >
-          <ChevronRight size={14} color="#475569" />
+          <ChevronRight size={14} color={isCurrentMonth ? '#cbd5e1' : '#475569'} />
         </TouchableOpacity>
       </View>
 
@@ -103,13 +114,16 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
               !!selectedDate &&
               selectedDate.toDateString() === new Date(year, month, cell.day).toDateString();
             const hasEntry = cell.type === 'current' && entrySet.has(getDateStr(cell.day));
+            const isFuture = cell.type === 'current' && new Date(year, month, cell.day) > today;
+            const isSelectable = cell.type === 'current' && !isFuture;
 
             return (
               <TouchableOpacity
                 key={colIdx}
                 className="flex-1 items-center py-0.5"
-                onPress={() => cell.type === 'current' && onDayPress?.(new Date(year, month, cell.day))}
-                activeOpacity={cell.type === 'current' ? 0.65 : 1}
+                onPress={() => isSelectable && onDayPress?.(new Date(year, month, cell.day))}
+                disabled={!isSelectable}
+                activeOpacity={isSelectable ? 0.65 : 1}
               >
                 <View
                   className={`w-8 h-8 rounded-full items-center justify-center ${
@@ -122,6 +136,8 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
                         ? 'text-white font-bold'
                         : isToday
                         ? 'text-blue-700 font-bold'
+                        : isFuture
+                        ? 'text-gray-200'
                         : cell.type === 'current'
                         ? 'text-slate-700'
                         : 'text-gray-300'
