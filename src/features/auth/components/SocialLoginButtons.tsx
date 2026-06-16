@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
+import { useColorScheme } from 'nativewind';
+
 import GmailIcon from '../../../assets/gmail.svg';
-import AppleIcon from '../../../assets/apple.svg';
+import AppleLightIcon from '../../../assets/apple-white.svg';
+import AppleDarkIcon from '../../../assets/apple-black.svg';
 
 export type SocialProvider = 'google' | 'apple';
 
@@ -14,6 +17,9 @@ export default function SocialLoginButtons({
   providers = ['google'],
   onSelect,
 }: SocialLoginButtonsProps) {
+  const { colorScheme } = useColorScheme();
+  const AppleIcon = colorScheme === 'dark' ? AppleLightIcon : AppleDarkIcon;
+
   return (
     <View className="flex-row justify-center gap-4">
       {providers.map(provider => (

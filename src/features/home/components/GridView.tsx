@@ -44,7 +44,7 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
           className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden"
           style={{ elevation: 1, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
         >
-          <View style={{ height: 4, backgroundColor: accentColor }} />
+          <View style={{ height: 2, backgroundColor: accentColor }} />
 
           <View className="px-3 pb-3">
             <View className="flex-row items-center gap-1 mb-2 pr-6">
@@ -86,7 +86,7 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
         {isMenuOpen && (
           <View
             pointerEvents="none"
-            className="absolute top-0 left-0 right-0 bottom-0 bg-black/30 rounded-2xl"
+            className="absolute top-0 left-0 right-0 bottom-0 bg-black/30 dark:bg-white/30 rounded-2xl"
           />
         )}
 
@@ -97,9 +97,9 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
               right: 10,
               top: 25,
               minWidth: 80,
-              elevation: 6,
+              elevation: 2,
               shadowColor: '#000',
-              shadowOpacity: 0.2,
+              shadowOpacity: 0.1,
               shadowRadius: 10,
             }}
           >
