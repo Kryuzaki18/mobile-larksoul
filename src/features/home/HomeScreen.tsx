@@ -101,14 +101,14 @@ export default function HomeScreen() {
 
             {defaultLayout === 'list' &&
               (entries.length > 0 ? (
-                <ListView entries={entries} />
+                <ListView entries={entries} refetch={refetch} />
               ) : (
                 <EmptyEntry />
               ))}
 
             {defaultLayout === 'grid' &&
               (entries.length > 0 ? (
-                <GridView entries={entries} />
+                <GridView entries={entries} refetch={refetch} />
               ) : (
                 <EmptyEntry />
               ))}

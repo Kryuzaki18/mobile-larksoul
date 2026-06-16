@@ -1,5 +1,11 @@
 import React, { useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated, PanResponder } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  PanResponder,
+} from 'react-native';
 import { Clock, Calendar, Image, Pencil, Trash2 } from 'lucide-react-native';
 import type { JournalEntry } from '../../../models/interfaces/users.model';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
@@ -14,7 +20,12 @@ interface JournalCardProps {
 const ACTION_WIDTH = 140;
 const SWIPE_THRESHOLD = 60;
 
-export default function JournalCard({ entry, onEdit, onDelete, onPress }: JournalCardProps) {
+export default function JournalCard({
+  entry,
+  onEdit,
+  onDelete,
+  onPress,
+}: JournalCardProps) {
   const translateX = useRef(new Animated.Value(0)).current;
   const isOpen = useRef(false);
   const timeLabel = formatEntryTime(entry.createdAt);
@@ -70,18 +81,35 @@ export default function JournalCard({ entry, onEdit, onDelete, onPress }: Journa
         }}
       >
         <TouchableOpacity
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 5 }}
-          onPress={() => { snap(false); onEdit?.(); }}
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 5,
+          }}
+          onPress={() => {
+            snap(false);
+            onEdit?.();
+          }}
         >
-          <Pencil size={16}  />
-          <Text style={{ fontSize: 11, fontWeight: '600' }}>Edit</Text>
+          <Pencil size={13} color="#475569" />
+          <Text className="text-xs font-medium text-slate-700">Edit</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity
-          style={{ flex: 1,justifyContent: 'center', alignItems: 'center', gap: 5 }}
-          onPress={() => { snap(false); onDelete?.(); }}
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 5,
+          }}
+          onPress={() => {
+            snap(false);
+            onDelete?.();
+          }}
         >
-          <Trash2 size={16}  />
-          <Text style={{  fontSize: 11, fontWeight: '600' }}>Delete</Text>
+          <Trash2 size={13} color="#ef4444" />
+          <Text className="text-xs font-medium text-red-500">Delete</Text>
         </TouchableOpacity>
       </View>
 
@@ -102,14 +130,22 @@ export default function JournalCard({ entry, onEdit, onDelete, onPress }: Journa
         >
           <View className="flex-row items-center gap-1.5 mb-2">
             <TimeIcon size={13} color="#9ca3af" />
-            <Text className="text-xs text-gray-400 font-medium tracking-wider">{timeLabel}</Text>
+            <Text className="text-xs text-gray-400 font-medium tracking-wider">
+              {timeLabel}
+            </Text>
           </View>
 
-          <Text className="text-xl font-bold text-slate-800 mb-1.5" numberOfLines={2}>
+          <Text
+            className="text-xl font-bold text-slate-800 mb-1.5"
+            numberOfLines={2}
+          >
             {entry.title}
           </Text>
 
-          <Text className="text-sm text-gray-500 leading-relaxed mb-3" numberOfLines={3}>
+          <Text
+            className="text-sm text-gray-500 leading-relaxed mb-3"
+            numberOfLines={3}
+          >
             {entry.preview}
           </Text>
 
