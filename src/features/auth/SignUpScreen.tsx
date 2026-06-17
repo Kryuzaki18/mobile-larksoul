@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ChevronLeft } from 'lucide-react-native';
+import { ChevronLeft, WifiOff } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { User } from '../../models/interfaces/users.model';
@@ -21,23 +21,49 @@ import {
 } from '../../services/AuthService';
 import { saveSession } from '../../services/sessionService';
 import { useAuthStore } from '../../store/authStore';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import SignUpForm from './components/SignUpForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function SignUpScreen() {
   const navigation = useNavigation<Nav>();
   const { currentUser, isGuest, setUser } = useAuthStore();
+  const { isConnected } = useNetworkStatus();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<SocialProvider | null>(null);
-  const { colorScheme } = useColorScheme();
+  const [formErrors, setFormErrors] = useState<{ name?: string; email?: string; password?: string }>({});
 
   const isAnyLoading = loading || loadingProvider != null;
+
+  function validateFields(): boolean {
+    const errors: { name?: string; email?: string; password?: string } = {};
+    if (!name.trim()) {
+      errors.name = 'Name is required.';
+    }
+    if (!email.trim()) {
+      errors.email = 'Email is required.';
+    } else if (!EMAIL_REGEX.test(email.trim())) {
+      errors.email = 'Enter a valid email address.';
+    }
+    if (!password) {
+      errors.password = 'Password is required.';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters.';
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
 
   async function completeSignIn(user: User) {
     if (isGuest && currentUser && currentUser.id !== user.id) {
@@ -49,29 +75,34 @@ export default function SignUpScreen() {
   }
 
   async function handleCreateAccount() {
-    if (!name.trim() || !email.trim() || !password.trim()) {
-      Alert.alert('Missing info', 'Please fill in your name, email, and password.');
-      return;
-    }
+    if (!validateFields()) return;
     setLoading(true);
     try {
       const user = await signUp(name.trim(), email.trim(), password);
       await completeSignIn(user);
     } catch (e) {
-      Alert.alert(
-        'Sign Up Failed',
-        e instanceof Error ? e.message : 'Please try again.',
-      );
+      if (e instanceof Error && e.message.includes('already exists')) {
+        setFormErrors(prev => ({ ...prev, email: 'An account with this email already exists.' }));
+      } else {
+        Alert.alert('Sign Up Failed', e instanceof Error ? e.message : 'Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   }
 
   async function handleProviderSignUp(provider: SocialProvider) {
+    if (!isConnected) {
+      Alert.alert(
+        'No Internet Connection',
+        `${provider === 'google' ? 'Google' : 'Apple'} Sign-In requires an internet connection.`,
+      );
+      return;
+    }
     setLoadingProvider(provider);
     try {
       const user = await signInWithProvider(provider);
-      if (!user) return; // user cancelled — no error
+      if (!user) return;
       await completeSignIn(user);
     } catch (error) {
       const message =
@@ -88,6 +119,15 @@ export default function SignUpScreen() {
 
   return (
     <View className="flex-1 bg-white dark:bg-slate-950">
+      {!isConnected && (
+        <View className="flex-row items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-500/10 border-b border-amber-100 dark:border-amber-500/20">
+          <WifiOff size={13} color="#d97706" />
+          <Text className="text-xs font-medium text-amber-700 dark:text-amber-400 flex-1">
+            No internet — social sign-in unavailable
+          </Text>
+        </View>
+      )}
+
       <View className="flex-row items-center px-4 pt-3 pb-3">
         <TouchableOpacity
           className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 items-center justify-center mr-3"
@@ -101,7 +141,7 @@ export default function SignUpScreen() {
           onPress={() => navigation.goBack()}
           disabled={isAnyLoading}
         >
-          <ChevronLeft size={18} color={colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'} />
+          <ChevronLeft size={18} color={isDark ? '#e2e8f0' : '#1e293b'} />
         </TouchableOpacity>
         <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">
           Create Account
@@ -110,11 +150,7 @@ export default function SignUpScreen() {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{
-          paddingHorizontal: 24,
-          paddingTop: 8,
-          paddingBottom: 40,
-        }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 8, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -135,11 +171,13 @@ export default function SignUpScreen() {
             name={name}
             email={email}
             password={password}
-            onNameChange={setName}
-            onEmailChange={setEmail}
-            onPasswordChange={setPassword}
+            onNameChange={v => { setName(v); setFormErrors(e => ({ ...e, name: undefined })); }}
+            onEmailChange={v => { setEmail(v); setFormErrors(e => ({ ...e, email: undefined })); }}
+            onPasswordChange={v => { setPassword(v); setFormErrors(e => ({ ...e, password: undefined })); }}
             onSubmit={handleCreateAccount}
             loading={loading}
+            disabled={isAnyLoading && !loading}
+            errors={formErrors}
           />
         </View>
 
@@ -152,9 +190,10 @@ export default function SignUpScreen() {
         <SocialLoginButtons
           providers={['google', 'apple']}
           loadingProvider={loadingProvider}
-          disabled={isAnyLoading}
+          disabled={isAnyLoading || !isConnected}
           onSelect={handleProviderSignUp}
         />
+        
       </ScrollView>
     </View>
   );

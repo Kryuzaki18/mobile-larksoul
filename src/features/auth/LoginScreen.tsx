@@ -10,30 +10,40 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ArrowRight } from 'lucide-react-native';
+import { ArrowRight, WifiOff } from 'lucide-react-native';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import {
   signInAsGuest,
+  signIn,
   signInWithProvider,
   getGoogleSignInError,
 } from '../../services/AuthService';
-import { hasRegisteredUser } from '../../database/functions/users';
 import { saveSession } from '../../services/sessionService';
 import { useAuthStore } from '../../store/authStore';
+import { hasRegisteredUser } from '../../database/functions/users';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
 
 type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function LoginScreen() {
   const navigation = useNavigation<LoginNav>();
   const { setUser } = useAuthStore();
+  const { isConnected } = useNetworkStatus();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<SocialProvider | null>(null);
   const [showGuestButton, setShowGuestButton] = useState(true);
+  const [formErrors, setFormErrors] = useState<{ email?: string; password?: string }>({});
+
+  const isAnyLoading = guestLoading || loginLoading || loadingProvider != null;
 
   useEffect(() => {
     hasRegisteredUser().then(has => {
@@ -41,7 +51,38 @@ export default function LoginScreen() {
     });
   }, []);
 
-  const isAnyLoading = guestLoading || loadingProvider != null;
+  function validateLoginFields(): boolean {
+    const errors: { email?: string; password?: string } = {};
+    if (!email.trim()) {
+      errors.email = 'Email is required.';
+    } else if (!EMAIL_REGEX.test(email.trim())) {
+      errors.email = 'Enter a valid email address.';
+    }
+    if (!password) {
+      errors.password = 'Password is required.';
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  async function handleLogin() {
+    if (!validateLoginFields()) return;
+    setLoginLoading(true);
+    try {
+      const user = await signIn(email.trim());
+      if (!user) {
+        setFormErrors({ email: 'No account found with this email.' });
+        return;
+      }
+      setUser(user, false);
+      await saveSession(user.id, false);
+      navigation.replace('Home');
+    } catch (e) {
+      Alert.alert('Login Failed', e instanceof Error ? e.message : 'Please try again.');
+    } finally {
+      setLoginLoading(false);
+    }
+  }
 
   async function handleGuestLogin() {
     setGuestLoading(true);
@@ -56,10 +97,17 @@ export default function LoginScreen() {
   }
 
   async function handleProviderLogin(provider: SocialProvider) {
+    if (!isConnected) {
+      Alert.alert(
+        'No Internet Connection',
+        `${provider === 'google' ? 'Google' : 'Apple'} Sign-In requires an internet connection.`,
+      );
+      return;
+    }
     setLoadingProvider(provider);
     try {
       const user = await signInWithProvider(provider);
-      if (!user) return; // user cancelled — no error
+      if (!user) return;
       setUser(user, false);
       await saveSession(user.id, false);
       navigation.replace('Home');
@@ -78,6 +126,15 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 bg-white dark:bg-slate-950">
+      {!isConnected && (
+        <View className="flex-row items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-500/10 border-b border-amber-100 dark:border-amber-500/20">
+          <WifiOff size={13} color="#d97706" />
+          <Text className="text-xs font-medium text-amber-700 dark:text-amber-400 flex-1">
+            No internet — social sign-in unavailable
+          </Text>
+        </View>
+      )}
+
       <View className="items-center pt-14 pb-8 px-6">
         <Image
           source={require('../../assets/logo.png')}
@@ -128,9 +185,12 @@ export default function LoginScreen() {
           <LoginForm
             email={email}
             password={password}
-            onEmailChange={setEmail}
-            onPasswordChange={setPassword}
-            onLogin={() => {}}
+            onEmailChange={v => { setEmail(v); setFormErrors(e => ({ ...e, email: undefined })); }}
+            onPasswordChange={v => { setPassword(v); setFormErrors(e => ({ ...e, password: undefined })); }}
+            onLogin={handleLogin}
+            loading={loginLoading}
+            disabled={isAnyLoading && !loginLoading}
+            errors={formErrors}
           />
         </View>
 
@@ -143,7 +203,7 @@ export default function LoginScreen() {
         <SocialLoginButtons
           providers={['google', 'apple']}
           loadingProvider={loadingProvider}
-          disabled={isAnyLoading}
+          disabled={isAnyLoading || !isConnected}
           onSelect={handleProviderLogin}
         />
 
