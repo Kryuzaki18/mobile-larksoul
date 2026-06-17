@@ -17,13 +17,21 @@ import {
   MonitorSmartphone,
   UserPlus,
 } from 'lucide-react-native';
+
+import GmailIcon from '../../assets/gmail.svg';
+import AppleLightIcon from '../../assets/apple-white.svg';
+import AppleDarkIcon from '../../assets/apple-black.svg';
+
 import type { ViewMode, ThemePreference } from '../../models/types/ui.type';
+import { RootStackParamList } from '../../models/types/navigation.type';
+
 import { useSettingsStore } from '../../store/settingsStore';
 import { useSecurityStore } from '../../store/securityStore';
 import { useThemeStore } from '../../store/themeStore';
-import { clearSession } from '../../services/sessionService';
-import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
+
+import { clearSession } from '../../services/sessionService';
+
 import SettingsSection from './components/SettingsSection';
 import SettingsItem from './components/SettingsItem';
 import NetworkStatusDot from '../commons/NetworkStatusDot';
@@ -61,6 +69,11 @@ export default function SettingsScreen() {
 
   const initial = currentUser?.name?.[0]?.toUpperCase() ?? 'G';
 
+  const socialProviders = (currentUser?.social ?? []).map(s => s.split(':')[0]) as ('google' | 'apple')[];
+  const hasGoogle = socialProviders.includes('google');
+  const hasApple = socialProviders.includes('apple');
+  const AppleIcon = isDark ? AppleLightIcon : AppleDarkIcon;
+
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
       <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50 dark:bg-slate-950">
@@ -84,13 +97,61 @@ export default function SettingsScreen() {
               </View>
               <NetworkStatusDot size={12} style={{ position: 'absolute', bottom: -1, right: -1 }} />
             </View>
-            <View className="flex-1">
-              <Text className="text-base font-bold text-slate-800 dark:text-slate-100">
-                {currentUser?.name ?? 'Guest'}
-              </Text>
-              <Text className="text-sm text-gray-400 mt-0.5">
-                {isGuest ? 'Browsing as guest' : (currentUser?.email ?? '')}
-              </Text>
+            <View className="flex-1 flex-row items-center justify-between">
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <Text className="text-base font-bold text-slate-800 dark:text-slate-100">
+                  {currentUser?.name ?? 'Guest'}
+                </Text>
+                <Text className="text-sm text-gray-400 mt-0.5" numberOfLines={1}>
+                  {isGuest ? 'Browsing as guest' : (currentUser?.email ?? '')}
+                </Text>
+              </View>
+
+              {(hasGoogle || hasApple) && (
+                <View style={{ alignItems: 'flex-end', gap: 4 }}>
+                  <Text style={{ fontSize: 10, fontWeight: '500', color: '#94a3b8', letterSpacing: 0.4 }}>
+                    Signed in with
+                  </Text>
+                  <View style={{ flexDirection: 'row', gap: 5 }}>
+                    {hasGoogle && (
+                      <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 5,
+                        paddingHorizontal: 9,
+                        paddingVertical: 4,
+                        borderRadius: 20,
+                        backgroundColor: isDark ? 'rgba(239,68,68,0.1)' : '#fff5f5',
+                        borderWidth: 1,
+                        borderColor: isDark ? 'rgba(239,68,68,0.2)' : '#fecaca',
+                      }}>
+                        <GmailIcon width={13} height={13} />
+                        <Text style={{ fontSize: 11, fontWeight: '600', color: '#dc2626', letterSpacing: 0.1 }}>
+                          Google
+                        </Text>
+                      </View>
+                    )}
+                    {hasApple && (
+                      <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 5,
+                        paddingHorizontal: 9,
+                        paddingVertical: 4,
+                        borderRadius: 20,
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#1e293b',
+                        borderWidth: 1,
+                        borderColor: isDark ? 'rgba(255,255,255,0.1)' : '#1e293b',
+                      }}>
+                        <AppleIcon width={12} height={12} />
+                        <Text style={{ fontSize: 11, fontWeight: '600', color: '#ffffff', letterSpacing: 0.1 }}>
+                          Apple
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              )}
             </View>
           </View>
 
