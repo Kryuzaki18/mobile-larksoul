@@ -13,7 +13,11 @@ import { ChevronLeft } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { User } from '../../models/interfaces/users.model';
-import { signUp, signInWithProvider } from '../../services/AuthService';
+import {
+  signUp,
+  signInWithProvider,
+  getGoogleSignInError,
+} from '../../services/AuthService';
 import { saveSession } from '../../services/sessionService';
 import { useAuthStore } from '../../store/authStore';
 import SignUpForm from './components/SignUpForm';
@@ -29,7 +33,10 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState<SocialProvider | null>(null);
   const { colorScheme } = useColorScheme();
+
+  const isAnyLoading = loading || loadingProvider != null;
 
   async function completeSignIn(user: User) {
     setUser(user, false);
@@ -39,10 +46,7 @@ export default function SignUpScreen() {
 
   async function handleCreateAccount() {
     if (!name.trim() || !email.trim() || !password.trim()) {
-      Alert.alert(
-        'Missing info',
-        'Please fill in your name, email, and password.',
-      );
+      Alert.alert('Missing info', 'Please fill in your name, email, and password.');
       return;
     }
     setLoading(true);
@@ -60,12 +64,21 @@ export default function SignUpScreen() {
   }
 
   async function handleProviderSignUp(provider: SocialProvider) {
-    setLoading(true);
+    setLoadingProvider(provider);
     try {
       const user = await signInWithProvider(provider);
+      if (!user) return; // user cancelled — no error
       await completeSignIn(user);
+    } catch (error) {
+      const message =
+        provider === 'google'
+          ? getGoogleSignInError(error)
+          : error instanceof Error
+            ? error.message
+            : 'Apple Sign-In failed. Please try again.';
+      Alert.alert('Sign-In Failed', message);
     } finally {
-      setLoading(false);
+      setLoadingProvider(null);
     }
   }
 
@@ -82,10 +95,13 @@ export default function SignUpScreen() {
             elevation: 2,
           }}
           onPress={() => navigation.goBack()}
+          disabled={isAnyLoading}
         >
           <ChevronLeft size={18} color={colorScheme === 'dark' ? '#e2e8f0' : '#1e293b'} />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">Create Account</Text>
+        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">
+          Create Account
+        </Text>
       </View>
 
       <ScrollView
@@ -125,13 +141,14 @@ export default function SignUpScreen() {
 
         <View className="flex-row items-center mb-4">
           <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
-          <Text className="mx-4 text-xs font-medium text-gray-400">
-            or continue with
-          </Text>
+          <Text className="mx-4 text-xs font-medium text-gray-400">or continue with</Text>
           <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
         </View>
+
         <SocialLoginButtons
           providers={['google', 'apple']}
+          loadingProvider={loadingProvider}
+          disabled={isAnyLoading}
           onSelect={handleProviderSignUp}
         />
       </ScrollView>

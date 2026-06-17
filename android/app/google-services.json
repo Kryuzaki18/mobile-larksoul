@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "563589011590",
+    "project_id": "larksoul",
+    "storage_bucket": "larksoul.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563589011590:android:565f323eaeca3d6ca89907",
+        "android_client_info": {
+          "package_name": "com.larksoul"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563589011590-nemtkhbeh4a1kvblrq0uddeajuvc2fsg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.larksoul",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "563589011590-7fe0hbkgmdmi9ig7cg84lpeesaudmvl9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDngLg0Pn0PBFKXgs3_QwRnJCkDBZ59vBY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563589011590-7fe0hbkgmdmi9ig7cg84lpeesaudmvl9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "563589011590-pvooto5suvl6kmnifpq3u0g4hsbqaalk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.larksoul"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

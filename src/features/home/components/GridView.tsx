@@ -104,7 +104,7 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
             }}
           >
             <TouchableOpacity
-              className="flex-row items-center gap-1 px-4 py-3"
+              className="flex-row items-center gap-1 px-4 py-2"
               onPress={() => { onToggleMenu(); onEdit(); }}
             >
               <Pencil size={12} color={isDark ? '#cbd5e1' : '#475569'} />
@@ -112,7 +112,7 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
             </TouchableOpacity>
             <View className="h-px bg-slate-100 dark:bg-slate-700" />
             <TouchableOpacity
-              className="flex-row items-center gap-1 px-4 py-3"
+              className="flex-row items-center gap-1 px-4 py-2"
               onPress={() => { onToggleMenu(); onDelete(); }}
             >
               <Trash2 size={12} color="#ef4444" />
