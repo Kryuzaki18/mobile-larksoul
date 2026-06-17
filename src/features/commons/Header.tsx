@@ -34,8 +34,8 @@ export default function Header({ name = 'Your', subtitle = 'Journal', activeTab 
     }
   };
 
-  const activeColor = '#1e40af';
-  const inactiveColor = isDark ? '#475569' : '#94a3b8';
+  const activeColor = isDark ? '#fff': '#1e40af';
+  const inactiveColor = isDark ? '#eee' : '#94a3b8';
 
   return (
     <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800">
@@ -64,7 +64,7 @@ export default function Header({ name = 'Your', subtitle = 'Journal', activeTab 
             paddingVertical: 6,
             borderRadius: 20,
             backgroundColor: activeTab === 'home'
-              ? isDark ? 'rgba(30,64,175,0.15)' : '#eff6ff'
+              ? isDark ? 'rgba(30,64,175,0.3)' : '#eff6ff'
               : 'transparent',
           }}
         >
@@ -91,7 +91,7 @@ export default function Header({ name = 'Your', subtitle = 'Journal', activeTab 
             paddingVertical: 6,
             borderRadius: 20,
             backgroundColor: activeTab === 'graph'
-              ? isDark ? 'rgba(30,64,175,0.15)' : '#eff6ff'
+              ? isDark ? 'rgba(30,64,175,0.3)' : '#eff6ff'
               : 'transparent',
           }}
         >

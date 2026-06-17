@@ -201,8 +201,9 @@ export default function SettingsScreen() {
               </View>
             }
           >
-            Layout
+            Home Layout
           </SettingsItem>
+
           <SettingsItem
             icon={<Sun size={17} color="#fff" />}
             iconBg="#f59e0b"
@@ -236,6 +237,7 @@ export default function SettingsScreen() {
           >
             Theme
           </SettingsItem>
+          
           <SettingsItem
             icon={<Lock size={17} color="#fff" />}
             iconBg="#10b981"
