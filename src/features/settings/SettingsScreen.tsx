@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ChevronLeft,
-  Pencil,
   Lock,
   Download,
   CloudUpload,
@@ -93,12 +92,8 @@ export default function SettingsScreen() {
                 {isGuest ? 'Browsing as guest' : (currentUser?.email ?? '')}
               </Text>
             </View>
-            {!isGuest && (
-              <TouchableOpacity className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
-                <Pencil size={14} color="#64748b" />
-              </TouchableOpacity>
-            )}
           </View>
+
           {isGuest && (
             <TouchableOpacity
               className="mt-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl py-2.5 items-center"
