@@ -9,14 +9,18 @@ import LoginScreen from '../features/auth/LoginScreen';
 import SignUpScreen from '../features/auth/SignUpScreen';
 import PinLockScreen from '../features/auth/PinLockScreen';
 import HomeScreen from '../features/home/HomeScreen';
+import MoodGraphScreen from '../features/insights/InsightsScreen';
 import SettingsScreen from '../features/settings/SettingsScreen';
 import SecurityScreen from '../features/settings/SecurityScreen';
 import AddEntryScreen from '../features/journal/AddEntryScreen';
+
 import { useAuthStore } from '../store/authStore';
 import { useSecurityStore } from '../store/securityStore';
 import { useThemeStore } from '../store/themeStore';
+
 import { loadSession, clearSession } from '../services/sessionService';
 import { hasPinLock } from '../services/securityService';
+
 import { getUserById } from '../database/functions/users';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -89,6 +93,7 @@ export default function RootStack() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="MoodGraph" component={MoodGraphScreen} />
         <Stack.Screen name="AddEntry" component={AddEntryScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Security" component={SecurityScreen} />
