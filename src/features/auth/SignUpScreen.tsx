@@ -16,6 +16,7 @@ import type { User } from '../../models/interfaces/users.model';
 import {
   signUp,
   signInWithProvider,
+  migrateGuestAccount,
   getGoogleSignInError,
 } from '../../services/AuthService';
 import { saveSession } from '../../services/sessionService';
@@ -28,7 +29,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
 export default function SignUpScreen() {
   const navigation = useNavigation<Nav>();
-  const { setUser } = useAuthStore();
+  const { currentUser, isGuest, setUser } = useAuthStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,6 +40,9 @@ export default function SignUpScreen() {
   const isAnyLoading = loading || loadingProvider != null;
 
   async function completeSignIn(user: User) {
+    if (isGuest && currentUser && currentUser.id !== user.id) {
+      await migrateGuestAccount(currentUser.id, user.id);
+    }
     setUser(user, false);
     await saveSession(user.id, false);
     navigation.replace('Home');

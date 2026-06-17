@@ -134,3 +134,20 @@ export async function deleteUser(id: string): Promise<void> {
     [new Date().toISOString(), id],
   );
 }
+
+export async function migrateGuestToUser(
+  guestUserId: string,
+  newUserId: string,
+): Promise<void> {
+  const db = getDatabase();
+  // Reassign all journal entries from the guest account to the real account
+  await db.execute(
+    'UPDATE journal_entries SET user_id = ? WHERE user_id = ? AND deleted_at IS NULL',
+    [newUserId, guestUserId],
+  );
+  // Soft-delete the guest account — its email slot is freed for reuse
+  await db.execute(
+    'UPDATE users SET deleted_at = ? WHERE id = ?',
+    [new Date().toISOString(), guestUserId],
+  );
+}
