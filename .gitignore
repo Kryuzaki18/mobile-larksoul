@@ -1,9 +1,10 @@
-# OSX
-#
+# ─── macOS ────────────────────────────────────────────────────────────────────
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
 
-# Xcode
-#
+# ─── Xcode ────────────────────────────────────────────────────────────────────
 build/
 *.pbxuser
 !default.pbxuser
@@ -13,63 +14,98 @@ build/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
+xcuserdata/
 *.xccheckout
 *.moved-aside
-DerivedData
+DerivedData/
 *.hmap
 *.ipa
 *.xcuserstate
 **/.xcode.env.local
+ios/.xcode.env.local
 
-# Android/IntelliJ
-#
-build/
-.idea
-.gradle
+# ─── Android / IntelliJ ───────────────────────────────────────────────────────
+.idea/
+.gradle/
 local.properties
 *.iml
 *.hprof
 .cxx/
-*.keystore
-!debug.keystore
 .kotlin/
 
-# node.js
-#
+# Keystores — keep debug.keystore (checked-in default), exclude everything else
+*.keystore
+!android/app/debug.keystore
+
+# ─── Google / Firebase ────────────────────────────────────────────────────────
+android/app/google-services.json
+ios/larksoul/GoogleService-Info.plist
+
+# ─── OAuth & secrets ──────────────────────────────────────────────────────────
+# Environment / secret files
+.env
+.env.*
+!.env.example
+*.secret
+secrets.json
+secrets.yaml
+secrets.yml
+
+# Auth config with real credentials (keep the template, ignore overrides)
+# src/config/auth.config.local.ts
+
+# ─── Node.js ──────────────────────────────────────────────────────────────────
 node_modules/
-npm-debug.log
+npm-debug.log*
 yarn-error.log
-
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/
-
-**/fastlane/report.xml
-**/fastlane/Preview.html
-**/fastlane/screenshots
-**/fastlane/test_output
-
-# Bundle artifact
-*.jsbundle
-
-# Ruby / CocoaPods
-**/Pods/
-/vendor/bundle/
-
-# Temporary files created by Metro to check the health of the file watcher
-.metro-health-check*
-
-# testing
-/coverage
-
-# Yarn
+.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# ─── Ruby / CocoaPods ─────────────────────────────────────────────────────────
+**/Pods/
+/vendor/bundle/
+
+# ─── Fastlane ─────────────────────────────────────────────────────────────────
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots/
+**/fastlane/test_output/
+# Fastlane credentials
+fastlane/Appfile
+fastlane/Matchfile
+
+# ─── Metro / React Native ─────────────────────────────────────────────────────
+.metro-health-check*
+*.jsbundle
+.react-native-cache/
+
+# ─── Testing & coverage ───────────────────────────────────────────────────────
+/coverage/
+*.lcov
+
+# ─── Editor & IDE ─────────────────────────────────────────────────────────────
+.vscode/settings.json
+.vscode/launch.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── OS generated ─────────────────────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ─── Logs & temp ──────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
