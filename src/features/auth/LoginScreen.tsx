@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import {
   signInWithProvider,
   getGoogleSignInError,
 } from '../../services/AuthService';
+import { hasRegisteredUser } from '../../database/functions/users';
 import { saveSession } from '../../services/sessionService';
 import { useAuthStore } from '../../store/authStore';
 import LoginForm from './components/LoginForm';
@@ -32,6 +33,13 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [guestLoading, setGuestLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<SocialProvider | null>(null);
+  const [showGuestButton, setShowGuestButton] = useState(true);
+
+  useEffect(() => {
+    hasRegisteredUser().then(has => {
+      if (has) setShowGuestButton(false);
+    });
+  }, []);
 
   const isAnyLoading = guestLoading || loadingProvider != null;
 
@@ -90,27 +98,31 @@ export default function LoginScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity
-          className="bg-blue-800 rounded-2xl py-4 items-center mb-6"
-          onPress={handleGuestLogin}
-          disabled={isAnyLoading}
-          activeOpacity={0.85}
-        >
-          {guestLoading ? (
-            <ActivityIndicator size="small" color="#ffffff" />
-          ) : (
-            <View className="flex-row items-center gap-2">
-              <Text className="text-white text-base font-semibold">Continue as Guest</Text>
-              <ArrowRight size={16} color="#fff" />
-            </View>
-          )}
-        </TouchableOpacity>
+        {showGuestButton && (
+          <>
+            <TouchableOpacity
+              className="bg-blue-800 rounded-2xl py-4 items-center mb-6"
+              onPress={handleGuestLogin}
+              disabled={isAnyLoading}
+              activeOpacity={0.85}
+            >
+              {guestLoading ? (
+                <ActivityIndicator size="small" color="#ffffff" />
+              ) : (
+                <View className="flex-row items-center gap-2">
+                  <Text className="text-white text-base font-semibold">Continue as Guest</Text>
+                  <ArrowRight size={16} color="#fff" />
+                </View>
+              )}
+            </TouchableOpacity>
 
-        <View className="flex-row items-center mb-5">
-          <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
-          <Text className="mx-4 text-xs font-medium text-gray-400 tracking-wider">OR</Text>
-          <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
-        </View>
+            <View className="flex-row items-center mb-5">
+              <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
+              <Text className="mx-4 text-xs font-medium text-gray-400 tracking-wider">OR</Text>
+              <View className="flex-1 h-px bg-gray-200 dark:bg-slate-800" />
+            </View>
+          </>
+        )}
 
         <View className="bg-slate-50 dark:bg-slate-900 rounded-2xl px-5 py-5 mb-5">
           <LoginForm

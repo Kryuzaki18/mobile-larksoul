@@ -56,6 +56,13 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   return rows.length > 0 ? toUser(rows[0] as RawUser) : null;
 }
 
+export async function hasRegisteredUser(): Promise<boolean> {
+  const { rows } = await getDatabase().execute(
+    "SELECT 1 FROM users WHERE email != 'guest@larksoul.local' AND deleted_at IS NULL LIMIT 1",
+  );
+  return rows.length > 0;
+}
+
 export async function createUser(
   name: string,
   email: string,
