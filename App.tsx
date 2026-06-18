@@ -5,7 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import BootSplash from 'react-native-bootsplash';
 import RootStack from './src/navigation/RootStack';
-import { configureGoogleSignIn } from './src/services/AuthService';
+import { configureGoogleSignIn } from './src/services/authService';
 
 // Configure Google Sign-In once at module load time (before any navigation renders)
 configureGoogleSignIn();

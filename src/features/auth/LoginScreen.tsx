@@ -17,7 +17,7 @@ import {
   signIn,
   signInWithProvider,
   getGoogleSignInError,
-} from '../../services/AuthService';
+} from '../../services/authService';
 import { saveSession } from '../../services/sessionService';
 import { useAuthStore } from '../../store/authStore';
 import { hasRegisteredUser } from '../../database/functions/users';

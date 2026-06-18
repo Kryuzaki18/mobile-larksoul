@@ -18,7 +18,7 @@ import {
   signInWithProvider,
   migrateGuestAccount,
   getGoogleSignInError,
-} from '../../services/AuthService';
+} from '../../services/authService';
 import { saveSession } from '../../services/sessionService';
 import { useAuthStore } from '../../store/authStore';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
