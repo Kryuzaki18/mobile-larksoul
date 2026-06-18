@@ -7,7 +7,7 @@ import {
   ChevronLeft,
   Lock,
   Download,
-  CloudUpload,
+  // CloudUpload,
   Calendar,
   Menu,
   LayoutGrid,
@@ -282,7 +282,7 @@ export default function SettingsScreen() {
           >
             Export Journal
           </SettingsItem>
-          <SettingsItem
+          {/* <SettingsItem
             icon={<CloudUpload size={17} color="#fff" />}
             iconBg="#0ea5e9"
             extra={<Text className="text-xs font-medium text-gray-400">2h ago</Text>}
@@ -290,7 +290,7 @@ export default function SettingsScreen() {
             onPress={() => {}}
           >
             Cloud Backup
-          </SettingsItem>
+          </SettingsItem> */}
         </SettingsSection>
 
         {!isGuest && (
