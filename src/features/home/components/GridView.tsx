@@ -109,6 +109,8 @@ function GridCard({ entry, index, isMenuOpen, onToggleMenu, onEdit, onDelete, on
     <Pressable
       style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}
       onPress={onDismiss}
+      onLongPress={onToggleMenu}
+      delayLongPress={2000}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       android_ripple={null}

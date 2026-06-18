@@ -166,6 +166,8 @@ export default function JournalCard({
               onPress?.();
             }
           }}
+          onLongPress={() => snap(true)}
+          delayLongPress={2000}
         >
           <View className="flex-row items-center gap-1.5 mb-2">
             <TimeIcon size={13} color="#9ca3af" />
