@@ -19,10 +19,11 @@ export default function ListView({ entries, refetch }: ListViewProps) {
 
   return (
     <View className="pt-2">
-      {entries.map(entry => (
+      {entries.map((entry, index) => (
         <JournalCard
           key={entry.id}
           entry={entry}
+          index={index}
           onEdit={() => navigation.navigate('AddEntry', { entryId: entry.id })}
           onDelete={() =>
             Alert.alert(

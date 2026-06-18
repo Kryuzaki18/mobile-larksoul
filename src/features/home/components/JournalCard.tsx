@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   Animated,
+  Easing,
   PanResponder,
 } from 'react-native';
 import { Clock, Calendar, Pencil, Trash2 } from 'lucide-react-native';
@@ -13,6 +14,7 @@ import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
 interface JournalCardProps {
   entry: JournalEntry;
+  index?: number;
   onEdit?: () => void;
   onDelete?: () => void;
   onPress?: () => void;
@@ -23,12 +25,35 @@ const SWIPE_THRESHOLD = 60;
 
 export default function JournalCard({
   entry,
+  index = 0,
   onEdit,
   onDelete,
   onPress,
 }: JournalCardProps) {
   const translateX = useRef(new Animated.Value(0)).current;
+  const mountFade = useRef(new Animated.Value(0)).current;
+  const mountSlide = useRef(new Animated.Value(16)).current;
   const isOpen = useRef(false);
+
+  useEffect(() => {
+    const delay = Math.min(index, 8) * 45;
+    Animated.parallel([
+      Animated.timing(mountFade, {
+        toValue: 1,
+        duration: 300,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(mountSlide, {
+        toValue: 0,
+        duration: 300,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
   const timeLabel = formatEntryTime(entry.createdAt);
   const iconName = getEntryIcon(entry.createdAt);
   const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
@@ -70,7 +95,10 @@ export default function JournalCard({
   ).current;
 
   return (
-    <View className="mx-4 mb-3">
+    <Animated.View
+      className="mx-4 mb-3"
+      style={{ opacity: mountFade, transform: [{ translateY: mountSlide }] }}
+    >
       <View
         style={{
           position: 'absolute',
@@ -118,7 +146,14 @@ export default function JournalCard({
 
       <Animated.View
         className="bg-white dark:bg-slate-900 rounded-2xl p-4"
-        style={{ transform: [{ translateX }] }}
+        style={{
+          transform: [{ translateX }],
+          elevation: 2,
+          shadowColor: '#000',
+          shadowOpacity: 0.07,
+          shadowRadius: 6,
+          shadowOffset: { width: 0, height: 2 },
+        }}
         {...panResponder.panHandlers}
       >
         <TouchableOpacity
@@ -161,6 +196,6 @@ export default function JournalCard({
           </View>
         </TouchableOpacity>
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 }
