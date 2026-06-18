@@ -8,13 +8,10 @@ interface Props {
   mood: Mood;
   count: number;
   pct: number;
-  index: number;
   isDark: boolean;
 }
 
-export default function MoodBreakdownRow({ mood, count, pct, index }: Props) {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(8)).current;
+export default function MoodBreakdownRow({ mood, count, pct }: Props) {
   const widthAnim = useRef(new Animated.Value(0)).current;
   const [displayPct, setDisplayPct] = useState(0);
 
@@ -26,33 +23,14 @@ export default function MoodBreakdownRow({ mood, count, pct, index }: Props) {
   }, []);
 
   useEffect(() => {
-    fadeAnim.setValue(0);
-    slideAnim.setValue(8);
     widthAnim.setValue(0);
     setDisplayPct(0);
-
-    const delay = index * 70;
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 280,
-        delay,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 280,
-        delay,
-        useNativeDriver: true,
-      }),
-      Animated.timing(widthAnim, {
-        toValue: pct,
-        duration: 550,
-        delay: delay + 120,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-    ]).start();
+    Animated.timing(widthAnim, {
+      toValue: pct,
+      duration: 600,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
   }, [pct]);
 
   const widthInterp = widthAnim.interpolate({
@@ -61,13 +39,7 @@ export default function MoodBreakdownRow({ mood, count, pct, index }: Props) {
   });
 
   return (
-    <Animated.View
-      style={{
-        opacity: fadeAnim,
-        transform: [{ translateY: slideAnim }],
-        marginBottom: 14,
-      }}
-    >
+    <View style={{ marginBottom: 14 }}>
       <View className="flex-row justify-between items-center mb-1.5">
         <View className="flex-row items-center gap-2">
           <Text style={{ fontSize: 14 }}>{MOOD_META[mood].emoji}</Text>
@@ -92,6 +64,6 @@ export default function MoodBreakdownRow({ mood, count, pct, index }: Props) {
           }}
         />
       </View>
-    </Animated.View>
+    </View>
   );
 }

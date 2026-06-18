@@ -30,7 +30,7 @@ export default function MoodBreakdown({ moodCounts }: Props) {
       <Text className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-4">
         Mood Breakdown
       </Text>
-      {sorted.map(([mood, count], index) => {
+      {sorted.map(([mood, count]) => {
         const pct = total > 0 ? (count / total) * 100 : 0;
         return (
           <MoodBreakdownRow
@@ -38,7 +38,6 @@ export default function MoodBreakdown({ moodCounts }: Props) {
             mood={mood}
             count={count}
             pct={pct}
-            index={index}
             isDark={isDark}
           />
         );
