@@ -1,18 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import type { Mood } from '../../../models/interfaces/users.model';
-import { MOOD_COLORS } from './InsightsGraph';
 
-export const MOOD_META: Record<Mood, { emoji: string; label: string }> = {
-  happy: { emoji: '😊', label: 'Happy' },
-  grateful: { emoji: '🙏', label: 'Grateful' },
-  excited: { emoji: '🎉', label: 'Excited' },
-  neutral: { emoji: '😐', label: 'Neutral' },
-  reflective: { emoji: '🤔', label: 'Reflective' },
-  anxious: { emoji: '😰', label: 'Anxious' },
-  sad: { emoji: '😢', label: 'Sad' },
-};
+import type { Mood } from '../../../models/interfaces/users.model';
+import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
 
 interface Props {
   moodCounts: Partial<Record<Mood, number>>;

@@ -6,9 +6,10 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import Header from '../commons/Header';
 import InsightsGraph from './components/InsightsGraph';
-import MoodBreakdown, { MOOD_META } from './components/MoodBreakdown';
+import MoodBreakdown from './components/MoodBreakdown';
 import { useInsightsGraph } from '../../hooks/useInsightsGraph';
 import { useAuthStore } from '../../store/authStore';
+import { MOOD_META } from '../../utils/mood';
 
 export default function MoodGraphScreen() {
   const { currentUser } = useAuthStore();
@@ -19,6 +20,7 @@ export default function MoodGraphScreen() {
 
   const {
     selectedYear,
+    selectedMonth,
     monthName,
     dayData,
     moodCounts,
@@ -88,7 +90,13 @@ export default function MoodGraphScreen() {
               <ActivityIndicator color={isDark ? '#475569' : '#cbd5e1'} />
             </View>
           ) : (
-            <InsightsGraph dayData={dayData} isDark={isDark} />
+            <InsightsGraph
+              dayData={dayData}
+              totalEntries={totalEntries}
+              monthName={monthName}
+              isDark={isDark}
+              resetKey={selectedYear * 100 + selectedMonth}
+            />
           )}
         </View>
 
