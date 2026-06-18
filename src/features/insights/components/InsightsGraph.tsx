@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useWindowDimensions, View, Text } from 'react-native';
+import { useWindowDimensions, View, Animated, Easing } from 'react-native';
 import Svg, { Rect, Line, Text as SvgText, G } from 'react-native-svg';
 
 import type { DayData } from '../../../hooks/useInsightsGraph';
-import { MOOD_COLORS, MOOD_META } from '../../../utils/mood';
+import { MOOD_COLORS } from '../../../utils/mood';
+import BarTooltip, { TOOLTIP_W, TOOLTIP_H } from './BarTooltip';
 
 const CHART_H = 180;
 const PAD = { top: 16, right: 8, bottom: 30, left: 26 };
 const BAR_GAP = 2;
 const BAR_RADIUS = 2;
-const TOOLTIP_W = 120;
-const TOOLTIP_H = 72;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const AnimatedRect = Animated.createAnimatedComponent(Rect) as React.ComponentType<any>;
 
 interface Props {
   dayData: DayData[];
@@ -42,9 +44,18 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
 
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const barProgress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     setTooltip(null);
+    barProgress.setValue(0);
+    Animated.timing(barProgress, {
+      toValue: 1,
+      duration: 650,
+      delay: 80,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
   }, [resetKey]);
 
   useEffect(() => {
@@ -69,11 +80,6 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
     const tooltipY = Math.max(2, barTopY - TOOLTIP_H - 6);
     setTooltip({ day, x: clampedX, y: tooltipY });
   };
-
-  const tooltipBg = isDark ? '#1e293b' : '#ffffff';
-  const tooltipBorder = isDark ? '#334155' : '#e2e8f0';
-  const tooltipPrimary = isDark ? '#f1f5f9' : '#0f172a';
-  const tooltipSecondary = isDark ? '#94a3b8' : '#64748b';
 
   return (
     <View style={{ position: 'relative' }}>
@@ -142,15 +148,21 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
             <G key={`day-${day.day}`} onPress={() => handleBarPress(day, i)}>
               {day.entryMoods.map((mood, mi) => {
                 const segH = yScale;
-                const segY = barBottom - (mi + 1) * segH;
+                const targetY = barBottom - (mi + 1) * segH + 1;
                 const isTop = mi === day.entryMoods.length - 1;
                 return (
-                  <Rect
+                  <AnimatedRect
                     key={`seg-${mi}`}
                     x={x}
-                    y={segY + 1}
+                    y={barProgress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [barBottom + 1, targetY],
+                    })}
                     width={barW}
-                    height={segH - 1}
+                    height={barProgress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, segH - 1],
+                    })}
                     fill={mood ? MOOD_COLORS[mood] : MOOD_COLORS.neutral}
                     rx={isTop ? BAR_RADIUS : 0}
                     ry={isTop ? BAR_RADIUS : 0}
@@ -158,7 +170,6 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
                   />
                 );
               })}
-              {/* Full-column transparent hit area for reliable touch */}
               <Rect x={x} y={PAD.top} width={barW} height={innerH} fill="transparent" />
               {showLabel && (
                 <SvgText
@@ -177,56 +188,14 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
       </Svg>
 
       {tooltip && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: tooltip.x,
-            top: tooltip.y,
-            width: TOOLTIP_W,
-            backgroundColor: tooltipBg,
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: tooltipBorder,
-            paddingHorizontal: 10,
-            paddingVertical: 8,
-            shadowColor: '#000',
-            shadowOpacity: isDark ? 0.35 : 0.1,
-            shadowRadius: 6,
-            shadowOffset: { width: 0, height: 2 },
-            elevation: 8,
-          }}
-        >
-          <Text
-            style={{ fontSize: 10, fontWeight: '700', color: tooltipPrimary, marginBottom: 2 }}
-          >
-            {monthName} {tooltip.day.day}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 5,
-            }}
-          >
-            <Text style={{ fontSize: 11, fontWeight: '600', color: tooltipPrimary }}>
-              {tooltip.day.count} {tooltip.day.count === 1 ? 'entry' : 'entries'}
-            </Text>
-            {totalEntries > 0 && (
-              <Text style={{ fontSize: 10, color: tooltipSecondary }}>
-                {Math.round((tooltip.day.count / totalEntries) * 100)}%
-              </Text>
-            )}
-          </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 2 }}>
-            {tooltip.day.entryMoods.map((mood, idx) => (
-              <Text key={idx} style={{ fontSize: 12 }}>
-                {MOOD_META[mood ?? 'neutral'].emoji}
-              </Text>
-            ))}
-          </View>
-        </View>
+        <BarTooltip
+          day={tooltip.day}
+          x={tooltip.x}
+          y={tooltip.y}
+          totalEntries={totalEntries}
+          monthName={monthName}
+          isDark={isDark}
+        />
       )}
     </View>
   );
