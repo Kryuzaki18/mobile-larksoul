@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -34,6 +34,7 @@ export default function JournalCard({
   const mountFade = useRef(new Animated.Value(0)).current;
   const mountSlide = useRef(new Animated.Value(16)).current;
   const isOpen = useRef(false);
+  const [elevated, setElevated] = useState(false);
 
   useEffect(() => {
     const delay = Math.min(index, 8) * 45;
@@ -52,7 +53,7 @@ export default function JournalCard({
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => setElevated(true));
   }, []);
   const timeLabel = formatEntryTime(entry.createdAt);
   const iconName = getEntryIcon(entry.createdAt);
@@ -148,9 +149,9 @@ export default function JournalCard({
         className="bg-white dark:bg-slate-900 rounded-2xl p-4"
         style={{
           transform: [{ translateX }],
-          elevation: 2,
+          elevation: elevated ? 2 : 0,
           shadowColor: '#000',
-          shadowOpacity: 0.07,
+          shadowOpacity: elevated ? 0.07 : 0,
           shadowRadius: 6,
           shadowOffset: { width: 0, height: 2 },
         }}

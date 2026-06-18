@@ -4,11 +4,14 @@ import { Clock, Calendar, Pencil, Trash2, MoreVertical } from 'lucide-react-nati
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import type { JournalEntry } from '../../../models/interfaces/users.model';
 import type { RootStackParamList } from '../../../models/types/navigation.type';
+
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
-import { deleteEntry } from '../../../database/functions/journal';
 import { MOOD_COLORS } from '../../../utils/mood';
+
+import { deleteEntry } from '../../../database/functions/journal';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -35,6 +38,7 @@ function GridCard({ entry, index, isMenuOpen, onToggleMenu, onEdit, onDelete, on
   const pressScale = useRef(new Animated.Value(1)).current;
   const menuFade = useRef(new Animated.Value(0)).current;
   const menuScale = useRef(new Animated.Value(0.88)).current;
+  const [elevated, setElevated] = useState(false);
 
   useEffect(() => {
     const delay = Math.min(index, 7) * 50;
@@ -53,7 +57,7 @@ function GridCard({ entry, index, isMenuOpen, onToggleMenu, onEdit, onDelete, on
         easing: Easing.out(Easing.back(1.4)),
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => setElevated(true));
   }, []);
 
   useLayoutEffect(() => {
@@ -113,11 +117,19 @@ function GridCard({ entry, index, isMenuOpen, onToggleMenu, onEdit, onDelete, on
         className="relative"
         style={{ opacity: mountFade, transform: [{ scale: mountScale }] }}
       >
-        <Animated.View style={{ transform: [{ scale: pressScale }] }}>
-          <View
-            className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden"
-            style={{ elevation: 2, shadowColor: '#000', shadowOpacity: 0.07, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } }}
-          >
+        <Animated.View
+          style={{
+            transform: [{ scale: pressScale }],
+            borderRadius: 16,
+            backgroundColor: isDark ? '#0f172a' : '#ffffff',
+            elevation: elevated ? 3 : 0,
+            shadowColor: '#000',
+            shadowOpacity: elevated ? 0.07 : 0,
+            shadowRadius: 6,
+            shadowOffset: { width: 0, height: 2 },
+          }}
+        >
+          <View style={{ borderRadius: 16, overflow: 'hidden' }}>
             <View style={{ height: 2, backgroundColor: accentColor }} />
 
             <View className="px-3 pb-3">
@@ -172,7 +184,7 @@ function GridCard({ entry, index, isMenuOpen, onToggleMenu, onEdit, onDelete, on
               right: 10,
               top: 25,
               minWidth: 80,
-              elevation: 4,
+              elevation: 5,
               shadowColor: '#000',
               shadowOpacity: 0.12,
               shadowRadius: 12,
