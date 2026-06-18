@@ -63,7 +63,12 @@ export default function RootStack() {
     const subscription = AppState.addEventListener('change', nextState => {
       const wasBackgrounded = appState.current.match(/inactive|background/);
       if (wasBackgrounded && nextState === 'active' && isPinEnabled && currentUser) {
-        lock();
+        const { suppressNextLock, clearSuppressLock } = useSecurityStore.getState();
+        if (suppressNextLock) {
+          clearSuppressLock();
+        } else {
+          lock();
+        }
       }
       appState.current = nextState;
     });

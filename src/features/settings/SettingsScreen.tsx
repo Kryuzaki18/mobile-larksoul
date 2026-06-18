@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,6 +23,7 @@ import AppleLightIcon from '../../assets/apple-white.svg';
 import AppleDarkIcon from '../../assets/apple-black.svg';
 
 import type { ViewMode, ThemePreference } from '../../models/types/ui.type';
+import type { JournalEntry } from '../../models/interfaces/users.model';
 import { RootStackParamList } from '../../models/types/navigation.type';
 
 import { useSettingsStore } from '../../store/settingsStore';
@@ -31,9 +32,11 @@ import { useThemeStore } from '../../store/themeStore';
 import { useAuthStore } from '../../store/authStore';
 
 import { clearSession } from '../../services/sessionService';
+import { getEntriesByUser } from '../../database/functions/journal';
 
 import SettingsSection from './components/SettingsSection';
 import SettingsItem from './components/SettingsItem';
+import ExportModal from './components/ExportModal';
 import NetworkStatusDot from '../commons/NetworkStatusDot';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -61,13 +64,29 @@ export default function SettingsScreen() {
   const chipInactiveBg = isDark ? '#1e293b' : '#f1f5f9';
   const chipInactiveColor = isDark ? '#94a3b8' : '#6b7280';
 
+  const [exportVisible, setExportVisible] = useState(false);
+  const [exportEntries, setExportEntries] = useState<JournalEntry[]>([]);
+
   async function handleSignOut() {
     await clearSession();
     clearUser();
     navigation.replace('Login');
   }
 
+  async function handleOpenExport() {
+    const userId = currentUser?.id;
+    if (!userId) return;
+    try {
+      const entries = await getEntriesByUser(userId);
+      setExportEntries(entries);
+      setExportVisible(true);
+    } catch {
+      Alert.alert('Error', 'Could not load journal entries. Please try again.');
+    }
+  }
+
   const initial = currentUser?.name?.[0]?.toUpperCase() ?? 'G';
+  const userName = currentUser?.name ?? 'User';
 
   const socialProviders = (currentUser?.social ?? []).map(s => s.split(':')[0]) as ('google' | 'apple')[];
   const hasGoogle = socialProviders.includes('google');
@@ -237,7 +256,7 @@ export default function SettingsScreen() {
           >
             Theme
           </SettingsItem>
-          
+
           <SettingsItem
             icon={<Lock size={17} color="#fff" />}
             iconBg="#10b981"
@@ -259,7 +278,7 @@ export default function SettingsScreen() {
             iconBg="#8b5cf6"
             extra={<Text className="text-xs font-medium text-gray-400">PDF, JSON</Text>}
             arrow
-            onPress={() => {}}
+            onPress={handleOpenExport}
           >
             Export Journal
           </SettingsItem>
@@ -288,6 +307,13 @@ export default function SettingsScreen() {
 
         <View className="h-10" />
       </ScrollView>
+
+      <ExportModal
+        visible={exportVisible}
+        entries={exportEntries}
+        userName={userName}
+        onClose={() => setExportVisible(false)}
+      />
     </View>
   );
 }
