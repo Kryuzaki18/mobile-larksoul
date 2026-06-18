@@ -5,7 +5,7 @@ const RNPrint = NativeModules.RNPrint as RNPrintModule | undefined;
 
 import type { JournalEntry } from '../models/interfaces/users.model';
 import { MOOD_META } from '../utils/mood';
-import { formatEntryDate } from '../utils/dateTime';
+import { formatEntryDate, formatDateShort } from '../utils/dateTime';
 
 export type ExportFormat = 'pdf' | 'json';
 
@@ -65,25 +65,45 @@ function buildHTML(entries: JournalEntry[], userName: string): string {
     day: 'numeric',
   });
 
-  const rows = entries
+  const sorted = [...entries].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+
+  const first = sorted[0]?.createdAt.slice(0, 10);
+  const last = sorted[sorted.length - 1]?.createdAt.slice(0, 10);
+  const dateRange =
+    first && last && first !== last
+      ? `${formatDateShort(first)} – ${formatDateShort(last)}`
+      : first
+        ? formatDateShort(first)
+        : '—';
+
+  const moodTally: Record<string, number> = {};
+  sorted.forEach(e => e.moods.forEach(m => { moodTally[m] = (moodTally[m] ?? 0) + 1; }));
+  const topMoodKey = Object.entries(moodTally).sort((a, b) => b[1] - a[1])[0]?.[0] as keyof typeof MOOD_META | undefined;
+  const topMoodStr = topMoodKey
+    ? `${MOOD_META[topMoodKey].emoji} ${MOOD_META[topMoodKey].label}`
+    : '—';
+
+  const rows = sorted
     .map(entry => {
-      const moods = entry.moods
-        .map(m => `${MOOD_META[m].emoji}&nbsp;${MOOD_META[m].label}`)
-        .join('&emsp;');
-      const tagChips = entry.tags
-        .map(t => `<span class="tag">${esc(t)}</span>`)
-        .join('');
+      const primaryMood = entry.moods[0] ?? null;
+      const accentColor = primaryMood ? MOOD_META[primaryMood].color : '#e2e8f0';
+      const moodEmojis = entry.moods.map(m => MOOD_META[m].emoji).join(' ');
+      const tagChips = entry.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('');
       const dateLabel = formatEntryDate(entry.createdAt.slice(0, 10));
       const body = esc(entry.content).replace(/\n/g, '<br/>');
+      const title = esc(entry.title);
 
       return `<div class="entry">
-  <div class="meta">
-    <span class="date">${esc(dateLabel)}</span>
-    ${moods ? `<span class="moods">${moods}</span>` : ''}
+  <div class="accent" style="background:${accentColor}"></div>
+  <div class="ec">
+    <div class="eh">
+      <span class="edate">${esc(dateLabel)}</span>
+      ${moodEmojis ? `<span class="emoods">${moodEmojis}</span>` : ''}
+    </div>
+    ${title ? `<div class="etitle">${title}</div>` : '<div class="etitle notitle">Untitled</div>'}
+    ${body ? `<div class="ebody">${body}</div>` : ''}
+    ${tagChips ? `<div class="etags">${tagChips}</div>` : ''}
   </div>
-  <h2>${esc(entry.title) || '<em>Untitled</em>'}</h2>
-  <p class="body">${body || '<span class="empty">No content</span>'}</p>
-  ${tagChips ? `<div class="tags">${tagChips}</div>` : ''}
 </div>`;
     })
     .join('\n');
@@ -95,28 +115,44 @@ function buildHTML(entries: JournalEntry[], userName: string): string {
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>${esc(userName)}'s Journal</title>
 <style>
+@page{margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,Helvetica,Arial,sans-serif;color:#1e293b;padding:40px 48px;font-size:14px;line-height:1.65}
-.cover{margin-bottom:36px;padding-bottom:20px;border-bottom:2px solid #e2e8f0}
-.cover h1{font-size:26px;font-weight:800;color:#0f172a;letter-spacing:-0.4px}
-.cover .sub{font-size:13px;color:#64748b;margin-top:6px}
-.entry{margin-bottom:24px;padding:20px 24px;border:1px solid #e2e8f0;border-radius:12px;page-break-inside:avoid}
-.meta{display:flex;align-items:center;gap:14px;margin-bottom:8px}
-.date{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.6px}
-.moods{font-size:13px;color:#475569}
-h2{font-size:16px;font-weight:700;color:#0f172a;margin-bottom:10px}
-.body{font-size:14px;color:#334155;line-height:1.75;white-space:pre-wrap}
-.empty{color:#94a3b8;font-style:italic}
-.tags{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
-.tag{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;font-size:11px;padding:2px 10px;border-radius:20px}
+body{font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;color:#1e293b;background:#fff;padding:36px 44px;font-size:13px;line-height:1.6}
+/* ── Cover ── */
+.cover{padding-bottom:22px;margin-bottom:22px;border-bottom:2px solid #f1f5f9}
+.brand{font-size:10px;font-weight:700;color:#a0aec0;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px}
+.cname{font-size:28px;font-weight:800;color:#0f172a;letter-spacing:-0.5px;line-height:1.1;margin-bottom:3px}
+.csub{font-size:12.5px;color:#64748b;margin-bottom:16px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.stat{border:1px solid #e8edf2;border-radius:8px;padding:8px 13px;background:#fafbfc;min-width:80px}
+.sv{font-size:15px;font-weight:700;color:#0f172a;line-height:1.25}
+.sl{font-size:9.5px;color:#94a3b8;font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:0.6px}
+.cexp{font-size:10.5px;color:#94a3b8}
+/* ── Entry ── */
+.entry{display:flex;margin-bottom:8px;border-radius:7px;overflow:hidden;border:1px solid #f0f4f8;page-break-inside:avoid;background:#fff}
+.accent{width:3px;flex-shrink:0}
+.ec{flex:1;padding:11px 13px}
+.eh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.edate{font-size:9.5px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.7px}
+.emoods{font-size:12px;line-height:1}
+.etitle{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.35}
+.notitle{color:#94a3b8;font-style:italic;font-weight:400}
+.ebody{font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap}
+.etags{margin-top:7px;display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:9.5px;color:#64748b;background:#f8fafc;border:1px solid #e8edf2;padding:1px 7px;border-radius:20px}
 </style>
 </head>
 <body>
 <div class="cover">
-  <h1>${esc(userName)}'s Journal</h1>
-  <p class="sub">Exported ${exportDate}&ensp;·&ensp;${entries.length} ${
-    entries.length === 1 ? 'entry' : 'entries'
-  }</p>
+  <div class="brand">LarkSoul</div>
+  <div class="cname">${esc(userName)}'s Journal</div>
+  <div class="csub">Personal diary export</div>
+  <div class="stats">
+    <div class="stat"><div class="sv">${sorted.length}</div><div class="sl">Entries</div></div>
+    <div class="stat"><div class="sv">${dateRange}</div><div class="sl">Period</div></div>
+    <div class="stat"><div class="sv">${topMoodStr}</div><div class="sl">Top mood</div></div>
+  </div>
+  <div class="cexp">Exported on ${exportDate}</div>
 </div>
 ${rows}
 </body>

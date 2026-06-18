@@ -47,3 +47,8 @@ export function formatEntryDate(dateStr: string): string {
   const d = new Date(year, month - 1, day);
   return `${DAY_NAMES[d.getDay()]}, ${MONTHS_ABBR[month - 1]} ${String(day).padStart(2, '0')} · ${year}`;
 }
+
+export function formatDateShort(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return `${MONTHS_ABBR[month - 1]} ${day}, ${year}`;
+}
