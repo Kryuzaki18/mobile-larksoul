@@ -8,18 +8,9 @@ import type { JournalEntry } from '../../../models/interfaces/users.model';
 import type { RootStackParamList } from '../../../models/types/navigation.type';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 import { deleteEntry } from '../../../database/functions/journal';
+import { MOOD_COLORS } from '../../../utils/mood';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-
-const MOOD_COLORS: Record<string, string> = {
-  happy: '#fef9c3',
-  grateful: '#dcfce7',
-  excited: '#fce7f3',
-  neutral: '#f1f5f9',
-  reflective: '#ede9fe',
-  anxious: '#fff7ed',
-  sad: '#e0f2fe',
-};
 
 interface GridCardProps {
   entry: JournalEntry;
@@ -27,9 +18,10 @@ interface GridCardProps {
   onToggleMenu: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onDismiss: () => void;
 }
 
-function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCardProps) {
+function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete, onDismiss }: GridCardProps) {
   const timeLabel = formatEntryTime(entry.createdAt);
   const iconName = getEntryIcon(entry.createdAt);
   const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
@@ -38,7 +30,11 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
   const isDark = colorScheme === 'dark';
 
   return (
-    <View style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}>
+    <Pressable
+      style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}
+      onPress={onDismiss}
+      android_ripple={null}
+    >
       <View className="relative">
         <View
           className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden"
@@ -121,7 +117,7 @@ function GridCard({ entry, isMenuOpen, onToggleMenu, onEdit, onDelete }: GridCar
           </View>
         )}
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -136,13 +132,6 @@ export default function GridView({ entries, refetch }: GridViewProps) {
 
   return (
     <View className="flex-row flex-wrap px-3 pt-3">
-      {activeMenuId !== null && (
-        <Pressable
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }}
-          onPress={() => setActiveMenuId(null)}
-        />
-      )}
-
       {entries.map(entry => (
         <GridCard
           key={entry.id}
@@ -151,6 +140,7 @@ export default function GridView({ entries, refetch }: GridViewProps) {
           onToggleMenu={() =>
             setActiveMenuId(current => (current === entry.id ? null : entry.id))
           }
+          onDismiss={() => setActiveMenuId(null)}
           onEdit={() => navigation.navigate('AddEntry', { entryId: entry.id })}
           onDelete={() =>
             Alert.alert(
