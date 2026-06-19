@@ -11,7 +11,7 @@ import { Clock, Calendar, Pencil, Trash2 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
 import type { JournalEntry } from '../../../models/interfaces/users.model';
-import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
+import { formatTimeOnly } from '../../../utils/dateTime';
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -37,9 +37,7 @@ export default function JournalCard({
   const { colorScheme } = useColorScheme();
 
   const isDark = colorScheme === 'dark';
-  const timeLabel = formatEntryTime(entry.createdAt);
-  const iconName = getEntryIcon(entry.createdAt);
-  const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
+  const timeLabel = formatTimeOnly(entry.createdAt);
 
   useEffect(() => {
     const delay = Math.min(index, 8) * 45;
@@ -163,7 +161,7 @@ export default function JournalCard({
           delayLongPress={1000}
         >
           <View className="flex-row items-center gap-1.5 mb-2">
-            <TimeIcon size={13} color="#9ca3af" />
+            <Clock size={13} color="#9ca3af" />
             <Text className="text-xs text-gray-400 font-medium tracking-wider">
               {timeLabel}
             </Text>

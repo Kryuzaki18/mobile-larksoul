@@ -9,6 +9,15 @@ export const WEEK_DAYS = DAY_NAMES.map(m => m.slice(0, 1)); // 'S', 'M', 'T', 'W
 const MONTHS_ABBR = MONTH_NAMES.map(m => m.slice(0, 3));          // 'Jan', 'Feb', ...
 const MONTHS_ABBR_UPPER = MONTHS_ABBR.map(m => m.toUpperCase());  // 'JAN', 'FEB', ...
 
+export function formatTimeOnly(createdAt: string): string {
+  const date = new Date(createdAt);
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const h = hours % 12 || 12;
+  return `${String(h).padStart(2, '0')}:${minutes} ${ampm}`;
+}
+
 export function formatEntryTime(createdAt: string): string {
   const date = new Date(createdAt);
   const now = new Date();
@@ -25,10 +34,6 @@ export function formatEntryTime(createdAt: string): string {
   const m = MONTHS_ABBR_UPPER[date.getMonth()];
   const d = String(date.getDate()).padStart(2, '0');
   return `${m} ${d}, ${timeStr}`;
-}
-
-export function getEntryIcon(createdAt: string): 'clock-circle' | 'calendar' {
-  return new Date(createdAt).getHours() < 17 ? 'clock-circle' : 'calendar';
 }
 
 export function toDateStr(date: Date): string {

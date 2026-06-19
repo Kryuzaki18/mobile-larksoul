@@ -22,7 +22,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { JournalEntry } from '../../../models/interfaces/users.model';
 import type { RootStackParamList } from '../../../models/types/navigation.type';
 
-import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
+import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_COLORS } from '../../../utils/mood';
 
 import { deleteEntry } from '../../../database/functions/journal';
@@ -48,9 +48,7 @@ function GridCard({
   onDelete,
   onDismiss,
 }: GridCardProps) {
-  const timeLabel = formatEntryTime(entry.createdAt);
-  const iconName = getEntryIcon(entry.createdAt);
-  const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
+  const timeLabel = formatTimeOnly(entry.createdAt);
   const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? '#f1f5f9';
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -152,7 +150,7 @@ function GridCard({
             <View className="px-3 pb-3 ">
               <View className="flex-row items-center gap-1 mb-2 pr-6">
                 <View className="flex-row items-center gap-1">
-                  <TimeIcon size={12} color="#9ca3af" />
+                  <Clock size={12} color="#9ca3af" />
                   <Text
                     className="text-xs text-gray-400 flex-1"
                     numberOfLines={1}
@@ -213,8 +211,8 @@ function GridCard({
             <Animated.View
               className="absolute bg-white dark:bg-slate-800 rounded-2xl overflow-hidden"
               style={{
-                right: 10,
-                top: 25,
+                right: 8,
+                top: 20,
                 minWidth: 80,
                 elevation: 3,
                 shadowColor: '#000',
