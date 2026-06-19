@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PanResponder, View, Text, TouchableOpacity } from 'react-native';
+import { Animated, Easing, PanResponder, View, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { MONTH_NAMES, WEEK_DAYS } from '../../../utils/dateTime';
 
 type DayCell = { day: number; type: 'prev' | 'current' | 'next' };
+
+const SLIDE = 300;
 
 function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
@@ -38,39 +40,107 @@ interface CalendarViewProps {
 
 export default function CalendarView({ selectedDate, entryDates = [], onDayPress, displayMonth }: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
-
-  useEffect(() => {
-    if (displayMonth) {
-      setCurrent(new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 1));
-    }
-  }, [displayMonth]);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const isCurrentMonth = current.getFullYear() === now.getFullYear() && current.getMonth() === now.getMonth();
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim  = useRef(new Animated.Value(1)).current;
 
-  const goToNextMonth = () => {
-    setCurrent(c => {
-      if (c.getFullYear() === now.getFullYear() && c.getMonth() === now.getMonth()) return c;
-      return new Date(c.getFullYear(), c.getMonth() + 1, 1);
+  // Keep refs fresh for use inside PanResponder (avoids stale closures)
+  const currentRef = useRef(current);
+  useEffect(() => { currentRef.current = current; }, [current]);
+
+  const now   = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const isCurrentMonth =
+    current.getFullYear() === now.getFullYear() && current.getMonth() === now.getMonth();
+
+  // dir: -1 = going left (prev month), 1 = going right (next month)
+  function navigate(dir: -1 | 1, next: Date) {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: dir * -SLIDE,
+        duration: 170,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 130,
+        easing: Easing.in(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setCurrent(next);
+      slideAnim.setValue(dir * SLIDE);
+      Animated.parallel([
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          damping: 22,
+          stiffness: 260,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]).start();
     });
-  };
+  }
+
+  const navigateRef = useRef(navigate);
+  useEffect(() => { navigateRef.current = navigate; });
+
+  function prevMonth() {
+    const c = currentRef.current;
+    navigate(-1, new Date(c.getFullYear(), c.getMonth() - 1, 1));
+  }
+
+  function nextMonth() {
+    const c = currentRef.current;
+    const candidate = new Date(c.getFullYear(), c.getMonth() + 1, 1);
+    const limit = new Date(now.getFullYear(), now.getMonth(), 1);
+    if (candidate > limit) return;
+    navigate(1, candidate);
+  }
+
+  // Sync when parent forces a month jump (e.g. "Today" button)
+  const prevDisplayMonth = useRef<Date | undefined>(undefined);
+  useEffect(() => {
+    if (!displayMonth) return;
+    if (
+      prevDisplayMonth.current?.getFullYear() === displayMonth.getFullYear() &&
+      prevDisplayMonth.current?.getMonth() === displayMonth.getMonth()
+    ) return;
+    prevDisplayMonth.current = displayMonth;
+    const next = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 1);
+    const c = currentRef.current;
+    const dir = next >= new Date(c.getFullYear(), c.getMonth(), 1) ? 1 : -1;
+    navigateRef.current(dir, next);
+  }, [displayMonth]);
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, { dx, dy }) =>
         Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10,
       onPanResponderRelease: (_, { dx }) => {
-        if (dx < -50) goToNextMonth();
-        else if (dx > 50) setCurrent(c => new Date(c.getFullYear(), c.getMonth() - 1, 1));
+        if (dx < -50) {
+          const c = currentRef.current;
+          const candidate = new Date(c.getFullYear(), c.getMonth() + 1, 1);
+          const limit = new Date(now.getFullYear(), now.getMonth(), 1);
+          if (candidate <= limit) navigateRef.current(1, candidate);
+        } else if (dx > 50) {
+          const c = currentRef.current;
+          navigateRef.current(-1, new Date(c.getFullYear(), c.getMonth() - 1, 1));
+        }
       },
     }),
   ).current;
 
-  const year = current.getFullYear();
-  const month = current.getMonth();
+  const year     = current.getFullYear();
+  const month    = current.getMonth();
   const todayDay = now.getDate();
   const entrySet = new Set(entryDates);
 
@@ -87,19 +157,22 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
       style={{ elevation: 1, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } }}
       {...panResponder.panHandlers}
     >
+      {/* ── Nav row (static — no animation) ── */}
       <View className="flex-row items-center justify-between px-4 pt-4 pb-3">
         <TouchableOpacity
           className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
-          onPress={() => setCurrent(new Date(year, month - 1, 1))}
+          onPress={prevMonth}
         >
           <ChevronLeft size={14} color={isDark ? '#cbd5e1' : '#475569'} />
         </TouchableOpacity>
+
         <Text className="text-sm font-bold text-slate-800 dark:text-slate-100">
           {MONTH_NAMES[month]} {year}
         </Text>
+
         <TouchableOpacity
           className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
-          onPress={goToNextMonth}
+          onPress={nextMonth}
           disabled={isCurrentMonth}
           activeOpacity={isCurrentMonth ? 1 : 0.65}
         >
@@ -107,71 +180,79 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
         </TouchableOpacity>
       </View>
 
-      <View className="flex-row px-2 mb-1">
-        {WEEK_DAYS.map((d, i) => (
-          <View key={i} className="flex-1 items-center py-1">
-            <Text className="text-xs font-semibold text-gray-400">{d}</Text>
-          </View>
-        ))}
-      </View>
-
-      {rows.map((row, rowIdx) => (
-        <View key={rowIdx} className="flex-row px-2">
-          {row.map((cell, colIdx) => {
-            const isToday = isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
-            const isSelected =
-              cell.type === 'current' &&
-              !!selectedDate &&
-              selectedDate.toDateString() === new Date(year, month, cell.day).toDateString();
-            const hasEntry = cell.type === 'current' && entrySet.has(getDateStr(cell.day));
-            const isFuture = cell.type === 'current' && new Date(year, month, cell.day) > today;
-            const isSelectable = cell.type === 'current' && !isFuture;
-
-            return (
-              <View key={colIdx} className="flex-1 items-center py-0.5">
-                <TouchableOpacity
-                  onPress={() => isSelectable && onDayPress?.(new Date(year, month, cell.day))}
-                  disabled={!isSelectable}
-                  activeOpacity={isSelectable ? 0.65 : 1}
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 16,
-                    overflow: 'hidden',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: isSelected ? '#1e40af' : isToday ? (isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff') : 'transparent',
-                  }}
-                >
-                  <Text
-                    className={`text-sm ${
-                      isSelected
-                        ? 'text-white font-bold'
-                        : isToday
-                        ? 'text-blue-700 dark:text-blue-400 font-bold'
-                        : isFuture
-                        ? 'text-gray-200 dark:text-slate-700'
-                        : cell.type === 'current'
-                        ? 'text-slate-700 dark:text-slate-200'
-                        : 'text-gray-300 dark:text-slate-700'
-                    }`}
-                  >
-                    {cell.day}
-                  </Text>
-                </TouchableOpacity>
-                <View className="h-1.5 items-center justify-center mt-0.5">
-                  {hasEntry && !isSelected && (
-                    <View
-                      className="w-1 h-1 rounded-full"
-                      style={{ backgroundColor: '#3b82f6' }}
-                    />
-                  )}
-                </View>
+      {/* ── Animated calendar body ── */}
+      <View style={{ overflow: 'hidden' }}>
+        <Animated.View style={{ transform: [{ translateX: slideAnim }], opacity: fadeAnim }}>
+          {/* Week day labels */}
+          <View className="flex-row px-2 mb-1">
+            {WEEK_DAYS.map((d, i) => (
+              <View key={i} className="flex-1 items-center py-1">
+                <Text className="text-xs font-semibold text-gray-400">{d}</Text>
               </View>
-            );
-          })}
-        </View>
-      ))}
+            ))}
+          </View>
+
+          {/* Day grid */}
+          {rows.map((row, rowIdx) => (
+            <View key={rowIdx} className="flex-row px-2">
+              {row.map((cell, colIdx) => {
+                const isToday     = isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
+                const isSelected  =
+                  cell.type === 'current' &&
+                  !!selectedDate &&
+                  selectedDate.toDateString() === new Date(year, month, cell.day).toDateString();
+                const hasEntry    = cell.type === 'current' && entrySet.has(getDateStr(cell.day));
+                const isFuture    = cell.type === 'current' && new Date(year, month, cell.day) > today;
+                const isSelectable = cell.type === 'current' && !isFuture;
+
+                return (
+                  <View key={colIdx} className="flex-1 items-center py-0.5">
+                    <TouchableOpacity
+                      onPress={() => isSelectable && onDayPress?.(new Date(year, month, cell.day))}
+                      disabled={!isSelectable}
+                      activeOpacity={isSelectable ? 0.65 : 1}
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 16,
+                        overflow: 'hidden',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isSelected
+                          ? '#1e40af'
+                          : isToday
+                          ? (isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff')
+                          : 'transparent',
+                      }}
+                    >
+                      <Text
+                        className={`text-sm ${
+                          isSelected
+                            ? 'text-white font-bold'
+                            : isToday
+                            ? 'text-blue-700 dark:text-blue-400 font-bold'
+                            : isFuture
+                            ? 'text-gray-200 dark:text-slate-700'
+                            : cell.type === 'current'
+                            ? 'text-slate-700 dark:text-slate-200'
+                            : 'text-gray-300 dark:text-slate-700'
+                        }`}
+                      >
+                        {cell.day}
+                      </Text>
+                    </TouchableOpacity>
+                    <View className="h-1.5 items-center justify-center mt-0.5">
+                      {hasEntry && !isSelected && (
+                        <View className="w-1 h-1 rounded-full" style={{ backgroundColor: '#3b82f6' }} />
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          ))}
+        </Animated.View>
+      </View>
     </View>
   );
 }
