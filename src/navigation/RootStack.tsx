@@ -79,7 +79,7 @@ export default function RootStack() {
 
   if (currentUser && isPinEnabled && isLocked) {
     return (
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1 bg-slate-100 dark:bg-[#020617]">
         <PinLockScreen
           title="Welcome back!"
           subtitle="Enter your PIN to continue"
@@ -90,10 +90,14 @@ export default function RootStack() {
   }
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg-slate-100 dark:bg-[#020617]">
       <Stack.Navigator
         initialRouteName={currentUser ? 'Home' : 'Login'}
-        screenOptions={{ headerShown: false }}
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right',
+          contentStyle: { backgroundColor: 'transparent' },
+        }}
       >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
