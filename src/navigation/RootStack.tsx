@@ -103,7 +103,7 @@ export default function RootStack() {
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="MoodGraph" component={MoodGraphScreen} />
-        <Stack.Screen name="AddEntry" component={AddEntryScreen} />
+        <Stack.Screen name="AddEntry" component={AddEntryScreen} options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Security" component={SecurityScreen} />
       </Stack.Navigator>
