@@ -1,97 +1,134 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Larksoul
 
-# Getting Started
+A personal journal app built with React Native. Write daily entries, track your mood, and reflect on your thoughts — all stored locally on your device.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- **Journal entries** — Title, free-form thoughts, up to 3 moods, and up to 3 hashtag tags per entry
+- **Calendar view** — Browse entries by date with an animated month calendar; swipe or tap arrows to navigate months
+- **List / Grid layout toggle** — Switch between a card list and a compact grid on the home screen
+- **Mood insights** — Bar chart breakdown of mood frequency over time
+- **Authentication** — Email/password, Google Sign-In, Apple Sign-In, and guest mode
+- **PIN lock** — Optional PIN to protect the app on resume
+- **Theme** — Light, Dark, and system-auto modes
+- **Export** — Print or export journal entries
+- **Offline-first** — All data stored locally via SQLite; no internet required to read or write
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
 
-```sh
-# Using npm
-npm start
+## Tech Stack
 
-# OR using Yarn
-yarn start
+| Layer | Library |
+|---|---|
+| Framework | React Native 0.85 (CLI) |
+| Language | TypeScript 5 |
+| Styling | NativeWind 4 (Tailwind CSS) |
+| Navigation | React Navigation 7 (Native Stack) |
+| State | Zustand 5 |
+| Database | op-sqlite 16 |
+| Animations | React Native Animated API + React Native Reanimated 4 |
+| Icons | lucide-react-native |
+| Auth | Google Sign-In, Apple Authentication, react-native-keychain |
+| Networking | @react-native-community/netinfo |
+| Splash screen | react-native-bootsplash |
+
+---
+
+## Project Structure
+
+```
+src/
+├── database/
+│   ├── functions/       # journal, users — CRUD helpers
+│   ├── migrations/      # versioned schema migrations
+│   └── schemas/         # table definitions with CHECK constraints
+├── features/
+│   ├── auth/            # Login, Sign Up, PIN lock screens
+│   ├── commons/         # Shared Header, NetworkStatusDot
+│   ├── home/            # HomeScreen, CalendarView, ListView, GridView, JournalCard
+│   ├── insights/        # MoodGraph screen and components
+│   ├── journal/         # AddEntryScreen, MoodSelector, TagInput, DatePickerModal
+│   └── settings/        # SettingsScreen, SecurityScreen
+├── hooks/               # useHomeState, useInsightsGraph
+├── models/              # TypeScript interfaces and navigation types
+├── navigation/          # RootStack (screen registration + transitions)
+├── services/            # auth, session, security services
+├── store/               # Zustand stores (auth, theme, security, settings)
+└── utils/               # dateTime, mood metadata
 ```
 
-## Step 2: Build and run your app
+---
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Getting Started
 
-### Android
+### Prerequisites
+
+- Node >= 22
+- React Native environment set up — follow the [official guide](https://reactnative.dev/docs/set-up-your-environment)
+- For iOS: Ruby + CocoaPods
+
+### Install dependencies
 
 ```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+npm install
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### iOS — install pods
 
 ```sh
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
 bundle exec pod install
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### Run
 
 ```sh
-# Using npm
-npm run ios
+# Start Metro
+npm start
 
-# OR using Yarn
-yarn ios
+# Android (new terminal)
+npm run android
+
+# iOS (new terminal)
+npm run ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Database
 
-## Step 3: Modify your app
+The app uses op-sqlite with a versioned migration system (`src/database/migrations/index.ts`). The current schema version is tracked in `DB_VERSION`. Migrations run automatically on app start.
 
-Now that you have successfully run the app, let's make changes!
+Validation is enforced at the app layer (`validateEntryFields` in `src/database/functions/journal.ts`) before any write reaches SQLite:
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- Title: 2–30 characters
+- Content: 7–300 characters
+- Moods: max 3
+- Tags: max 3, each 2–15 characters
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+---
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+## Navigation Transitions
 
-## Congratulations! :tada:
+| Route | Animation |
+|---|---|
+| Any screen push | Slide from right |
+| Insights → Home | Slide from left (pop) |
+| Settings → back | Slide to right (pop) |
+| Home → Add Entry | Slide from bottom |
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
+## Building for Release
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+```sh
+# Android APK
+npm run build:android
 
-# Troubleshooting
+# Android debug APK
+npm run build:android:debug
+```
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+For iOS release builds, archive from Xcode.
