@@ -48,11 +48,13 @@ export function runMigrations(db: DB): void {
     setVersion(db, 1);
   }
 
-  // if (current < 2) {
-  //   tryExec(db, 'ALTER TABLE users ADD COLUMN deleted_at TEXT');
-  //   tryExec(db, 'ALTER TABLE journal_entries ADD COLUMN deleted_at TEXT');
-  //   setVersion(db, 2);
-  // }
+  if (current < 2) {
+    // Length constraints are enforced at the app layer (journal.ts validateEntryFields).
+    // New installs get them as SQLite CHECK via SQL_CREATE_JOURNAL_ENTRIES.
+    // Existing installs keep the old schema to avoid retroactive CHECK failures
+    // on previously saved entries that pre-date these limits.
+    setVersion(db, 2);
+  }
 
   if (current < DB_VERSION) {
     setVersion(db, DB_VERSION);

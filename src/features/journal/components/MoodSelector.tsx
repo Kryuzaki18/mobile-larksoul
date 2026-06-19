@@ -3,6 +3,8 @@ import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import type { Mood } from '../../../models/interfaces/users.model';
 
+const MAX_MOODS = 3;
+
 const MOODS: { value: Mood; emoji: string; label: string }[] = [
   { value: 'happy', emoji: '😊', label: 'Happy' },
   { value: 'grateful', emoji: '🙏', label: 'Grateful' },
@@ -21,13 +23,14 @@ interface MoodSelectorProps {
 export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const isMaxed = selected.length >= MAX_MOODS;
 
   function toggle(value: Mood) {
-    onSelect(
-      selected.includes(value)
-        ? selected.filter(m => m !== value)
-        : [...selected, value],
-    );
+    if (selected.includes(value)) {
+      onSelect(selected.filter(m => m !== value));
+    } else if (!isMaxed) {
+      onSelect([...selected, value]);
+    }
   }
 
   return (
@@ -38,11 +41,13 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
     >
       {MOODS.map(({ value, emoji, label }) => {
         const isActive = selected.includes(value);
+        const isDisabled = isMaxed && !isActive;
         return (
           <TouchableOpacity
             key={value}
             onPress={() => toggle(value)}
-            activeOpacity={0.75}
+            activeOpacity={isDisabled ? 1 : 0.75}
+            disabled={isDisabled}
             style={{
               alignItems: 'center',
               paddingHorizontal: 12,
@@ -52,6 +57,7 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
               borderWidth: 1.5,
               borderColor: isActive ? '#1e40af' : isDark ? '#334155' : '#f1f5f9',
               minWidth: 66,
+              opacity: isDisabled ? 0.35 : 1,
             }}
           >
             <Text style={{ fontSize: 24, marginBottom: 4 }}>{emoji}</Text>

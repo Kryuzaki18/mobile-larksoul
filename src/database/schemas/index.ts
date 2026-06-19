@@ -2,7 +2,7 @@ export * from './users.schema';
 export * from './journalEntries.schema';
 
 export const DB_NAME = 'larksoul.db';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 export const SQL_CREATE_DB_LARKSOUL = `
   CREATE TABLE IF NOT EXISTS db_larksoul (

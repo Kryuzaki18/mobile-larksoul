@@ -38,6 +38,33 @@ function generateEntryId(): string {
   return `e-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+function validateEntryFields(
+  title?: string,
+  content?: string,
+  moods?: Mood[],
+  tags?: string[],
+): void {
+  if (title !== undefined) {
+    if (title.length < 2 || title.length > 30)
+      throw new Error('Title must be 2–30 characters');
+  }
+  if (content !== undefined) {
+    if (content.length < 7 || content.length > 300)
+      throw new Error('Content must be 7–300 characters');
+  }
+  if (moods !== undefined && moods.length > 3) {
+    throw new Error('Select up to 3 moods');
+  }
+  if (tags !== undefined) {
+    if (tags.length > 3) throw new Error('Add up to 3 tags');
+    for (const tag of tags) {
+      const bare = tag.replace(/^#/, '');
+      if (bare.length < 2 || bare.length > 15)
+        throw new Error(`Tag "${tag}" must be 2–15 characters`);
+    }
+  }
+}
+
 export async function getEntriesByUser(userId: string): Promise<JournalEntry[]> {
   const { rows } = await getDatabase().execute(
     'SELECT * FROM journal_entries WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at DESC',
@@ -70,6 +97,7 @@ export async function getEntryById(id: string): Promise<JournalEntry | null> {
 export async function createEntry(
   entry: Omit<JournalEntry, 'id' | 'updatedAt'>,
 ): Promise<JournalEntry> {
+  validateEntryFields(entry.title, entry.content, entry.moods, entry.tags);
   const id = generateEntryId();
   const now = new Date().toISOString();
 
@@ -96,6 +124,7 @@ export async function updateEntry(
   id: string,
   patch: Partial<Pick<JournalEntry, 'title' | 'content' | 'moods' | 'tags'>>,
 ): Promise<void> {
+  validateEntryFields(patch.title, patch.content, patch.moods, patch.tags);
   const fields: string[] = [];
   const values: string[] = [];
 

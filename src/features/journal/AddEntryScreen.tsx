@@ -51,7 +51,7 @@ export default function AddEntryScreen() {
   const isDark = colorScheme === 'dark';
 
   const contentRef = useRef<TextInput>(null);
-  const canSave = title.trim().length > 0 && content.trim().length > 0;
+  const canSave = title.trim().length >= 2 && content.trim().length >= 7;
 
   useEffect(() => {
     if (!entryId) return;
@@ -148,44 +148,104 @@ export default function AddEntryScreen() {
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 40 }}
       >
         <View className="bg-white dark:bg-slate-900 rounded-2xl px-4 pt-4 pb-3 mb-3">
-          <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">
-            HOW ARE YOU FEELING?
-          </Text>
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-xs font-semibold text-gray-400 tracking-widest">
+              HOW ARE YOU FEELING?
+            </Text>
+            <Text style={{ fontSize: 11, fontWeight: '600', color: moods.length >= 3 ? '#f59e0b' : '#94a3b8' }}>
+              {moods.length}/3
+            </Text>
+          </View>
           <MoodSelector selected={moods} onSelect={setMoods} />
         </View>
 
-        <View className="bg-white dark:bg-slate-900 rounded-2xl px-4 py-4 mb-3">
-          <TextInput
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Title"
-            placeholderTextColor={isDark ? '#475569' : '#cbd5e1'}
-            className="text-xl font-bold text-slate-800 dark:text-slate-100"
-            maxLength={120}
-            returnKeyType="next"
-            onSubmitEditing={() => contentRef.current?.focus()}
-            blurOnSubmit={false}
-          />
+        <View className="bg-white dark:bg-slate-900 rounded-2xl px-4 pt-4 pb-4 mb-3">
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-xs font-semibold text-gray-400 tracking-widest">
+              <Text style={{ color: '#ef4444' }}>* </Text>TITLE
+            </Text>
+            <Text style={{
+              fontSize: 11,
+              fontWeight: '600',
+              color: title.trim().length < 2
+                ? '#ef4444'
+                : title.length >= 27
+                ? '#f59e0b'
+                : '#94a3b8',
+            }}>
+              {title.length}/30
+            </Text>
+          </View>
+          <View style={{
+            borderWidth: 1,
+            borderColor: isDark ? '#334155' : '#e2e8f0',
+            borderRadius: 12,
+            backgroundColor: isDark ? '#1e293b' : '#f8fafc',
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+          }}>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Name this chapter of your day…"
+              placeholderTextColor={isDark ? '#475569' : '#cbd5e1'}
+              className="text-xl font-bold text-slate-800 dark:text-slate-100"
+              maxLength={30}
+              returnKeyType="next"
+              onSubmitEditing={() => contentRef.current?.focus()}
+              submitBehavior="submit"
+            />
+          </View>
         </View>
 
-        <View className="bg-white dark:bg-slate-900 rounded-2xl px-4 pt-4 pb-5 mb-3">
-          <TextInput
-            ref={contentRef}
-            value={content}
-            onChangeText={setContent}
-            placeholder="Write your thoughts…"
-            placeholderTextColor={isDark ? '#475569' : '#cbd5e1'}
-            multiline
-            textAlignVertical="top"
-            className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed"
-            style={{ minHeight: 140 }}
-            scrollEnabled={false}
-            maxLength={1000}
-          />
+        <View className="bg-white dark:bg-slate-900 rounded-2xl px-4 pt-4 pb-4 mb-3">
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-xs font-semibold text-gray-400 tracking-widest">
+              <Text style={{ color: '#ef4444' }}>* </Text>THOUGHTS
+            </Text>
+            <Text style={{
+              fontSize: 11,
+              fontWeight: '600',
+              color: content.trim().length < 7
+                ? '#ef4444'
+                : content.length >= 255
+                ? '#f59e0b'
+                : '#94a3b8',
+            }}>
+              {content.length}/300
+            </Text>
+          </View>
+          <View style={{
+            borderWidth: 1,
+            borderColor: isDark ? '#334155' : '#e2e8f0',
+            borderRadius: 12,
+            backgroundColor: isDark ? '#1e293b' : '#f8fafc',
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+          }}>
+            <TextInput
+              ref={contentRef}
+              value={content}
+              onChangeText={setContent}
+              placeholder="What's on your mind? This space is yours…"
+              placeholderTextColor={isDark ? '#475569' : '#cbd5e1'}
+              multiline
+              textAlignVertical="top"
+              className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed"
+              style={{ minHeight: 140 }}
+              scrollEnabled={false}
+              maxLength={300}
+            />
+          </View>
         </View>
 
         <View className="bg-white dark:bg-slate-900 rounded-2xl px-4 py-4 mb-3">
-          <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">TAGS</Text>
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-xs font-semibold text-gray-400 tracking-widest">TAGS</Text>
+            <Text style={{ fontSize: 11, fontWeight: '600', color: tags.length >= 3 ? '#f59e0b' : '#94a3b8' }}>
+              {tags.length}/3
+            </Text>
+          </View>
           <TagInput tags={tags} onChange={setTags} />
         </View>
 

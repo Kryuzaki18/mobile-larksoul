@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { X, Hash } from 'lucide-react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { useColorScheme } from 'nativewind';
+import { X } from 'lucide-react-native';
+
+const MAX_TAGS = 3;
+const MIN_CHARS = 2;
+const MAX_CHARS = 15;
 
 interface TagInputProps {
   tags: string[];
@@ -9,58 +14,103 @@ interface TagInputProps {
 
 export default function TagInput({ tags, onChange }: TagInputProps) {
   const [value, setValue] = useState('');
+  const scrollRef = useRef<ScrollView>(null);
+  const inputRef = useRef<TextInput>(null);
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const isAtMax = tags.length >= MAX_TAGS;
 
-  function commit() {
-    const tag = value.trim().toLowerCase().replace(/^#+/, '');
-    if (!tag || tags.includes(`#${tag}`)) {
+  function commit(raw: string) {
+    const tag = raw.trim().toLowerCase();
+    if (tag.length < MIN_CHARS || isAtMax || tags.includes(`#${tag}`)) {
       setValue('');
       return;
     }
     onChange([...tags, `#${tag}`]);
     setValue('');
+    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50);
+  }
+
+  function handleChangeText(text: string) {
+    const cleaned = text.replace(/,/g, '');
+    if (cleaned.length >= MAX_CHARS) {
+      commit(cleaned.slice(0, MAX_CHARS));
+    } else {
+      setValue(cleaned);
+    }
   }
 
   function remove(tag: string) {
     onChange(tags.filter(t => t !== tag));
+    inputRef.current?.focus();
   }
 
   return (
-    <View>
-      {tags.length > 0 && (
-        <View className="flex-row flex-wrap gap-2 mb-3">
-          {tags.map(tag => (
-            <View key={tag} className="flex-row items-center gap-1 bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1.5">
-              <Text className="text-xs font-semibold text-blue-700 dark:text-blue-400">{tag}</Text>
-              <TouchableOpacity onPress={() => remove(tag)} hitSlop={8}>
-                <X size={10} color="#3b82f6" />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      )}
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => inputRef.current?.focus()}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: isDark ? '#334155' : '#e2e8f0',
+        borderRadius: 12,
+        backgroundColor: isDark ? '#1e293b' : '#f8fafc',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        minHeight: 44,
+      }}
+    >
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="always"
+        contentContainerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+      >
+        {tags.map(tag => (
+          <View
+            key={tag}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+              backgroundColor: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff',
+              borderRadius: 20,
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+            }}
+          >
+            <Text style={{ fontSize: 12, fontWeight: '600', color: isDark ? '#60a5fa' : '#1d4ed8' }}>
+              {tag}
+            </Text>
+            <TouchableOpacity onPress={() => remove(tag)} hitSlop={8}>
+              <X size={10} color={isDark ? '#60a5fa' : '#3b82f6'} />
+            </TouchableOpacity>
+          </View>
+        ))}
 
-      <View className="flex-row items-center rounded-xl border border-gray-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 overflow-hidden">
-        <View className="pl-3">
-          <Hash size={14} color="#94a3b8" />
-        </View>
-        <TextInput
-          value={value}
-          onChangeText={setValue}
-          onSubmitEditing={commit}
-          placeholder="Add a tag…"
-          placeholderTextColor="#94a3b8"
-          className="flex-1 px-2 py-3 text-sm text-slate-800 dark:text-slate-100"
-          autoCapitalize="none"
-          returnKeyType="done"
-          maxLength={30}
-          blurOnSubmit={false}
-        />
-        {value.trim().length > 0 && (
-          <TouchableOpacity className="px-3 py-3" onPress={commit}>
-            <Text className="text-xs font-bold text-blue-700 dark:text-blue-400">Add</Text>
-          </TouchableOpacity>
+        {!isAtMax && (
+          <TextInput
+            ref={inputRef}
+            value={value}
+            onChangeText={handleChangeText}
+            onSubmitEditing={() => commit(value)}
+            placeholder={tags.length === 0 ? 'mood, travel, idea…' : ''}
+            placeholderTextColor="#94a3b8"
+            style={{
+              fontSize: 14,
+              color: isDark ? '#e2e8f0' : '#1e293b',
+              minWidth: 120,
+              paddingVertical: 2,
+            }}
+            autoCapitalize="none"
+            returnKeyType="done"
+            maxLength={MAX_CHARS}
+            submitBehavior="submit"
+          />
         )}
-      </View>
-    </View>
+      </ScrollView>
+    </TouchableOpacity>
   );
 }

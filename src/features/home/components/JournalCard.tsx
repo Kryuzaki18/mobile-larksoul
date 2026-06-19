@@ -184,17 +184,25 @@ export default function JournalCard({
 
           <View className="flex-row items-center">
             <View className="flex-1 flex-row flex-wrap gap-2">
-              {entry.tags.map(tag => (
+              {entry.tags.slice(0, 3).map(tag => (
                 <View key={tag} className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1">
                   <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">{tag}</Text>
                 </View>
               ))}
+              {entry.tags.length > 3 && (
+                <View className="bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-1">
+                  <Text className="text-xs text-gray-400 font-medium">+{entry.tags.length - 3}</Text>
+                </View>
+              )}
             </View>
             {entry.moods.length > 0 && (
-              <View style={{ flexDirection: 'row', gap: 2, marginLeft: 8 }}>
-                {entry.moods.map(mood => (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 8 }}>
+                {entry.moods.slice(0, 3).map(mood => (
                   <Text key={mood} style={{ fontSize: 16 }}>{MOOD_META[mood]?.emoji}</Text>
                 ))}
+                {entry.moods.length > 3 && (
+                  <Text style={{ fontSize: 11, color: '#94a3b8', fontWeight: '600' }}>+{entry.moods.length - 3}</Text>
+                )}
               </View>
             )}
           </View>

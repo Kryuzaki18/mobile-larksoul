@@ -195,12 +195,20 @@ function GridCard({
                       </Text>
                     </View>
                   ))}
+                  {entry.tags.length > 2 && (
+                    <View className="bg-slate-100 dark:bg-slate-800 rounded-full px-2 py-0.5">
+                      <Text style={{ fontSize: 10, color: '#94a3b8', fontWeight: '600' }}>+{entry.tags.length - 2}</Text>
+                    </View>
+                  )}
                 </View>
                 {entry.moods.length > 0 && (
-                  <View style={{ flexDirection: 'row', gap: 2, marginLeft: 4 }}>
-                    {entry.moods.map(mood => (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 4 }}>
+                    {entry.moods.slice(0, 2).map(mood => (
                       <Text key={mood} style={{ fontSize: 13 }}>{MOOD_META[mood]?.emoji}</Text>
                     ))}
+                    {entry.moods.length > 2 && (
+                      <Text style={{ fontSize: 10, color: '#94a3b8', fontWeight: '600' }}>+{entry.moods.length - 2}</Text>
+                    )}
                   </View>
                 )}
               </View>
