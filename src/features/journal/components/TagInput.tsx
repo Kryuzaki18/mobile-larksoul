@@ -81,7 +81,7 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
               paddingVertical: 5,
             }}
           >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: isDark ? '#60a5fa' : '#1d4ed8' }}>
+            <Text style={{ fontSize: 13, fontWeight: '600', letterSpacing: 0.1, color: isDark ? '#60a5fa' : '#1d4ed8' }}>
               {tag}
             </Text>
             <TouchableOpacity onPress={() => remove(tag)} hitSlop={8}>
@@ -100,6 +100,8 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
             placeholderTextColor="#94a3b8"
             style={{
               fontSize: 14,
+              fontWeight: '400',
+              letterSpacing: 0.1,
               color: isDark ? '#e2e8f0' : '#1e293b',
               minWidth: 120,
               paddingVertical: 2,

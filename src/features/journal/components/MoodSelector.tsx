@@ -59,9 +59,9 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
             <Text style={{ fontSize: 24, marginBottom: 4 }}>{emoji}</Text>
             <Text style={{
               fontSize: 10,
-              fontWeight: '600',
+              fontWeight: '700',
               color: isActive ? '#ffffff' : isDark ? '#64748b' : '#94a3b8',
-              letterSpacing: 0.3,
+              letterSpacing: 1,
             }}>
               {label}
             </Text>

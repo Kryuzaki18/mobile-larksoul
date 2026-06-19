@@ -188,10 +188,10 @@ export default function DatePickerModal({
               <CalendarDays size={15} color="#3b82f6" />
             </View>
             <View>
-              <Text style={{ fontSize: 16, fontWeight: '700', color: isDark ? '#f1f5f9' : '#0f172a', letterSpacing: 0.2 }}>
+              <Text style={{ fontSize: 16, fontWeight: '700', color: isDark ? '#f1f5f9' : '#0f172a', letterSpacing: -0.3 }}>
                 Select Date
               </Text>
-              <Text style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>
+              <Text style={{ fontSize: 12, fontWeight: '500', color: '#64748b', marginTop: 2, letterSpacing: 0.1 }}>
                 {formatSelected(localSelected)}
               </Text>
             </View>
@@ -249,8 +249,9 @@ export default function DatePickerModal({
             }}
           >
             <Text style={{
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: '600',
+              letterSpacing: 0.1,
               color: isToday ? (isDark ? '#475569' : '#94a3b8') : '#3b82f6',
             }}>
               Today
@@ -272,7 +273,7 @@ export default function DatePickerModal({
             }}
           >
             <Check size={14} color="#ffffff" strokeWidth={2.5} />
-            <Text style={{ fontSize: 13, fontWeight: '700', color: '#ffffff' }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', letterSpacing: 0.1, color: '#ffffff' }}>
               Confirm
             </Text>
           </TouchableOpacity>
