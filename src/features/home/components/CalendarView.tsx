@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PanResponder, View, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
@@ -33,10 +33,17 @@ interface CalendarViewProps {
   selectedDate?: Date;
   entryDates?: string[];
   onDayPress?: (date: Date) => void;
+  displayMonth?: Date;
 }
 
-export default function CalendarView({ selectedDate, entryDates = [], onDayPress }: CalendarViewProps) {
+export default function CalendarView({ selectedDate, entryDates = [], onDayPress, displayMonth }: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
+
+  useEffect(() => {
+    if (displayMonth) {
+      setCurrent(new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 1));
+    }
+  }, [displayMonth]);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 

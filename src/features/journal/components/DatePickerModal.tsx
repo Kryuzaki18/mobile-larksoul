@@ -40,6 +40,7 @@ export default function DatePickerModal({
 
   const [internalVisible, setInternalVisible] = useState(false);
   const [localSelected, setLocalSelected] = useState(selectedDate);
+  const [jumpMonth, setJumpMonth] = useState<Date | undefined>();
 
   const backdropAnim = useRef(new Animated.Value(0)).current;
   const sheetAnim = useRef(new Animated.Value(SHEET_SLIDE)).current;
@@ -47,6 +48,7 @@ export default function DatePickerModal({
   useEffect(() => {
     if (visible) {
       setLocalSelected(selectedDate);
+      setJumpMonth(undefined);
       setInternalVisible(true);
       requestAnimationFrame(() => {
         Animated.parallel([
@@ -102,6 +104,7 @@ export default function DatePickerModal({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     setLocalSelected(today);
+    setJumpMonth(today);
   }
 
   const isToday = (() => {
@@ -220,6 +223,7 @@ export default function DatePickerModal({
         <CalendarView
           selectedDate={localSelected}
           onDayPress={date => setLocalSelected(date)}
+          displayMonth={jumpMonth}
         />
 
         <View style={{
