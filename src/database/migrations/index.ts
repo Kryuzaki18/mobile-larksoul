@@ -40,20 +40,13 @@ export function runMigrations(db: DB): void {
   db.executeSync(SQL_CREATE_DB_LARKSOUL);
 
   const current = getVersion(db);
+  setVersion(db, 1);
 
   if (current < 1) {
     db.executeSync(SQL_CREATE_USERS);
     db.executeSync(SQL_CREATE_JOURNAL_ENTRIES);
     db.executeSync(SQL_CREATE_INDEX_ENTRIES_USER);
     setVersion(db, 1);
-  }
-
-  if (current < 2) {
-    // Length constraints are enforced at the app layer (journal.ts validateEntryFields).
-    // New installs get them as SQLite CHECK via SQL_CREATE_JOURNAL_ENTRIES.
-    // Existing installs keep the old schema to avoid retroactive CHECK failures
-    // on previously saved entries that pre-date these limits.
-    setVersion(db, 2);
   }
 
   if (current < DB_VERSION) {
