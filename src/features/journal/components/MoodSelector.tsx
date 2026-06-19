@@ -2,18 +2,14 @@ import React from 'react';
 import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import type { Mood } from '../../../models/interfaces/users.model';
+import { MOOD_META } from '../../../utils/mood';
 
 const MAX_MOODS = 3;
 
-const MOODS: { value: Mood; emoji: string; label: string }[] = [
-  { value: 'happy', emoji: '😊', label: 'Happy' },
-  { value: 'grateful', emoji: '🙏', label: 'Grateful' },
-  { value: 'excited', emoji: '🎉', label: 'Excited' },
-  { value: 'neutral', emoji: '😐', label: 'Neutral' },
-  { value: 'reflective', emoji: '🤔', label: 'Reflective' },
-  { value: 'anxious', emoji: '😰', label: 'Anxious' },
-  { value: 'sad', emoji: '😢', label: 'Sad' },
-];
+const MOODS = (Object.keys(MOOD_META) as Mood[]).map(value => ({
+  value,
+  ...MOOD_META[value],
+}));
 
 interface MoodSelectorProps {
   selected: Mood[];
