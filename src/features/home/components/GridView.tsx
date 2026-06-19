@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {
   Clock,
-  Calendar,
   Pencil,
   Trash2,
   MoreVertical,
@@ -23,7 +22,7 @@ import type { JournalEntry } from '../../../models/interfaces/users.model';
 import type { RootStackParamList } from '../../../models/types/navigation.type';
 
 import { formatTimeOnly } from '../../../utils/dateTime';
-import { MOOD_COLORS } from '../../../utils/mood';
+import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
 
 import { deleteEntry } from '../../../database/functions/journal';
 
@@ -184,8 +183,8 @@ function GridCard({
                 {entry.content}
               </Text>
 
-              {entry.tags.length > 0 && (
-                <View className="flex-row flex-wrap gap-1">
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
                   {entry.tags.slice(0, 2).map(tag => (
                     <View
                       key={tag}
@@ -197,7 +196,14 @@ function GridCard({
                     </View>
                   ))}
                 </View>
-              )}
+                {entry.moods.length > 0 && (
+                  <View style={{ flexDirection: 'row', gap: 2, marginLeft: 4 }}>
+                    {entry.moods.map(mood => (
+                      <Text key={mood} style={{ fontSize: 13 }}>{MOOD_META[mood]?.emoji}</Text>
+                    ))}
+                  </View>
+                )}
+              </View>
             </View>
           </View>
         </Animated.View>

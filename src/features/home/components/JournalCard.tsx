@@ -7,11 +7,12 @@ import {
   Easing,
   PanResponder,
 } from 'react-native';
-import { Clock, Calendar, Pencil, Trash2 } from 'lucide-react-native';
+import { Clock, Pencil, Trash2 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
 import type { JournalEntry } from '../../../models/interfaces/users.model';
 import { formatTimeOnly } from '../../../utils/dateTime';
+import { MOOD_META } from '../../../utils/mood';
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -181,12 +182,21 @@ export default function JournalCard({
             {entry.content}
           </Text>
 
-          <View className="flex-row flex-wrap gap-2">
-            {entry.tags.map(tag => (
-              <View key={tag} className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1">
-                <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">{tag}</Text>
+          <View className="flex-row items-center">
+            <View className="flex-1 flex-row flex-wrap gap-2">
+              {entry.tags.map(tag => (
+                <View key={tag} className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1">
+                  <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">{tag}</Text>
+                </View>
+              ))}
+            </View>
+            {entry.moods.length > 0 && (
+              <View style={{ flexDirection: 'row', gap: 2, marginLeft: 8 }}>
+                {entry.moods.map(mood => (
+                  <Text key={mood} style={{ fontSize: 16 }}>{MOOD_META[mood]?.emoji}</Text>
+                ))}
               </View>
-            ))}
+            )}
           </View>
         </TouchableOpacity>
       </Animated.View>
