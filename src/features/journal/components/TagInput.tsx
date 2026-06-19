@@ -52,7 +52,7 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderColor: isDark ? '#334155' : '#e2e8f0',
         borderRadius: 12,
         backgroundColor: isDark ? '#1e293b' : '#f8fafc',
