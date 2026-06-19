@@ -35,7 +35,7 @@ import SettingsItem from './components/SettingsItem';
 import ExportModal from './components/ExportModal';
 import NetworkStatusDot from '../commons/NetworkStatusDot';
 
-type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type HomeNav = NativeStackNavigationProp<RootStackParamList>;
 
 const THEME_OPTIONS: { mode: ThemePreference; label: string; Icon: React.FC<{ size: number; color: string }> }[] = [
   { mode: 'light', label: 'Light', Icon: Sun },
@@ -89,7 +89,7 @@ export default function SettingsScreen() {
         <TouchableOpacity
           className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 items-center justify-center mr-3"
           style={{ shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 2 }}
-          onPress={() => navigation.replace('Home')}
+          onPress={() => navigation.goBack()}
         >
           <ChevronLeft size={18} color={isDark ? '#e2e8f0' : '#1e293b'} />
         </TouchableOpacity>

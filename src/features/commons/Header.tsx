@@ -30,7 +30,7 @@ export default function Header({ name = 'Your', subtitle = 'Journal', activeTab 
     if (tab === 'graph') {
       navigation.navigate('MoodGraph');
     } else {
-      navigation.navigate('Home');
+      navigation.goBack();
     }
   };
 
@@ -111,7 +111,7 @@ export default function Header({ name = 'Your', subtitle = 'Journal', activeTab 
       <View className="flex-1 items-end">
         <TouchableOpacity
           className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
-          onPress={() => navigation.replace('Settings')}
+          onPress={() => navigation.navigate('Settings')}
           activeOpacity={0.7}
         >
           <Settings size={17} color={isDark ? '#cbd5e1' : '#475569'} />
