@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Clock, Calendar, Pencil, Trash2 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
+
 import type { JournalEntry } from '../../../models/interfaces/users.model';
 import { formatEntryTime, getEntryIcon } from '../../../utils/dateTime';
 
@@ -31,21 +32,18 @@ export default function JournalCard({
   onPress,
 }: JournalCardProps) {
   const translateX = useRef(new Animated.Value(0)).current;
-  const mountFade = useRef(new Animated.Value(0)).current;
   const mountSlide = useRef(new Animated.Value(16)).current;
   const isOpen = useRef(false);
-  const [elevated, setElevated] = useState(false);
+  const { colorScheme } = useColorScheme();
+
+  const isDark = colorScheme === 'dark';
+  const timeLabel = formatEntryTime(entry.createdAt);
+  const iconName = getEntryIcon(entry.createdAt);
+  const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
 
   useEffect(() => {
     const delay = Math.min(index, 8) * 45;
     Animated.parallel([
-      Animated.timing(mountFade, {
-        toValue: 1,
-        duration: 300,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
       Animated.timing(mountSlide, {
         toValue: 0,
         duration: 300,
@@ -53,13 +51,8 @@ export default function JournalCard({
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
-    ]).start(() => setElevated(true));
+    ]).start();
   }, []);
-  const timeLabel = formatEntryTime(entry.createdAt);
-  const iconName = getEntryIcon(entry.createdAt);
-  const TimeIcon = iconName === 'clock-circle' ? Clock : Calendar;
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === 'dark';
 
   function snap(open: boolean) {
     Animated.spring(translateX, {
@@ -98,7 +91,7 @@ export default function JournalCard({
   return (
     <Animated.View
       className="mx-4 mb-3"
-      style={{ opacity: mountFade, transform: [{ translateY: mountSlide }] }}
+      style={{ transform: [{ translateY: mountSlide }] }}
     >
       <View
         style={{
@@ -149,9 +142,9 @@ export default function JournalCard({
         className="bg-white dark:bg-slate-900 rounded-2xl p-4"
         style={{
           transform: [{ translateX }],
-          elevation: elevated ? 2 : 0,
+          elevation: 1,
           shadowColor: '#000',
-          shadowOpacity: elevated ? 0.07 : 0,
+          shadowOpacity: 0.03,
           shadowRadius: 6,
           shadowOffset: { width: 0, height: 2 },
         }}
@@ -167,7 +160,7 @@ export default function JournalCard({
             }
           }}
           onLongPress={() => snap(true)}
-          delayLongPress={2000}
+          delayLongPress={1000}
         >
           <View className="flex-row items-center gap-1.5 mb-2">
             <TimeIcon size={13} color="#9ca3af" />
