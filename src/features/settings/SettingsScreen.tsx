@@ -8,9 +8,6 @@ import {
   Lock,
   Download,
   // CloudUpload,
-  Calendar,
-  Menu,
-  LayoutGrid,
   LogOut,
   Sun,
   Moon,
@@ -22,11 +19,10 @@ import GmailIcon from '../../assets/gmail.svg';
 import AppleLightIcon from '../../assets/apple-white.svg';
 import AppleDarkIcon from '../../assets/apple-black.svg';
 
-import type { ViewMode, ThemePreference } from '../../models/types/ui.type';
+import type { ThemePreference } from '../../models/types/ui.type';
 import type { JournalEntry } from '../../models/interfaces/users.model';
 import { RootStackParamList } from '../../models/types/navigation.type';
 
-import { useSettingsStore } from '../../store/settingsStore';
 import { useSecurityStore } from '../../store/securityStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useAuthStore } from '../../store/authStore';
@@ -41,12 +37,6 @@ import NetworkStatusDot from '../commons/NetworkStatusDot';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
-const LAYOUT_OPTIONS: { mode: ViewMode; label: string; Icon: React.FC<{ size: number; color: string }> }[] = [
-  { mode: 'calendar', label: 'Calendar', Icon: Calendar },
-  { mode: 'list', label: 'List', Icon: Menu },
-  { mode: 'grid', label: 'Grid', Icon: LayoutGrid },
-];
-
 const THEME_OPTIONS: { mode: ThemePreference; label: string; Icon: React.FC<{ size: number; color: string }> }[] = [
   { mode: 'light', label: 'Light', Icon: Sun },
   { mode: 'dark', label: 'Dark', Icon: Moon },
@@ -56,7 +46,7 @@ const THEME_OPTIONS: { mode: ThemePreference; label: string; Icon: React.FC<{ si
 export default function SettingsScreen() {
   const navigation = useNavigation<HomeNav>();
   const { currentUser, isGuest, clearUser } = useAuthStore();
-  const { defaultLayout, setDefaultLayout } = useSettingsStore();
+
   const { isPinEnabled } = useSecurityStore();
   const { theme, setTheme } = useThemeStore();
   const { colorScheme } = useColorScheme();
@@ -189,40 +179,6 @@ export default function SettingsScreen() {
         </View>
 
         <SettingsSection title="App Settings">
-          <SettingsItem
-            icon={<LayoutGrid size={17} color="#fff" />}
-            iconBg="#6366f1"
-            extra={
-              <View className="flex-row gap-1.5">
-                {LAYOUT_OPTIONS.map(({ mode, label, Icon }) => {
-                  const isActive = defaultLayout === mode;
-                  return (
-                    <TouchableOpacity
-                      key={mode}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 4,
-                        paddingHorizontal: 8,
-                        paddingVertical: 5,
-                        borderRadius: 8,
-                        backgroundColor: isActive ? '#1e40af' : chipInactiveBg,
-                      }}
-                      onPress={() => setDefaultLayout(mode)}
-                    >
-                      <Icon size={11} color={isActive ? '#fff' : chipInactiveColor} />
-                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? '#fff' : chipInactiveColor }}>
-                        {label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            }
-          >
-            Home Layout
-          </SettingsItem>
-
           <SettingsItem
             icon={<Sun size={17} color="#fff" />}
             iconBg="#f59e0b"

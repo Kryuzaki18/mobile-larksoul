@@ -1,27 +1,21 @@
-import React, { useCallback } from 'react';
-import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Plus, Menu, LayoutGrid } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useColorScheme } from 'nativewind';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import Header from '../commons/Header';
 import CalendarView from './components/CalendarView';
-import DateSeparator from './components/DateSeparator';
-import JournalCard from './components/JournalCard';
 import ListView from './components/ListView';
 import GridView from './components/GridView';
 import EmptyEntry from './components/EmptyEntry';
 import HomeLoader from './components/HomeLoader';
 
 import { useHomeState } from '../../hooks/useHomeState';
-
 import { formatDateLabel, toDateStr } from '../../utils/dateTime';
-
 import { useAuthStore } from '../../store/authStore';
-import { useSettingsStore } from '../../store/settingsStore';
-
-import { deleteEntry } from '../../database/functions/journal';
 
 import type { RootStackParamList } from '../../models/types/navigation.type';
 
@@ -30,7 +24,10 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const { currentUser } = useAuthStore();
-  const { defaultLayout } = useSettingsStore();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  const [layout, setLayout] = useState<'list' | 'grid'>('list');
 
   const userId = currentUser?.id ?? '';
   const {
@@ -38,7 +35,6 @@ export default function HomeScreen() {
     setSelectedDate,
     entryDates,
     entriesForDay,
-    entries,
     isLoading,
     refetch,
   } = useHomeState(userId);
@@ -50,6 +46,8 @@ export default function HomeScreen() {
   );
 
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
+  const chipInactiveBg = isDark ? '#1e293b' : '#f1f5f9';
+  const chipInactiveColor = isDark ? '#94a3b8' : '#6b7280';
 
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
@@ -60,58 +58,59 @@ export default function HomeScreen() {
           <HomeLoader />
         ) : (
           <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            {defaultLayout === 'calendar' && (
-              <>
-                <CalendarView
-                  entryDates={entryDates}
-                  selectedDate={selectedDate}
-                  onDayPress={setSelectedDate}
-                />
-                <DateSeparator label={formatDateLabel(selectedDate)} />
-                {entriesForDay.map(entry => (
-                  <JournalCard
-                    key={entry.id}
-                    entry={entry}
-                    onEdit={() =>
-                      navigation.navigate('AddEntry', { entryId: entry.id })
-                    }
-                    onDelete={() =>
-                      Alert.alert(
-                        'Delete Entry',
-                        'Are you sure you want to delete this entry?',
-                        [
-                          { text: 'Cancel', style: 'cancel' },
-                          {
-                            text: 'Delete',
-                            style: 'destructive',
-                            onPress: () =>
-                              deleteEntry(entry.id)
-                                .then(refetch)
-                                .catch(console.error),
-                          },
-                        ],
-                      )
-                    }
-                  />
-                ))}
+            <CalendarView
+              entryDates={entryDates}
+              selectedDate={selectedDate}
+              onDayPress={setSelectedDate}
+            />
 
-                {entriesForDay.length === 0 && <EmptyEntry />}
-              </>
+            <View className="flex-row items-center px-4 mt-4 mb-1">
+              <Text className="text-xs font-bold text-gray-400 tracking-widest uppercase mr-3">
+                {formatDateLabel(selectedDate)}
+              </Text>
+              <View
+                className="flex-1 h-px mr-2"
+                style={{ backgroundColor: isDark ? '#1e293b' : '#e9edf2' }}
+              />
+              <View style={{ flexDirection: 'row', gap: 5 }}>
+                <TouchableOpacity
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 7,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: layout === 'list' ? '#1e40af' : chipInactiveBg,
+                  }}
+                  onPress={() => setLayout('list')}
+                >
+                  <Menu size={13} color={layout === 'list' ? '#fff' : chipInactiveColor} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 7,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: layout === 'grid' ? '#1e40af' : chipInactiveBg,
+                  }}
+                  onPress={() => setLayout('grid')}
+                >
+                  <LayoutGrid size={13} color={layout === 'grid' ? '#fff' : chipInactiveColor} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {entriesForDay.length > 0 ? (
+              layout === 'list' ? (
+                <ListView entries={entriesForDay} refetch={refetch} />
+              ) : (
+                <GridView entries={entriesForDay} refetch={refetch} />
+              )
+            ) : (
+              <EmptyEntry />
             )}
-
-            {defaultLayout === 'list' &&
-              (entries.length > 0 ? (
-                <ListView entries={entries} refetch={refetch} />
-              ) : (
-                <EmptyEntry />
-              ))}
-
-            {defaultLayout === 'grid' &&
-              (entries.length > 0 ? (
-                <GridView entries={entries} refetch={refetch} />
-              ) : (
-                <EmptyEntry />
-              ))}
 
             <View className="h-24" />
           </ScrollView>

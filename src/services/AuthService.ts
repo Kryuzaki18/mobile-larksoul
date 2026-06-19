@@ -17,8 +17,6 @@ export const GUEST_EMAIL = 'guest@larksoul.local';
 export function configureGoogleSignIn(): void {
   GoogleSignin.configure({
     webClientId: GOOGLE_WEB_CLIENT_ID,
-    // Only pass iosClientId if explicitly set — otherwise the SDK reads
-    // CLIENT_ID from GoogleService-Info.plist automatically.
     ...(Platform.OS === 'ios' && GOOGLE_IOS_CLIENT_ID
       ? { iosClientId: GOOGLE_IOS_CLIENT_ID }
       : {}),
@@ -45,10 +43,6 @@ export async function signUp(name: string, email: string, password?: string): Pr
   return createUser(name, email, { password });
 }
 
-/**
- * Returns null when the user cancels (no error should be shown).
- * Throws for real errors (Play Services unavailable, network issues, etc.).
- */
 export async function signInWithGoogle(): Promise<User | null> {
   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
@@ -66,7 +60,6 @@ export async function signInWithGoogle(): Promise<User | null> {
 
   const existing = await getUserByEmail(email);
   if (existing) {
-    // Refresh avatar in the background if the Google photo changed
     if (photo && existing.avatar !== photo) {
       await updateUser(existing.id, { avatar: photo });
       return { ...existing, avatar: photo };
@@ -80,11 +73,6 @@ export async function signInWithGoogle(): Promise<User | null> {
   });
 }
 
-/**
- * Returns null when the user cancels.
- * Throws when Apple credential state is invalid or another error occurs.
- * iOS only — Apple Sign-In is not available on Android.
- */
 export async function signInWithApple(): Promise<User | null> {
   if (!appleAuth.isSupported) {
     throw new Error('Apple Sign-In is not supported on this device.');
@@ -97,7 +85,6 @@ export async function signInWithApple(): Promise<User | null> {
       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
     });
   } catch (error: unknown) {
-    // User cancelled — do not surface an error
     if (
       error instanceof Error &&
       'code' in error &&
@@ -118,14 +105,12 @@ export async function signInWithApple(): Promise<User | null> {
 
   const { user: appleUserId, email, fullName } = appleAuthResponse;
 
-  // Subsequent sign-ins: Apple withholds email/name — look up by stored mapping
   const existingLocalId = await getLocalUserIdForApple(appleUserId);
   if (existingLocalId) {
     const existing = await getUserById(existingLocalId);
     if (existing) return existing;
   }
 
-  // First sign-in: Apple provides email and name exactly once
   if (!email) {
     throw new Error(
       'Unable to retrieve your email from Apple. If you previously signed in with Apple, try signing out of your Apple ID in Settings and signing in again.',
@@ -160,7 +145,6 @@ export async function migrateGuestAccount(
 }
 
 export async function signOut(): Promise<void> {
-  // Sign out Google session if present
   try {
     const currentGoogleUser = await GoogleSignin.getCurrentUser();
     if (currentGoogleUser) {
@@ -170,7 +154,6 @@ export async function signOut(): Promise<void> {
     // Ignore — user may not have been signed in via Google
   }
 
-  // Clear stored Apple mapping
   await clearAppleUserMapping();
 }
 

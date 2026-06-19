@@ -205,52 +205,51 @@ function GridCard({
         </Animated.View>
 
         {isMenuOpen && (
-          <View
-            pointerEvents="none"
-            className="absolute top-0 left-0 right-0 bottom-0 bg-slate-200/80 dark:bg-white/30 rounded-2xl"
-          />
-        )}
-
-        {isMenuOpen && (
-          <Animated.View
-            className="absolute bg-white dark:bg-slate-800 rounded-2xl overflow-hidden"
-            style={{
-              right: 10,
-              top: 25,
-              minWidth: 80,
-              elevation: 3,
-              shadowColor: '#000',
-              shadowOpacity: 0.12,
-              shadowRadius: 12,
-              shadowOffset: { width: 0, height: 4 },
-              opacity: menuFade,
-              transform: [{ scale: menuScale }],
-            }}
-          >
-            <TouchableOpacity
-              className="flex-row items-center gap-1 px-4 py-2"
-              onPress={() => {
-                onToggleMenu();
-                onEdit();
+          <>
+            <View
+              pointerEvents="none"
+              className="absolute top-0 left-0 right-0 bottom-0 !bg-black/10 dark:bg-white/30 rounded-2xl"
+            />
+            <Animated.View
+              className="absolute bg-white dark:bg-slate-800 rounded-2xl overflow-hidden"
+              style={{
+                right: 10,
+                top: 25,
+                minWidth: 80,
+                elevation: 3,
+                shadowColor: '#000',
+                shadowOpacity: 0.12,
+                shadowRadius: 12,
+                shadowOffset: { width: 0, height: 4 },
+                opacity: menuFade,
+                transform: [{ scale: menuScale }],
               }}
             >
-              <Pencil size={12} color={isDark ? '#cbd5e1' : '#475569'} />
-              <Text className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                Edit
-              </Text>
-            </TouchableOpacity>
-            <View className="h-px bg-slate-100 dark:bg-slate-700" />
-            <TouchableOpacity
-              className="flex-row items-center gap-1 px-4 py-2"
-              onPress={() => {
-                onToggleMenu();
-                onDelete();
-              }}
-            >
-              <Trash2 size={12} color="#ef4444" />
-              <Text className="text-xs font-medium text-red-500">Delete</Text>
-            </TouchableOpacity>
-          </Animated.View>
+              <TouchableOpacity
+                className="flex-row items-center gap-1 px-4 py-2"
+                onPress={() => {
+                  onToggleMenu();
+                  onEdit();
+                }}
+              >
+                <Pencil size={12} color={isDark ? '#cbd5e1' : '#475569'} />
+                <Text className="text-xs font-medium text-slate-700 dark:text-slate-200">
+                  Edit
+                </Text>
+              </TouchableOpacity>
+              <View className="h-px bg-slate-100 dark:bg-slate-700" />
+              <TouchableOpacity
+                className="flex-row items-center gap-1 px-4 py-2"
+                onPress={() => {
+                  onToggleMenu();
+                  onDelete();
+                }}
+              >
+                <Trash2 size={12} color="#ef4444" />
+                <Text className="text-xs font-medium text-red-500">Delete</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </>
         )}
       </Animated.View>
     </Pressable>

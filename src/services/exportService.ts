@@ -4,6 +4,7 @@ type RNPrintModule = { print: (opts: { html: string; jobName?: string }) => Prom
 const RNPrint = NativeModules.RNPrint as RNPrintModule | undefined;
 
 import type { JournalEntry } from '../models/interfaces/users.model';
+
 import { MOOD_META } from '../utils/mood';
 import { formatEntryDate, formatDateShort } from '../utils/dateTime';
 
