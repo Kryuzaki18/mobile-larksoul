@@ -5,10 +5,16 @@ import { getEntriesByUser } from '../database/functions/journal';
 
 const MIN_LOADER_DURATION_MS = 1000;
 
+export interface EntryGroup {
+  date: string;
+  items: JournalEntry[];
+}
+
 export function useHomeState(userId: string) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const hasLoadedOnce = useRef(false);
 
   const fetchEntries = useCallback(() => {
@@ -50,12 +56,27 @@ export function useHomeState(userId: string) {
     [entries, selectedDate],
   );
 
+  const groupedEntries = useMemo<EntryGroup[]>(() => {
+    const map = new Map<string, JournalEntry[]>();
+    for (const entry of entries) {
+      const dateKey = entry.createdAt.slice(0, 10);
+      if (!map.has(dateKey)) map.set(dateKey, []);
+      map.get(dateKey)!.push(entry);
+    }
+    return Array.from(map.entries()).map(([date, items]) => ({ date, items }));
+  }, [entries]);
+
+  const toggleAll = useCallback(() => setShowAll(prev => !prev), []);
+
   return {
     selectedDate,
     setSelectedDate,
     entryDates,
     entriesForDay,
     entries,
+    groupedEntries,
+    showAll,
+    toggleAll,
     isLoading,
     refetch: fetchEntries,
   };

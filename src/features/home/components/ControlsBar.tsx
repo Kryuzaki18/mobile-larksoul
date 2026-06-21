@@ -1,0 +1,97 @@
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Menu, LayoutGrid } from 'lucide-react-native';
+
+interface ControlsBarProps {
+  dateLabel: string;
+  showAll: boolean;
+  onToggleAll: () => void;
+  layout: 'list' | 'grid';
+  onLayoutChange: (layout: 'list' | 'grid') => void;
+  isDark: boolean;
+}
+
+export default function ControlsBar({
+  dateLabel,
+  showAll,
+  onToggleAll,
+  layout,
+  onLayoutChange,
+  isDark,
+}: ControlsBarProps) {
+  const chipInactiveBg = isDark ? '#1e293b' : '#f1f5f9';
+  const chipInactiveColor = isDark ? '#94a3b8' : '#6b7280';
+  const bgColor = isDark ? '#020617' : '#f8fafc';
+
+  return (
+    <View
+      style={{ backgroundColor: bgColor, paddingTop: 16, paddingBottom: 4 }}
+      className="flex-row items-center px-4"
+    >
+      <Text className="text-xs font-bold text-gray-400 tracking-widest uppercase mr-3">
+        {dateLabel}
+      </Text>
+      <View
+        className="flex-1 h-px mr-2"
+        style={{ backgroundColor: isDark ? '#1e293b' : '#e9edf2' }}
+      />
+      <View style={{ flexDirection: 'row', gap: 5 }}>
+        <TouchableOpacity
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 7,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: layout === 'list' ? '#1e40af' : chipInactiveBg,
+          }}
+          onPress={() => onLayoutChange('list')}
+        >
+          <Menu
+            size={13}
+            color={layout === 'list' ? '#fff' : chipInactiveColor}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 7,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: layout === 'grid' ? '#1e40af' : chipInactiveBg,
+          }}
+          onPress={() => onLayoutChange('grid')}
+        >
+          <LayoutGrid
+            size={13}
+            color={layout === 'grid' ? '#fff' : chipInactiveColor}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            paddingHorizontal: 10,
+            height: 28,
+            borderRadius: 7,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: showAll ? '#1e40af' : chipInactiveBg,
+          }}
+          onPress={onToggleAll}
+        >
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: '700',
+              color: showAll ? '#fff' : chipInactiveColor,
+            }}
+          >
+            All Journals
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}

@@ -57,3 +57,8 @@ export function formatDateShort(dateStr: string): string {
   const [year, month, day] = dateStr.split('-').map(Number);
   return `${MONTHS_ABBR[month - 1]} ${day}, ${year}`;
 }
+
+export function formatDateStrLabel(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return `${MONTHS_ABBR_UPPER[month - 1]} ${String(day).padStart(2, '0')}, ${year}`;
+}

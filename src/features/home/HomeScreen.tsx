@@ -1,6 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { Plus, Menu, LayoutGrid } from 'lucide-react-native';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
+} from 'react-native';
+import { Plus } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
@@ -12,9 +18,11 @@ import ListView from './components/ListView';
 import GridView from './components/GridView';
 import EmptyEntry from './components/EmptyEntry';
 import HomeLoader from './components/HomeLoader';
+import ControlsBar from './components/ControlsBar';
+import AllEntriesView from './components/AllEntriesView';
 
 import { useHomeState } from '../../hooks/useHomeState';
-import { formatDateLabel, toDateStr } from '../../utils/dateTime';
+import { formatDateLabel, formatDateStrLabel, toDateStr } from '../../utils/dateTime';
 import { useAuthStore } from '../../store/authStore';
 
 import type { RootStackParamList } from '../../models/types/navigation.type';
@@ -35,6 +43,9 @@ export default function HomeScreen() {
     setSelectedDate,
     entryDates,
     entriesForDay,
+    groupedEntries,
+    showAll,
+    toggleAll,
     isLoading,
     refetch,
   } = useHomeState(userId);
@@ -45,9 +56,55 @@ export default function HomeScreen() {
     }, [refetch]),
   );
 
+  // Scroll-driven date tracking for "All" mode
+  const allEntriesOffsetY = useRef(0);
+  const groupYOffsetsRef = useRef<{ date: string; y: number }[]>([]);
+  const controlsBarHeightRef = useRef(0);
+  const [visibleDate, setVisibleDate] = useState('');
+
+  useEffect(() => {
+    groupYOffsetsRef.current = [];
+  }, [groupedEntries]);
+
+  useEffect(() => {
+    if (showAll && groupedEntries.length > 0) {
+      setVisibleDate(groupedEntries[0].date);
+    }
+  }, [showAll, groupedEntries]);
+
+  const handleGroupLayout = useCallback((date: string, relativeY: number) => {
+    const absoluteY = allEntriesOffsetY.current + relativeY;
+    const existing = groupYOffsetsRef.current.filter(g => g.date !== date);
+    groupYOffsetsRef.current = [...existing, { date, y: absoluteY }].sort(
+      (a, b) => a.y - b.y,
+    );
+  }, []);
+
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (!showAll) return;
+      const y = e.nativeEvent.contentOffset.y;
+      const offsets = groupYOffsetsRef.current;
+      if (offsets.length === 0) return;
+
+      let current = offsets[0].date;
+      for (const offset of offsets) {
+        if (offset.y <= y + controlsBarHeightRef.current) {
+          current = offset.date;
+        } else {
+          break;
+        }
+      }
+      setVisibleDate(prev => (prev !== current ? current : prev));
+    },
+    [showAll],
+  );
+
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
-  const chipInactiveBg = isDark ? '#1e293b' : '#f1f5f9';
-  const chipInactiveColor = isDark ? '#94a3b8' : '#6b7280';
+  const dateLabel =
+    showAll && visibleDate
+      ? formatDateStrLabel(visibleDate)
+      : formatDateLabel(selectedDate);
 
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
@@ -57,52 +114,48 @@ export default function HomeScreen() {
         {isLoading ? (
           <HomeLoader />
         ) : (
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <ScrollView
+            className="flex-1"
+            showsVerticalScrollIndicator={false}
+            stickyHeaderIndices={[1]}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+          >
             <CalendarView
               entryDates={entryDates}
               selectedDate={selectedDate}
               onDayPress={setSelectedDate}
             />
 
-            <View className="flex-row items-center px-4 mt-4 mb-1">
-              <Text className="text-xs font-bold text-gray-400 tracking-widest uppercase mr-3">
-                {formatDateLabel(selectedDate)}
-              </Text>
-              <View
-                className="flex-1 h-px mr-2"
-                style={{ backgroundColor: isDark ? '#1e293b' : '#e9edf2' }}
+            <View
+              onLayout={(e) => {
+                controlsBarHeightRef.current = e.nativeEvent.layout.height;
+              }}
+            >
+              <ControlsBar
+                dateLabel={dateLabel}
+                showAll={showAll}
+                onToggleAll={toggleAll}
+                layout={layout}
+                onLayoutChange={setLayout}
+                isDark={isDark}
               />
-              <View style={{ flexDirection: 'row', gap: 5 }}>
-                <TouchableOpacity
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 7,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: layout === 'list' ? '#1e40af' : chipInactiveBg,
-                  }}
-                  onPress={() => setLayout('list')}
-                >
-                  <Menu size={13} color={layout === 'list' ? '#fff' : chipInactiveColor} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 7,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: layout === 'grid' ? '#1e40af' : chipInactiveBg,
-                  }}
-                  onPress={() => setLayout('grid')}
-                >
-                  <LayoutGrid size={13} color={layout === 'grid' ? '#fff' : chipInactiveColor} />
-                </TouchableOpacity>
-              </View>
             </View>
 
-            {entriesForDay.length > 0 ? (
+            {showAll ? (
+              <View
+                onLayout={(e) => {
+                  allEntriesOffsetY.current = e.nativeEvent.layout.y;
+                }}
+              >
+                <AllEntriesView
+                  groups={groupedEntries}
+                  layout={layout}
+                  refetch={refetch}
+                  onGroupLayout={handleGroupLayout}
+                />
+              </View>
+            ) : entriesForDay.length > 0 ? (
               layout === 'list' ? (
                 <ListView entries={entriesForDay} refetch={refetch} />
               ) : (
