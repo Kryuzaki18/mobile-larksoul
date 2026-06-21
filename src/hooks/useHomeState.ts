@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { toDateStr } from '../utils/dateTime';
-import type { JournalEntry } from '../models/interfaces/users.model';
+import type { JournalEntry } from '../models/interfaces/users.interface';
 import { getEntriesByUser } from '../database/functions/journal';
 
 const MIN_LOADER_DURATION_MS = 1000;

@@ -1,6 +1,12 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  memo,
+} from 'react';
 import {
-  Alert,
   Pressable,
   View,
   Text,
@@ -8,44 +14,41 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import {
-  Clock,
-  Pencil,
-  Trash2,
-  MoreVertical,
-} from 'lucide-react-native';
+import { Clock, Pencil, Trash2, MoreVertical } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import type { JournalEntry } from '../../../models/interfaces/users.model';
-import type { RootStackParamList } from '../../../models/types/navigation.type';
+import { useEntryActions } from '../../../hooks/useEntryActions';
 
 import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
 
-import { deleteEntry } from '../../../database/functions/journal';
+import type { GridCardProps } from '../../../models/interfaces/home.interface';
+import { GridViewProps } from '../../../models/types/home.type';
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+const CARD_SHADOW = {
+  elevation: 1,
+  shadowColor: '#000',
+  shadowOpacity: 0.03,
+  shadowRadius: 6,
+  shadowOffset: { width: 0, height: 2 },
+} as const;
 
-interface GridCardProps {
-  entry: JournalEntry;
-  index: number;
-  isMenuOpen: boolean;
-  onToggleMenu: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  onDismiss: () => void;
-}
+const MENU_SHADOW = {
+  elevation: 3,
+  shadowColor: '#000',
+  shadowOpacity: 0.12,
+  shadowRadius: 12,
+  shadowOffset: { width: 0, height: 4 },
+} as const;
 
-function GridCard({
+const GridCard = memo(function GridCard({
   entry,
   index,
   isMenuOpen,
   onToggleMenu,
+  onDismiss,
   onEdit,
   onDelete,
-  onDismiss,
 }: GridCardProps) {
   const timeLabel = formatTimeOnly(entry.createdAt);
   const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? '#f1f5f9';
@@ -58,16 +61,13 @@ function GridCard({
   const menuScale = useRef(new Animated.Value(0.88)).current;
 
   useEffect(() => {
-    const delay = Math.min(index, 7) * 50;
-    Animated.parallel([
-      Animated.timing(mountScale, {
-        toValue: 1,
-        duration: 360,
-        delay,
-        easing: Easing.out(Easing.back(1.4)),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    Animated.timing(mountScale, {
+      toValue: 1,
+      duration: 360,
+      delay: Math.min(index, 7) * 50,
+      easing: Easing.out(Easing.back(1.4)),
+      useNativeDriver: true,
+    }).start();
   }, []);
 
   useLayoutEffect(() => {
@@ -96,6 +96,19 @@ function GridCard({
     }
   }, [isMenuOpen]);
 
+  const handleToggle = useCallback(
+    () => onToggleMenu(entry.id),
+    [onToggleMenu, entry.id],
+  );
+  const handleEdit = useCallback(() => {
+    onToggleMenu(entry.id);
+    onEdit(entry.id);
+  }, [onToggleMenu, onEdit, entry.id]);
+  const handleDelete = useCallback(() => {
+    onToggleMenu(entry.id);
+    onDelete(entry.id);
+  }, [onToggleMenu, onDelete, entry.id]);
+
   const handlePressIn = () => {
     if (isMenuOpen) return;
     Animated.spring(pressScale, {
@@ -115,11 +128,13 @@ function GridCard({
     }).start();
   };
 
+  const iconColor = isDark ? '#cbd5e1' : '#475569';
+
   return (
     <Pressable
       style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}
       onPress={onDismiss}
-      onLongPress={onToggleMenu}
+      onLongPress={handleToggle}
       delayLongPress={1000}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
@@ -133,11 +148,7 @@ function GridCard({
           style={{
             transform: [{ scale: pressScale }],
             borderRadius: 16,
-            elevation: 1,
-            shadowColor: '#000',
-            shadowOpacity: 0.03,
-            shadowRadius: 6,
-            shadowOffset: { width: 0, height: 2 },
+            ...CARD_SHADOW,
           }}
         >
           <View
@@ -146,26 +157,20 @@ function GridCard({
           >
             <View style={{ height: 2, backgroundColor: accentColor }} />
 
-            <View className="px-3 pb-3 ">
+            <View className="px-3 pb-3">
               <View className="flex-row items-center gap-1 mb-2 pr-6">
-                <View className="flex-row items-center gap-1">
-                  <Clock size={12} color="#9ca3af" />
-                  <Text
-                    className="text-xs text-gray-400 flex-1"
-                    numberOfLines={1}
-                  >
-                    {timeLabel}
-                  </Text>
-                </View>
-
+                <Clock size={12} color="#9ca3af" />
+                <Text
+                  className="text-xs text-gray-400 flex-1"
+                  numberOfLines={1}
+                >
+                  {timeLabel}
+                </Text>
                 <TouchableOpacity
                   className="w-7 h-7 rounded-full items-center justify-center"
-                  onPress={onToggleMenu}
+                  onPress={handleToggle}
                 >
-                  <MoreVertical
-                    size={14}
-                    color={isDark ? '#cbd5e1' : '#475569'}
-                  />
+                  <MoreVertical size={14} color={iconColor} />
                 </TouchableOpacity>
               </View>
 
@@ -184,7 +189,14 @@ function GridCard({
               </Text>
 
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    gap: 4,
+                  }}
+                >
                   {entry.tags.slice(0, 2).map(tag => (
                     <View
                       key={tag}
@@ -197,17 +209,42 @@ function GridCard({
                   ))}
                   {entry.tags.length > 2 && (
                     <View className="bg-slate-100 dark:bg-slate-800 rounded-full px-2 py-0.5">
-                      <Text style={{ fontSize: 10, color: '#94a3b8', fontWeight: '600' }}>+{entry.tags.length - 2}</Text>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          color: '#94a3b8',
+                          fontWeight: '600',
+                        }}
+                      >
+                        +{entry.tags.length - 2}
+                      </Text>
                     </View>
                   )}
                 </View>
                 {entry.moods.length > 0 && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 4 }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 2,
+                      marginLeft: 4,
+                    }}
+                  >
                     {entry.moods.slice(0, 2).map(mood => (
-                      <Text key={mood} style={{ fontSize: 13 }}>{MOOD_META[mood]?.emoji}</Text>
+                      <Text key={mood} style={{ fontSize: 13 }}>
+                        {MOOD_META[mood]?.emoji}
+                      </Text>
                     ))}
                     {entry.moods.length > 2 && (
-                      <Text style={{ fontSize: 10, color: '#94a3b8', fontWeight: '600' }}>+{entry.moods.length - 2}</Text>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          color: '#94a3b8',
+                          fontWeight: '600',
+                        }}
+                      >
+                        +{entry.moods.length - 2}
+                      </Text>
                     )}
                   </View>
                 )}
@@ -228,23 +265,16 @@ function GridCard({
                 right: 8,
                 top: 20,
                 minWidth: 80,
-                elevation: 3,
-                shadowColor: '#000',
-                shadowOpacity: 0.12,
-                shadowRadius: 12,
-                shadowOffset: { width: 0, height: 4 },
+                ...MENU_SHADOW,
                 opacity: menuFade,
                 transform: [{ scale: menuScale }],
               }}
             >
               <TouchableOpacity
                 className="flex-row items-center gap-1 px-4 py-2"
-                onPress={() => {
-                  onToggleMenu();
-                  onEdit();
-                }}
+                onPress={handleEdit}
               >
-                <Pencil size={12} color={isDark ? '#cbd5e1' : '#475569'} />
+                <Pencil size={12} color={iconColor} />
                 <Text className="text-xs font-medium text-slate-700 dark:text-slate-200">
                   Edit
                 </Text>
@@ -252,10 +282,7 @@ function GridCard({
               <View className="h-px bg-slate-100 dark:bg-slate-700" />
               <TouchableOpacity
                 className="flex-row items-center gap-1 px-4 py-2"
-                onPress={() => {
-                  onToggleMenu();
-                  onDelete();
-                }}
+                onPress={handleDelete}
               >
                 <Trash2 size={12} color="#ef4444" />
                 <Text className="text-xs font-medium text-red-500">Delete</Text>
@@ -266,16 +293,18 @@ function GridCard({
       </Animated.View>
     </Pressable>
   );
-}
-
-interface GridViewProps {
-  entries: JournalEntry[];
-  refetch: () => void;
-}
+});
 
 export default function GridView({ entries, refetch }: GridViewProps) {
-  const navigation = useNavigation<Nav>();
+  const { editEntry, confirmDelete } = useEntryActions(refetch);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  const toggleMenu = useCallback(
+    (id: string) => setActiveMenuId(curr => (curr === id ? null : id)),
+    [],
+  );
+
+  const dismiss = useCallback(() => setActiveMenuId(null), []);
 
   return (
     <View className="flex-row flex-wrap px-3 pt-3">
@@ -285,26 +314,10 @@ export default function GridView({ entries, refetch }: GridViewProps) {
           entry={entry}
           index={index}
           isMenuOpen={activeMenuId === entry.id}
-          onToggleMenu={() =>
-            setActiveMenuId(current => (current === entry.id ? null : entry.id))
-          }
-          onDismiss={() => setActiveMenuId(null)}
-          onEdit={() => navigation.navigate('AddEntry', { entryId: entry.id })}
-          onDelete={() =>
-            Alert.alert(
-              'Delete Entry',
-              'Are you sure you want to delete this entry?',
-              [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                  text: 'Delete',
-                  style: 'destructive',
-                  onPress: () =>
-                    deleteEntry(entry.id).then(refetch).catch(console.error),
-                },
-              ],
-            )
-          }
+          onToggleMenu={toggleMenu}
+          onDismiss={dismiss}
+          onEdit={editEntry}
+          onDelete={confirmDelete}
         />
       ))}
     </View>

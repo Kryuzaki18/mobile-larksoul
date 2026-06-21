@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import type { Mood } from '../../../models/interfaces/users.model';
+import type { Mood } from '../../../models/interfaces/users.interface';
 import { MOOD_META } from '../../../utils/mood';
 
 const MAX_MOODS = 3;

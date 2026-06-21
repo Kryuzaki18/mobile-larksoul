@@ -8,7 +8,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import { getUserByEmail, getUserById, createUser, updateUser, migrateGuestToUser } from '../database/functions/users';
-import type { User } from '../models/interfaces/users.model';
+import type { User } from '../models/interfaces/users.interface';
 import { saveAppleUserMapping, getLocalUserIdForApple, clearAppleUserMapping } from './tokenService';
 import { GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from '../config/auth.config';
 

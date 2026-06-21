@@ -19,8 +19,8 @@ import GmailIcon from '../../assets/gmail.svg';
 import AppleLightIcon from '../../assets/apple-white.svg';
 import AppleDarkIcon from '../../assets/apple-black.svg';
 
+import type { JournalEntry } from '../../models/interfaces/users.interface';
 import type { ThemePreference } from '../../models/types/ui.type';
-import type { JournalEntry } from '../../models/interfaces/users.model';
 import { RootStackParamList } from '../../models/types/navigation.type';
 
 import { useSecurityStore } from '../../store/securityStore';

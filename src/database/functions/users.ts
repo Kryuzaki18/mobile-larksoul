@@ -1,5 +1,5 @@
 import { getDatabase } from '../index';
-import type { User } from '../../models/interfaces/users.model';
+import type { User } from '../../models/interfaces/users.interface';
 
 type RawUser = {
   id: string;

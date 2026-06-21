@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated, Easing } from 'react-native';
 
-import type { Mood } from '../../../models/interfaces/users.model';
+import type { Mood } from '../../../models/interfaces/users.interface';
 import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
 
 interface Props {

@@ -12,7 +12,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChevronLeft, WifiOff } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
-import type { User } from '../../models/interfaces/users.model';
+import type { User } from '../../models/interfaces/users.interface';
 import {
   signUp,
   signInWithProvider,

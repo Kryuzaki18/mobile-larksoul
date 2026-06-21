@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useColorScheme } from 'nativewind';
 
-import type { Mood } from '../../../models/interfaces/users.model';
+import type { Mood } from '../../../models/interfaces/users.interface';
 import MoodBreakdownRow from './MoodBreakdownRow';
 
 interface Props {

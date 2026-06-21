@@ -17,7 +17,7 @@ import type { RouteProp } from '@react-navigation/native';
 import { ChevronLeft, Calendar } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
-import type { Mood } from '../../models/interfaces/users.model';
+import type { Mood } from '../../models/interfaces/users.interface';
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 import { useAuthStore } from '../../store/authStore';
 import { formatEntryDate, toDateStr } from '../../utils/dateTime';
