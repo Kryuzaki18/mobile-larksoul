@@ -35,10 +35,11 @@ interface CalendarViewProps {
   selectedDate?: Date;
   entryDates?: string[];
   onDayPress?: (date: Date) => void;
+  onMonthChange?: (year: number, month: number) => void;
   displayMonth?: Date;
 }
 
-export default function CalendarView({ selectedDate, entryDates = [], onDayPress, displayMonth }: CalendarViewProps) {
+export default function CalendarView({ selectedDate, entryDates = [], onDayPress, onMonthChange, displayMonth }: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -50,12 +51,15 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
   const currentRef = useRef(current);
   useEffect(() => { currentRef.current = current; }, [current]);
 
+  useEffect(() => {
+    onMonthChange?.(current.getFullYear(), current.getMonth());
+  }, [current]);
+
   const now   = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const isCurrentMonth =
     current.getFullYear() === now.getFullYear() && current.getMonth() === now.getMonth();
 
-  // dir: -1 = going left (prev month), 1 = going right (next month)
   function navigate(dir: -1 | 1, next: Date) {
     Animated.parallel([
       Animated.timing(slideAnim, {
@@ -106,7 +110,6 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
     navigate(1, candidate);
   }
 
-  // Sync when parent forces a month jump (e.g. "Today" button)
   const prevDisplayMonth = useRef<Date | undefined>(undefined);
   useEffect(() => {
     if (!displayMonth) return;
@@ -157,7 +160,6 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
       style={{ elevation: 1, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } }}
       {...panResponder.panHandlers}
     >
-      {/* ── Nav row (static — no animation) ── */}
       <View className="flex-row items-center justify-between px-4 pt-4 pb-3">
         <TouchableOpacity
           className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
@@ -180,10 +182,8 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
         </TouchableOpacity>
       </View>
 
-      {/* ── Animated calendar body ── */}
       <View style={{ overflow: 'hidden' }}>
         <Animated.View style={{ transform: [{ translateX: slideAnim }], opacity: fadeAnim }}>
-          {/* Week day labels */}
           <View className="flex-row px-2 mb-1">
             {WEEK_DAYS.map((d, i) => (
               <View key={i} className="flex-1 items-center py-1">
@@ -192,7 +192,6 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
             ))}
           </View>
 
-          {/* Day grid */}
           {rows.map((row, rowIdx) => (
             <View key={rowIdx} className="flex-row px-2">
               {row.map((cell, colIdx) => {

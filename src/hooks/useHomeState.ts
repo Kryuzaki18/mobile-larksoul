@@ -10,10 +10,19 @@ export interface EntryGroup {
   items: JournalEntry[];
 }
 
+export interface DisplayMonth {
+  year: number;
+  month: number;
+}
+
 export function useHomeState(userId: string) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [displayMonth, setDisplayMonth] = useState<DisplayMonth>(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  });
   const hasLoadedOnce = useRef(false);
 
   const fetchEntries = useCallback(() => {
@@ -65,6 +74,11 @@ export function useHomeState(userId: string) {
     return Array.from(map.entries()).map(([date, items]) => ({ date, items }));
   }, [entries]);
 
+  const groupedEntriesForMonth = useMemo<EntryGroup[]>(() => {
+    const prefix = `${displayMonth.year}-${String(displayMonth.month + 1).padStart(2, '0')}`;
+    return groupedEntries.filter(g => g.date.startsWith(prefix));
+  }, [groupedEntries, displayMonth]);
+
   return {
     selectedDate,
     setSelectedDate,
@@ -72,6 +86,9 @@ export function useHomeState(userId: string) {
     entriesForDay,
     entries,
     groupedEntries,
+    groupedEntriesForMonth,
+    displayMonth,
+    setDisplayMonth,
     isLoading,
     refetch: fetchEntries,
   };

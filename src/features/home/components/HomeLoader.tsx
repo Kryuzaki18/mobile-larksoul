@@ -39,7 +39,7 @@ export default function HomeLoader() {
   }));
 
   return (
-    <View className="flex-1 items-center justify-center py-24">
+    <View className="flex-1 items-center justify-center py-16">
       <Animated.View
         style={animatedStyle}
         className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-500/15 items-center justify-center mb-4"

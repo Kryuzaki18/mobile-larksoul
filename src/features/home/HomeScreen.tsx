@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -15,7 +15,6 @@ import ControlsBar from './components/ControlsBar';
 import AllEntriesView from './components/AllEntriesView';
 
 import { useScrollDateTracker } from '../../hooks/useScrollDateTracker';
-
 import { useHomeState } from '../../hooks/useHomeState';
 import { useJournalViewStore } from '../../store/journalViewStore';
 import { useAuthStore } from '../../store/authStore';
@@ -23,6 +22,8 @@ import { formatDateLabel, formatDateStrLabel, toDateStr } from '../../utils/date
 import type { RootStackParamList } from '../../models/types/navigation.type';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
+const MONTH_LOADER_DURATION_MS = 300;
 
 export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
@@ -32,13 +33,33 @@ export default function HomeScreen() {
 
   const { layout, setLayout, showAll, toggleAll } = useJournalViewStore();
   const userId = currentUser?.id ?? '';
-  const { selectedDate, setSelectedDate, entryDates, entriesForDay, groupedEntries, isLoading, refetch } =
-    useHomeState(userId);
+  const {
+    selectedDate, setSelectedDate,
+    entryDates, entriesForDay,
+    groupedEntriesForMonth,
+    setDisplayMonth,
+    isLoading, refetch,
+  } = useHomeState(userId);
 
   const { visibleDate, onGroupLayout, onScroll, onAllEntriesLayout, onControlsLayout } =
-    useScrollDateTracker(showAll, groupedEntries);
+    useScrollDateTracker(showAll, groupedEntriesForMonth);
 
   useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
+
+  const [isMonthChanging, setIsMonthChanging] = useState(false);
+  const isFirstMonthCall = useRef(true);
+  const monthTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMonthChange = useCallback((year: number, month: number) => {
+    setDisplayMonth({ year, month });
+    if (isFirstMonthCall.current) {
+      isFirstMonthCall.current = false;
+      return;
+    }
+    if (monthTimerRef.current) clearTimeout(monthTimerRef.current);
+    setIsMonthChanging(true);
+    monthTimerRef.current = setTimeout(() => setIsMonthChanging(false), MONTH_LOADER_DURATION_MS);
+  }, [setDisplayMonth]);
 
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
   const dateLabel = showAll && visibleDate
@@ -64,6 +85,7 @@ export default function HomeScreen() {
               entryDates={entryDates}
               selectedDate={selectedDate}
               onDayPress={setSelectedDate}
+              onMonthChange={handleMonthChange}
             />
 
             <View onLayout={(e) => onControlsLayout(e.nativeEvent.layout.height)}>
@@ -78,14 +100,18 @@ export default function HomeScreen() {
             </View>
 
             {showAll ? (
-              <View onLayout={(e) => onAllEntriesLayout(e.nativeEvent.layout.y)}>
-                <AllEntriesView
-                  groups={groupedEntries}
-                  layout={layout}
-                  refetch={refetch}
-                  onGroupLayout={onGroupLayout}
-                />
-              </View>
+              isMonthChanging ? (
+                <HomeLoader />
+              ) : (
+                <View onLayout={(e) => onAllEntriesLayout(e.nativeEvent.layout.y)}>
+                  <AllEntriesView
+                    groups={groupedEntriesForMonth}
+                    layout={layout}
+                    refetch={refetch}
+                    onGroupLayout={onGroupLayout}
+                  />
+                </View>
+              )
             ) : entriesForDay.length > 0 ? (
               layout === 'list' ? (
                 <ListView entries={entriesForDay} refetch={refetch} />
