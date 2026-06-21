@@ -100,10 +100,12 @@ const GridCard = memo(function GridCard({
     () => onToggleMenu(entry.id),
     [onToggleMenu, entry.id],
   );
+
   const handleEdit = useCallback(() => {
     onToggleMenu(entry.id);
     onEdit(entry.id);
   }, [onToggleMenu, onEdit, entry.id]);
+
   const handleDelete = useCallback(() => {
     onToggleMenu(entry.id);
     onDelete(entry.id);
@@ -158,14 +160,17 @@ const GridCard = memo(function GridCard({
             <View style={{ height: 2, backgroundColor: accentColor }} />
 
             <View className="px-3 pb-3">
-              <View className="flex-row items-center gap-1 mb-2 pr-6">
-                <Clock size={12} color="#9ca3af" />
-                <Text
-                  className="text-xs text-gray-400 flex-1"
-                  numberOfLines={1}
-                >
-                  {timeLabel}
-                </Text>
+              <View className="flex-row items-center justify-between gap-1 mb-2 pr-6">
+                <View className="flex-row items-center gap-1">
+                  <Clock size={12} color="#9ca3af" />
+                  <Text
+                    className="text-xs text-gray-400 flex-1"
+                    numberOfLines={1}
+                  >
+                    {timeLabel}
+                  </Text>
+                </View>
+
                 <TouchableOpacity
                   className="w-7 h-7 rounded-full items-center justify-center"
                   onPress={handleToggle}
