@@ -17,6 +17,7 @@ import AddEntryScreen from '../features/journal/AddEntryScreen';
 import { useAuthStore } from '../store/authStore';
 import { useSecurityStore } from '../store/securityStore';
 import { useThemeStore } from '../store/themeStore';
+import { useJournalViewStore } from '../store/journalViewStore';
 
 import { loadSession, clearSession } from '../services/sessionService';
 import { hasPinLock } from '../services/securityService';
@@ -29,13 +30,14 @@ export default function RootStack() {
   const { currentUser, setUser } = useAuthStore();
   const { isPinEnabled, isLocked, setPinEnabled, lock, unlock } = useSecurityStore();
   const hydrateTheme = useThemeStore(state => state.hydrate);
+  const hydrateJournalView = useJournalViewStore(state => state.hydrate);
   const [isReady, setIsReady] = useState(false);
   const appState = useRef<AppStateStatus>(AppState.currentState);
 
   useEffect(() => {
     async function restoreSession() {
       try {
-        await hydrateTheme();
+        await Promise.all([hydrateTheme(), hydrateJournalView()]);
 
         const pinEnabled = await hasPinLock();
         setPinEnabled(pinEnabled);
@@ -57,7 +59,7 @@ export default function RootStack() {
       }
     }
     restoreSession();
-  }, [setUser, setPinEnabled, lock, hydrateTheme]);
+  }, [setUser, setPinEnabled, lock, hydrateTheme, hydrateJournalView]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextState => {

@@ -14,7 +14,6 @@ export function useHomeState(userId: string) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
   const hasLoadedOnce = useRef(false);
 
   const fetchEntries = useCallback(() => {
@@ -66,8 +65,6 @@ export function useHomeState(userId: string) {
     return Array.from(map.entries()).map(([date, items]) => ({ date, items }));
   }, [entries]);
 
-  const toggleAll = useCallback(() => setShowAll(prev => !prev), []);
-
   return {
     selectedDate,
     setSelectedDate,
@@ -75,8 +72,6 @@ export function useHomeState(userId: string) {
     entriesForDay,
     entries,
     groupedEntries,
-    showAll,
-    toggleAll,
     isLoading,
     refetch: fetchEntries,
   };

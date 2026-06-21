@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -22,6 +22,7 @@ import ControlsBar from './components/ControlsBar';
 import AllEntriesView from './components/AllEntriesView';
 
 import { useHomeState } from '../../hooks/useHomeState';
+import { useJournalViewStore } from '../../store/journalViewStore';
 import { formatDateLabel, formatDateStrLabel, toDateStr } from '../../utils/dateTime';
 import { useAuthStore } from '../../store/authStore';
 
@@ -35,7 +36,7 @@ export default function HomeScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const [layout, setLayout] = useState<'list' | 'grid'>('list');
+  const { layout, setLayout, showAll, toggleAll } = useJournalViewStore();
 
   const userId = currentUser?.id ?? '';
   const {
@@ -44,8 +45,6 @@ export default function HomeScreen() {
     entryDates,
     entriesForDay,
     groupedEntries,
-    showAll,
-    toggleAll,
     isLoading,
     refetch,
   } = useHomeState(userId);
@@ -56,7 +55,6 @@ export default function HomeScreen() {
     }, [refetch]),
   );
 
-  // Scroll-driven date tracking for "All" mode
   const allEntriesOffsetY = useRef(0);
   const groupYOffsetsRef = useRef<{ date: string; y: number }[]>([]);
   const controlsBarHeightRef = useRef(0);
