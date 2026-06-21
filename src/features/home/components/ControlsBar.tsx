@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Menu, LayoutGrid } from 'lucide-react-native';
+import { Menu, LayoutGrid, BookOpen } from 'lucide-react-native';
 
 interface ControlsBarProps {
   dateLabel: string;
@@ -28,21 +28,39 @@ export default function ControlsBar({
       style={{ backgroundColor: bgColor, paddingTop: 16, paddingBottom: 4 }}
       className="flex-row items-center px-4"
     >
-      <Text className="text-xs font-bold text-gray-400 tracking-widest uppercase mr-3">
-        {dateLabel}
-      </Text>
-      <View
-        className="flex-1 h-px mr-2"
-        style={{ backgroundColor: isDark ? '#1e293b' : '#e9edf2' }}
-      />
       <View style={{ flexDirection: 'row', gap: 5 }}>
         <TouchableOpacity
           style={{
-            width: 28,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            paddingHorizontal: 8,
             height: 28,
             borderRadius: 7,
+            backgroundColor: showAll ? '#1e40af' : chipInactiveBg,
+          }}
+          onPress={onToggleAll}
+        >
+          <BookOpen size={13} color={showAll ? '#fff' : chipInactiveColor} />
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: '700',
+              color: showAll ? '#fff' : chipInactiveColor,
+            }}
+          >
+            All
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
+            gap: 4,
+            paddingHorizontal: 8,
+            height: 28,
+            borderRadius: 7,
             backgroundColor: layout === 'list' ? '#1e40af' : chipInactiveBg,
           }}
           onPress={() => onLayoutChange('list')}
@@ -51,15 +69,25 @@ export default function ControlsBar({
             size={13}
             color={layout === 'list' ? '#fff' : chipInactiveColor}
           />
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: '700',
+              color: layout === 'list' ? '#fff' : chipInactiveColor,
+            }}
+          >
+            List
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={{
-            width: 28,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            paddingHorizontal: 8,
             height: 28,
             borderRadius: 7,
-            alignItems: 'center',
-            justifyContent: 'center',
             backgroundColor: layout === 'grid' ? '#1e40af' : chipInactiveBg,
           }}
           onPress={() => onLayoutChange('grid')}
@@ -68,30 +96,26 @@ export default function ControlsBar({
             size={13}
             color={layout === 'grid' ? '#fff' : chipInactiveColor}
           />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            paddingHorizontal: 10,
-            height: 28,
-            borderRadius: 7,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: showAll ? '#1e40af' : chipInactiveBg,
-          }}
-          onPress={onToggleAll}
-        >
           <Text
             style={{
               fontSize: 11,
               fontWeight: '700',
-              color: showAll ? '#fff' : chipInactiveColor,
+              color: layout === 'grid' ? '#fff' : chipInactiveColor,
             }}
           >
-            All Journals
+            Grid
           </Text>
         </TouchableOpacity>
       </View>
+
+      <View
+        className="flex-1 h-px mr-2"
+        style={{ backgroundColor: isDark ? '#1e293b' : '#e9edf2' }}
+      />
+
+      <Text className="text-xs font-bold text-gray-400 tracking-widest uppercase mr-3">
+        {dateLabel}
+      </Text>
     </View>
   );
 }
