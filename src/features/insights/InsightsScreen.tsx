@@ -44,7 +44,7 @@ export default function MoodGraphScreen() {
 
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
-      <Header name={`${firstName}'s`} subtitle="Insights" activeTab="graph" />
+      <Header name={`${firstName}'s`} activeTab="graph" />
 
       <ScrollView
         className="flex-1"

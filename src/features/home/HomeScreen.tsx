@@ -47,7 +47,7 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
-      <Header name={`${firstName}'s`} subtitle="Journal" activeTab="home" />
+      <Header name={`${firstName}'s`} activeTab="home" />
 
       <View className="flex-1">
         {isLoading ? (

@@ -198,7 +198,6 @@ export default function AddEntryScreen() {
     elevation: 2,
   };
 
-  // Section header row — label left, counter right
   function SectionHeader({
     label,
     required,
@@ -239,7 +238,6 @@ export default function AddEntryScreen() {
       style={{ flex: 1, backgroundColor: isDark ? '#020617' : '#f1f5f9' }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      {/* ── Header ── */}
       <View style={{
         flexDirection: 'row',
         alignItems: 'center',
@@ -315,7 +313,6 @@ export default function AddEntryScreen() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 4, paddingBottom: 48 }}
       >
-        {/* ── Feeling ── */}
         <Animated.View style={[cardStyle, sectionStyle(0)]}>
           <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
             <SectionHeader label="HOW ARE YOU FEELING?" count={moods.length} max={3} />
@@ -323,7 +320,6 @@ export default function AddEntryScreen() {
           </View>
         </Animated.View>
 
-        {/* ── Title ── */}
         <Animated.View style={[cardStyle, sectionStyle(1)]}>
           <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
             <SectionHeader
@@ -351,7 +347,6 @@ export default function AddEntryScreen() {
           </View>
         </Animated.View>
 
-        {/* ── Thoughts ── */}
         <Animated.View style={[cardStyle, sectionStyle(2)]}>
           <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
             <SectionHeader
@@ -380,7 +375,6 @@ export default function AddEntryScreen() {
           </View>
         </Animated.View>
 
-        {/* ── Tags ── */}
         <Animated.View style={[cardStyle, sectionStyle(3)]}>
           <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
             <SectionHeader label="TAGS" count={tags.length} max={3} />

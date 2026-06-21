@@ -104,7 +104,6 @@ export default function ExportModal({ visible, entries, userName, onClose }: Pro
                 paddingHorizontal: 20,
               }}
             >
-              {/* Handle */}
               <View
                 style={{
                   width: 36,
@@ -116,7 +115,6 @@ export default function ExportModal({ visible, entries, userName, onClose }: Pro
                 }}
               />
 
-              {/* Header */}
               <View
                 style={{
                   flexDirection: 'row',
@@ -150,7 +148,6 @@ export default function ExportModal({ visible, entries, userName, onClose }: Pro
                 </TouchableOpacity>
               </View>
 
-              {/* Format options */}
               {FORMATS.map(({ id, label, desc, Icon, accent }) => {
                 const isActive = loading === id;
                 const accentBg = isDark
@@ -211,7 +208,6 @@ export default function ExportModal({ visible, entries, userName, onClose }: Pro
                 );
               })}
 
-              {/* Cancel */}
               <TouchableOpacity
                 onPress={loading ? undefined : onClose}
                 activeOpacity={0.7}

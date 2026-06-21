@@ -14,11 +14,10 @@ export type HeaderTab = 'home' | 'graph';
 
 interface HeaderProps {
   name?: string;
-  subtitle?: string;
   activeTab?: HeaderTab;
 }
 
-export default function Header({ name = 'Your', subtitle = 'Journal', activeTab = 'home' }: HeaderProps) {
+export default function Header({ name = 'Your', activeTab = 'home' }: HeaderProps) {
   const navigation = useNavigation<Nav>();
   const { currentUser } = useAuthStore();
   const { colorScheme } = useColorScheme();
@@ -48,7 +47,7 @@ export default function Header({ name = 'Your', subtitle = 'Journal', activeTab 
         </View>
         <View>
           <Text className="text-base font-bold text-slate-800 dark:text-slate-100">{name}</Text>
-          <Text className="text-xs text-gray-400">{subtitle}</Text>
+          <Text className="text-xs text-gray-400">LarkSoul</Text>
         </View>
       </View>
 
