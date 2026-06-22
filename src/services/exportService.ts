@@ -4,6 +4,7 @@ type RNPrintModule = { print: (opts: { html: string; jobName?: string }) => Prom
 const RNPrint = NativeModules.RNPrint as RNPrintModule | undefined;
 
 import type { JournalEntry } from '../models/interfaces/users.interface';
+import { Colors } from '../utils/colors';
 
 import { MOOD_META } from '../utils/mood';
 import { formatEntryDate, formatDateShort } from '../utils/dateTime';
@@ -87,7 +88,7 @@ function buildHTML(entries: JournalEntry[], userName: string): string {
   const rows = sorted
     .map(entry => {
       const primaryMood = entry.moods[0] ?? null;
-      const accentColor = primaryMood ? MOOD_META[primaryMood].color : '#e2e8f0';
+      const accentColor = primaryMood ? MOOD_META[primaryMood].color : Colors.slate200;
       const moodEmojis = entry.moods.map(m => MOOD_META[m].emoji).join(' ');
       const tagChips = entry.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('');
       const dateLabel = formatEntryDate(entry.createdAt.slice(0, 10));

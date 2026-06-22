@@ -3,6 +3,7 @@ import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import type { Mood } from '../../../models/interfaces/users.interface';
 import { MOOD_META } from '../../../utils/mood';
+import { Colors } from '../../../utils/colors';
 
 const MAX_MOODS = 3;
 
@@ -49,9 +50,9 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
               paddingHorizontal: 12,
               paddingVertical: 10,
               borderRadius: 16,
-              backgroundColor: isActive ? '#1e3a8a' : isDark ? '#1e293b' : '#f8fafc',
+              backgroundColor: isActive ? Colors.blue900 : isDark ? Colors.slate800 : Colors.slate50,
               borderWidth: 1.5,
-              borderColor: isActive ? '#1e40af' : isDark ? '#334155' : '#f1f5f9',
+              borderColor: isActive ? Colors.blue800 : isDark ? Colors.slate700 : Colors.slate100,
               minWidth: 66,
               opacity: isDisabled ? 0.35 : 1,
             }}
@@ -60,7 +61,7 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
             <Text style={{
               fontSize: 10,
               fontWeight: '700',
-              color: isActive ? '#ffffff' : isDark ? '#64748b' : '#94a3b8',
+              color: isActive ? Colors.white : isDark ? Colors.slate500 : Colors.slate400,
               letterSpacing: 1,
             }}>
               {label}

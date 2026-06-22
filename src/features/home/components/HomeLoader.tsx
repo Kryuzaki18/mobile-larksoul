@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import { Colors } from '../../../utils/colors';
 
 export default function HomeLoader() {
   const scale = useSharedValue(0.85);
@@ -44,7 +45,7 @@ export default function HomeLoader() {
         style={animatedStyle}
         className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-500/15 items-center justify-center mb-4"
       >
-        <BookOpen size={28} color="#3b82f6" />
+        <BookOpen size={28} color={Colors.blue500} />
       </Animated.View>
       <Text className="text-sm font-semibold text-gray-400">
         Loading your journal...

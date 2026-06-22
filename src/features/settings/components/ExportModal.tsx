@@ -15,6 +15,7 @@ import { FileText, Code2, X } from 'lucide-react-native';
 import type { JournalEntry } from '../../../models/interfaces/users.interface';
 import { exportJournal, type ExportFormat } from '../../../services/exportService';
 import { useSecurityStore } from '../../../store/securityStore';
+import { Colors } from '../../../utils/colors';
 
 interface Props {
   visible: boolean;
@@ -35,14 +36,14 @@ const FORMATS: {
     label: 'PDF Document',
     desc: 'Formatted and ready to print or share',
     Icon: FileText,
-    accent: '#8b5cf6',
+    accent: Colors.violet500,
   },
   {
     id: 'json',
     label: 'JSON Data',
     desc: 'Raw data for backup or migration',
     Icon: Code2,
-    accent: '#0ea5e9',
+    accent: Colors.sky500,
   },
 ];
 
@@ -67,13 +68,13 @@ export default function ExportModal({ visible, entries, userName, onClose }: Pro
     }
   };
 
-  const sheetBg = isDark ? '#0f172a' : '#ffffff';
-  const borderColor = isDark ? '#1e293b' : '#f1f5f9';
-  const cardBg = isDark ? '#0d1929' : '#f8fafc';
-  const titleColor = isDark ? '#f8fafc' : '#0f172a';
-  const subtitleColor = isDark ? '#64748b' : '#94a3b8';
-  const handleColor = isDark ? '#334155' : '#e2e8f0';
-  const cancelBg = isDark ? '#1e293b' : '#f1f5f9';
+  const sheetBg = isDark ? Colors.slate900 : Colors.white;
+  const borderColor = isDark ? Colors.slate800 : Colors.slate100;
+  const cardBg = isDark ? Colors.navy950 : Colors.slate50;
+  const titleColor = isDark ? Colors.slate50 : Colors.slate900;
+  const subtitleColor = isDark ? Colors.slate500 : Colors.slate400;
+  const handleColor = isDark ? Colors.slate700 : Colors.slate200;
+  const cancelBg = isDark ? Colors.slate800 : Colors.slate100;
 
   const entryCount = entries.length;
 
@@ -90,7 +91,7 @@ export default function ExportModal({ visible, entries, userName, onClose }: Pro
           style={{
             flex: 1,
             justifyContent: 'flex-end',
-            backgroundColor: 'rgba(0,0,0,0.45)',
+            backgroundColor: Colors.black_45,
           }}
         >
           <TouchableWithoutFeedback>
@@ -152,7 +153,7 @@ export default function ExportModal({ visible, entries, userName, onClose }: Pro
                 const isActive = loading === id;
                 const accentBg = isDark
                   ? `${accent}1e`
-                  : id === 'pdf' ? '#f5f3ff' : '#f0f9ff';
+                  : id === 'pdf' ? Colors.violet50 : Colors.sky50;
 
                 return (
                   <TouchableOpacity

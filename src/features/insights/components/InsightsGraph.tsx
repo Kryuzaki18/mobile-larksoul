@@ -5,6 +5,7 @@ import Svg, { Rect, Line, Text as SvgText, G } from 'react-native-svg';
 import type { DayData } from '../../../hooks/useInsightsGraph';
 import { MOOD_COLORS } from '../../../utils/mood';
 import BarTooltip, { TOOLTIP_W, TOOLTIP_H } from './BarTooltip';
+import { Colors } from '../../../utils/colors';
 
 const CHART_H = 180;
 const PAD = { top: 16, right: 8, bottom: 30, left: 26 };
@@ -36,9 +37,9 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
   const maxCount = Math.max(...dayData.map(d => d.count), 1);
   const yScale = innerH / maxCount;
 
-  const axisColor = isDark ? '#1e293b' : '#e2e8f0';
-  const labelColor = isDark ? '#334155' : '#cbd5e1';
-  const emptyBarColor = isDark ? '#1e293b' : '#f1f5f9';
+  const axisColor = isDark ? Colors.slate800 : Colors.slate200;
+  const labelColor = isDark ? Colors.slate700 : Colors.slate300;
+  const emptyBarColor = isDark ? Colors.slate800 : Colors.slate100;
 
   const yTicks = Array.from({ length: maxCount + 1 }, (_, i) => i);
 
@@ -176,7 +177,7 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
                   x={x + barW / 2}
                   y={barBottom + 14}
                   fontSize={7}
-                  fill={isDark ? '#475569' : '#94a3b8'}
+                  fill={isDark ? Colors.slate600 : Colors.slate400}
                   textAnchor="middle"
                 >
                   {day.day}

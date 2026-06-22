@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { useColorScheme } from 'nativewind';
+import { Colors } from '../../../utils/colors';
 
 import GmailIcon from '../../../assets/gmail.svg';
 import AppleLightIcon from '../../../assets/apple-white.svg';
@@ -50,7 +51,7 @@ export default function SocialLoginButtons({
             {isLoading ? (
               <ActivityIndicator
                 size="small"
-                color={colorScheme === 'dark' ? '#94a3b8' : '#475569'}
+                color={colorScheme === 'dark' ? Colors.slate400 : Colors.slate600}
               />
             ) : provider === 'google' ? (
               <GmailIcon width={28} height={28} />

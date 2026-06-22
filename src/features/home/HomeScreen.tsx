@@ -30,6 +30,7 @@ import { useJournalViewStore } from '../../store/journalViewStore';
 import { useAuthStore } from '../../store/authStore';
 import { toDateStr } from '../../utils/dateTime';
 import type { RootStackParamList } from '../../models/types/navigation.type';
+import { Colors } from '../../utils/colors';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 type Route = RouteProp<RootStackParamList, 'Home'>;
@@ -191,7 +192,7 @@ export default function HomeScreen() {
                 scrollViewRef.current?.scrollTo({ y: 0, animated: true })
               }
             >
-              <ChevronUp size={22} color="#ffffff" />
+              <ChevronUp size={22} color={Colors.white} />
             </TouchableOpacity>
           )}
 
@@ -201,7 +202,7 @@ export default function HomeScreen() {
               navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })
             }
           >
-            <Plus size={26} color="#ffffff" />
+            <Plus size={26} color={Colors.white} />
           </TouchableOpacity>
         </View>
       </View>

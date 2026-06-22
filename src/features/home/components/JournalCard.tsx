@@ -13,6 +13,7 @@ import { useColorScheme } from 'nativewind';
 import type { JournalEntry } from '../../../models/interfaces/users.interface';
 import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_COLORS, MOOD_META } from '../../../utils/mood';
+import { Colors } from '../../../utils/colors';
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -37,7 +38,7 @@ export default function JournalCard({
   const isOpen = useRef(false);
   const { colorScheme } = useColorScheme();
 
-  const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? '#f1f5f9';
+  const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
   const isDark = colorScheme === 'dark';
   const timeLabel = formatTimeOnly(entry.createdAt);
 
@@ -117,7 +118,7 @@ export default function JournalCard({
             onEdit?.();
           }}
         >
-          <Pencil size={13} color={isDark ? '#cbd5e1' : '#475569'} />
+          <Pencil size={13} color={isDark ? Colors.slate300 : Colors.slate600} />
           <Text className="text-xs font-medium text-slate-700 dark:text-slate-300">
             Edit
           </Text>
@@ -135,7 +136,7 @@ export default function JournalCard({
             onDelete?.();
           }}
         >
-          <Trash2 size={13} color="#ef4444" />
+          <Trash2 size={13} color={Colors.red500} />
           <Text className="text-xs font-medium text-red-500">Delete</Text>
         </TouchableOpacity>
       </View>
@@ -145,7 +146,7 @@ export default function JournalCard({
         style={{
           transform: [{ translateX }],
           elevation: 1,
-          shadowColor: '#000',
+          shadowColor: Colors.black,
           shadowOpacity: 0.05,
           shadowRadius: 6,
           shadowOffset: { width: 0, height: 2 },
@@ -169,7 +170,7 @@ export default function JournalCard({
             delayLongPress={1000}
           >
             <View className="flex-row items-center mb-2">
-              <Clock size={13} color="#9ca3af" />
+              <Clock size={13} color={Colors.gray400} />
               <Text className="text-xs text-gray-400 font-medium tracking-wider ml-1 flex-1">
                 {timeLabel}
               </Text>

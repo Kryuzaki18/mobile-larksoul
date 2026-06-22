@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { Delete } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
+import { Colors } from '../../../utils/colors';
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'back'];
 
@@ -51,7 +52,7 @@ export default function PinPad({ length = 4, value, onChange, error }: PinPadPro
               width: 14,
               height: 14,
               borderRadius: 7,
-              backgroundColor: i < value.length ? (error ? '#ef4444' : '#1e40af') : (isDark ? '#334155' : '#e2e8f0'),
+              backgroundColor: i < value.length ? (error ? Colors.red500 : Colors.blue800) : (isDark ? Colors.slate700 : Colors.slate200),
             }}
           />
         ))}
@@ -68,7 +69,7 @@ export default function PinPad({ length = 4, value, onChange, error }: PinPadPro
             style={{ width: 88, height: 72 }}
           >
             {key === 'back' ? (
-              <Delete size={22} color={isDark ? '#cbd5e1' : '#475569'} />
+              <Delete size={22} color={isDark ? Colors.slate300 : Colors.slate600} />
             ) : key !== '' ? (
               <Text className="text-2xl font-semibold text-slate-800 dark:text-slate-100">{key}</Text>
             ) : null}

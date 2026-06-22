@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
+import { Colors } from '../../../utils/colors';
 
 interface SettingsItemProps {
   icon?: React.ReactNode;
@@ -14,7 +15,7 @@ interface SettingsItemProps {
 
 export default function SettingsItem({
   icon,
-  iconBg = '#f1f5f9',
+  iconBg = Colors.slate100,
   extra,
   arrow,
   onPress,
@@ -51,7 +52,7 @@ export default function SettingsItem({
         )}
       </View>
       {extra && <View className="ml-3">{extra}</View>}
-      {arrow && <ChevronRight size={15} color="#cbd5e1" style={{ marginLeft: 4 }} />}
+      {arrow && <ChevronRight size={15} color={Colors.slate300} style={{ marginLeft: 4 }} />}
     </TouchableOpacity>
   );
 }

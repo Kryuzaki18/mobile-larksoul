@@ -24,10 +24,11 @@ import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
 
 import type { GridCardProps } from '../../../models/interfaces/home.interface';
 import { GridViewProps } from '../../../models/types/home.type';
+import { Colors } from '../../../utils/colors';
 
 const CARD_SHADOW = {
   elevation: 1,
-  shadowColor: '#000',
+  shadowColor: Colors.black,
   shadowOpacity: 0.03,
   shadowRadius: 6,
   shadowOffset: { width: 0, height: 2 },
@@ -35,7 +36,7 @@ const CARD_SHADOW = {
 
 const MENU_SHADOW = {
   elevation: 3,
-  shadowColor: '#000',
+  shadowColor: Colors.black,
   shadowOpacity: 0.12,
   shadowRadius: 12,
   shadowOffset: { width: 0, height: 4 },
@@ -51,7 +52,7 @@ const GridCard = memo(function GridCard({
   onDelete,
 }: GridCardProps) {
   const timeLabel = formatTimeOnly(entry.createdAt);
-  const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? '#f1f5f9';
+  const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -130,7 +131,7 @@ const GridCard = memo(function GridCard({
     }).start();
   };
 
-  const iconColor = isDark ? '#cbd5e1' : '#475569';
+  const iconColor = isDark ? Colors.slate300 : Colors.slate600;
 
   return (
     <Pressable
@@ -161,7 +162,7 @@ const GridCard = memo(function GridCard({
 
             <View className="pt-1 pb-3">
               <View className="flex-row items-center gap-1 mb-2 ml-2">
-                <Clock size={12} color="#9ca3af" />
+                <Clock size={12} color={Colors.gray400} />
                 <Text
                   className="text-xs text-gray-400 flex-1"
                   numberOfLines={1}
@@ -256,7 +257,7 @@ const GridCard = memo(function GridCard({
                 className="flex-row items-center gap-1 px-4 py-2"
                 onPress={handleDelete}
               >
-                <Trash2 size={12} color="#ef4444" />
+                <Trash2 size={12} color={Colors.red500} />
                 <Text className="text-xs font-medium text-red-500">Delete</Text>
               </TouchableOpacity>
             </Animated.View>

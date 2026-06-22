@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, PanResponder, View, Text, TouchableOpacity } from 'react-native';
+import { Animated, Easing, PanResponder, View, Text } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import { MONTH_NAMES, WEEK_DAYS } from '../../../utils/dateTime';
-import { PrevButton, NextButton } from '../../commons/Button';
+import { WEEK_DAYS } from '../../../utils/dateTime';
+import { Colors } from '../../../utils/colors';
+import CalendarHeader from './CalendarHeader';
+import CalendarDayCell from './CalendarDayCell';
 
 type DayCell = { day: number; type: 'prev' | 'current' | 'next' };
 
@@ -47,7 +49,6 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
   const slideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim  = useRef(new Animated.Value(1)).current;
 
-  // Keep refs fresh for use inside PanResponder (avoids stale closures)
   const currentRef = useRef(current);
   useEffect(() => { currentRef.current = current; }, [current]);
 
@@ -159,18 +160,16 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
   return (
     <View
       className="bg-white dark:bg-slate-900 rounded-2xl mx-4 mt-4 pb-3"
-      style={{ elevation: 1, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } }}
+      style={{ elevation: 1, shadowColor: Colors.black, shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } }}
       {...panResponder.panHandlers}
     >
-      <View className="flex-row items-center justify-between px-4 pt-4 pb-3">
-        <PrevButton onPress={prevMonth} />
-
-        <Text className="text-sm font-bold text-slate-800 dark:text-slate-100">
-          {MONTH_NAMES[month]} {year}
-        </Text>
-
-        <NextButton onPress={nextMonth} disabled={isCurrentMonth} />
-      </View>
+      <CalendarHeader
+        year={year}
+        month={month}
+        isCurrentMonth={isCurrentMonth}
+        onPrev={prevMonth}
+        onNext={nextMonth}
+      />
 
       <View style={{ overflow: 'hidden' }}>
         <Animated.View style={{ transform: [{ translateX: slideAnim }], opacity: fadeAnim }}>
@@ -185,57 +184,30 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
           {rows.map((row, rowIdx) => (
             <View key={rowIdx} className="flex-row px-2">
               {row.map((cell, colIdx) => {
-                const isToday     = isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
-                const isSelected  =
+                const isToday    = isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
+                const isSelected =
                   cell.type === 'current' &&
                   !!selectedDate &&
                   selectedDate.toDateString() === new Date(year, month, cell.day).toDateString();
-                const hasEntry    = cell.type === 'current' && entrySet.has(getDateStr(cell.day));
-                const isFuture    = cell.type === 'current' && new Date(year, month, cell.day) > today;
-                const isSelectable = cell.type === 'current' && !isFuture;
+                const hasEntry   = cell.type === 'current' && entrySet.has(getDateStr(cell.day));
+                const isFuture   = cell.type === 'current' && new Date(year, month, cell.day) > today;
 
                 return (
-                  <View key={colIdx} className="flex-1 items-center py-0.5">
-                    <TouchableOpacity
-                      onPress={() => isSelectable && onDayPress?.(new Date(year, month, cell.day))}
-                      disabled={!isSelectable}
-                      activeOpacity={isSelectable ? 0.65 : 1}
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 16,
-                        overflow: 'hidden',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: isSelected
-                          ? '#1e40af'
-                          : isToday
-                          ? (isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff')
-                          : 'transparent',
-                      }}
-                    >
-                      <Text
-                        className={`text-sm ${
-                          isSelected
-                            ? 'text-white font-bold'
-                            : isToday
-                            ? 'text-blue-700 dark:text-blue-400 font-bold'
-                            : isFuture
-                            ? 'text-gray-200 dark:text-slate-700'
-                            : cell.type === 'current'
-                            ? 'text-slate-700 dark:text-slate-200'
-                            : 'text-gray-300 dark:text-slate-700'
-                        }`}
-                      >
-                        {cell.day}
-                      </Text>
-                    </TouchableOpacity>
-                    <View className="h-1.5 items-center justify-center mt-0.5">
-                      {hasEntry && !isSelected && (
-                        <View className="w-1 h-1 rounded-full" style={{ backgroundColor: '#3b82f6' }} />
-                      )}
-                    </View>
-                  </View>
+                  <CalendarDayCell
+                    key={colIdx}
+                    day={cell.day}
+                    type={cell.type}
+                    isToday={isToday}
+                    isSelected={isSelected}
+                    hasEntry={hasEntry}
+                    isFuture={isFuture}
+                    isDark={isDark}
+                    onPress={() => {
+                      if (cell.type === 'current' && !isFuture) {
+                        onDayPress?.(new Date(year, month, cell.day));
+                      }
+                    }}
+                  />
                 );
               })}
             </View>

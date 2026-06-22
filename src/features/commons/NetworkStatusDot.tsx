@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import { Colors } from '../../utils/colors';
 
 interface NetworkStatusDotProps {
   size?: number;
@@ -28,9 +29,9 @@ export default function NetworkStatusDot({ size = 10, style }: NetworkStatusDotP
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: isActive ? '#22c55e' : '#ef4444',
+          backgroundColor: isActive ? Colors.green500 : Colors.red500,
           borderWidth: 1.5,
-          borderColor: '#ffffff',
+          borderColor: Colors.white,
         },
         style,
       ]}

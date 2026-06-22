@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
+import { Colors } from '../../utils/colors';
 
 interface BackButtonProps {
   onPress?: () => void;
@@ -23,7 +24,7 @@ export default function BackButton({ onPress, disabled }: BackButtonProps) {
     <TouchableOpacity
       className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 items-center justify-center"
       style={{
-        shadowColor: '#000',
+        shadowColor: Colors.black,
         shadowOpacity: 0.06,
         shadowRadius: 4,
         shadowOffset: { width: 0, height: 1 },
@@ -33,7 +34,7 @@ export default function BackButton({ onPress, disabled }: BackButtonProps) {
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <ChevronLeft size={18} color={isDark ? '#e2e8f0' : '#1e293b'} />
+      <ChevronLeft size={18} color={isDark ? Colors.slate200 : Colors.slate800} />
     </TouchableOpacity>
   );
 }
@@ -51,9 +52,9 @@ function NextPrevButton({ isPrev, onPress, disabled }: NavButtonProps & { isPrev
       style={{ opacity: disabled ? 0.35 : 1 }}
     >
       {isPrev ? (
-        <ChevronLeft size={14} color={isDark ? '#cbd5e1' : '#475569'} />
+        <ChevronLeft size={14} color={isDark ? Colors.slate300 : Colors.slate600} />
       ) : (
-        <ChevronRight size={14} color={isDark ? '#cbd5e1' : '#475569'} />
+        <ChevronRight size={14} color={isDark ? Colors.slate300 : Colors.slate600} />
       )}
     </TouchableOpacity>
   );

@@ -25,6 +25,7 @@ import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
+import { Colors } from '../../utils/colors';
 
 type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -133,7 +134,7 @@ export default function LoginScreen() {
     <View className="flex-1 bg-white dark:bg-slate-950">
       {!isConnected && (
         <View className="flex-row items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-500/10 border-b border-amber-100 dark:border-amber-500/20">
-          <WifiOff size={13} color="#d97706" />
+          <WifiOff size={13} color={Colors.amber600} />
           <Text className="text-xs font-medium text-amber-700 dark:text-amber-400 flex-1">
             No internet — social sign-in unavailable
           </Text>
@@ -169,11 +170,11 @@ export default function LoginScreen() {
               activeOpacity={0.85}
             >
               {guestLoading ? (
-                <ActivityIndicator size="small" color="#ffffff" />
+                <ActivityIndicator size="small" color={Colors.white} />
               ) : (
                 <View className="flex-row items-center gap-2">
                   <Text className="text-white text-base font-semibold">Continue as Guest</Text>
-                  <ArrowRight size={16} color="#fff" />
+                  <ArrowRight size={16} color={Colors.white} />
                 </View>
               )}
             </TouchableOpacity>

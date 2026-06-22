@@ -6,6 +6,7 @@ import { ShieldCheck } from 'lucide-react-native';
 import BackButton from '../commons/Button';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
+import { Colors } from '../../utils/colors';
 import { setPinLock, removePinLock } from '../../services/securityService';
 import { useSecurityStore } from '../../store/securityStore';
 import PinPad from '../auth/components/PinPad';
@@ -81,7 +82,7 @@ export default function SecurityScreen() {
     return (
       <View className="flex-1 bg-slate-50 dark:bg-slate-950 items-center justify-center px-6">
         <View className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 items-center justify-center mb-5">
-          <ShieldCheck size={26} color="#3b82f6" />
+          <ShieldCheck size={26} color={Colors.blue500} />
         </View>
         <Text className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5">
           {step === 'create' ? 'Create a PIN' : 'Confirm your PIN'}
@@ -118,8 +119,8 @@ export default function SecurityScreen() {
             <Switch
               value={isPinEnabled}
               onValueChange={handleToggle}
-              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-              thumbColor="#ffffff"
+              trackColor={{ false: Colors.slate200, true: Colors.blue600 }}
+              thumbColor={Colors.white}
               style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }}
             />
           </View>

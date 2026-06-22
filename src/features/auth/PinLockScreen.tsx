@@ -7,6 +7,7 @@ import {
   getPinLockStatus,
   MAX_PIN_ATTEMPTS,
 } from '../../services/securityService';
+import { Colors } from '../../utils/colors';
 
 interface PinLockScreenProps {
   title?: string;
@@ -93,9 +94,9 @@ export default function PinLockScreen({
 
       <View className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 items-center justify-center mb-5">
         {isLocked ? (
-          <Clock size={26} color="#ef4444" />
+          <Clock size={26} color={Colors.red500} />
         ) : (
-          <Lock size={26} color="#3b82f6" />
+          <Lock size={26} color={Colors.blue500} />
         )}
       </View>
 

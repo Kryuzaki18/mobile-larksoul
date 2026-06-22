@@ -3,6 +3,7 @@ import { View, Text, Animated } from 'react-native';
 
 import type { DayData } from '../../../hooks/useInsightsGraph';
 import { MOOD_META } from '../../../utils/mood';
+import { Colors } from '../../../utils/colors';
 
 export const TOOLTIP_W = 120;
 export const TOOLTIP_H = 72;
@@ -39,10 +40,10 @@ export default function BarTooltip({ day, x, y, totalEntries, monthName, isDark 
   }, [day.day]);
 
   const pct = totalEntries > 0 ? Math.round((day.count / totalEntries) * 100) : null;
-  const bg = isDark ? '#1e293b' : '#ffffff';
-  const border = isDark ? '#334155' : '#e2e8f0';
-  const primary = isDark ? '#f1f5f9' : '#0f172a';
-  const secondary = isDark ? '#94a3b8' : '#64748b';
+  const bg = isDark ? Colors.slate800 : Colors.white;
+  const border = isDark ? Colors.slate700 : Colors.slate200;
+  const primary = isDark ? Colors.slate100 : Colors.slate900;
+  const secondary = isDark ? Colors.slate400 : Colors.slate500;
 
   return (
     <Animated.View
@@ -60,7 +61,7 @@ export default function BarTooltip({ day, x, y, totalEntries, monthName, isDark 
         borderColor: border,
         paddingHorizontal: 10,
         paddingVertical: 8,
-        shadowColor: '#000',
+        shadowColor: Colors.black,
         shadowOpacity: isDark ? 0.35 : 0.1,
         shadowRadius: 6,
         shadowOffset: { width: 0, height: 2 },

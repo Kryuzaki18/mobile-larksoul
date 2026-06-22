@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../models/types/navigation.type';
 import { useAuthStore } from '../../store/authStore';
 import NetworkStatusDot from './NetworkStatusDot';
+import { Colors } from '../../utils/colors';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -33,8 +34,8 @@ export default function Header({ name = 'Your', activeTab = 'home' }: HeaderProp
     }
   };
 
-  const activeColor = isDark ? '#fff': '#1e40af';
-  const inactiveColor = isDark ? '#eee' : '#94a3b8';
+  const activeColor = isDark ? Colors.white : Colors.blue800;
+  const inactiveColor = isDark ? Colors.slate200 : Colors.slate400;
 
   return (
     <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800">
@@ -63,7 +64,7 @@ export default function Header({ name = 'Your', activeTab = 'home' }: HeaderProp
             paddingVertical: 6,
             borderRadius: 20,
             backgroundColor: activeTab === 'home'
-              ? isDark ? 'rgba(30,64,175,0.3)' : '#eff6ff'
+              ? isDark ? Colors.blue800_30 : Colors.blue50
               : 'transparent',
           }}
         >
@@ -90,7 +91,7 @@ export default function Header({ name = 'Your', activeTab = 'home' }: HeaderProp
             paddingVertical: 6,
             borderRadius: 20,
             backgroundColor: activeTab === 'graph'
-              ? isDark ? 'rgba(30,64,175,0.3)' : '#eff6ff'
+              ? isDark ? Colors.blue800_30 : Colors.blue50
               : 'transparent',
           }}
         >
@@ -113,7 +114,7 @@ export default function Header({ name = 'Your', activeTab = 'home' }: HeaderProp
           onPress={() => navigation.navigate('Settings')}
           activeOpacity={0.7}
         >
-          <Settings size={17} color={isDark ? '#cbd5e1' : '#475569'} />
+          <Settings size={17} color={isDark ? Colors.slate300 : Colors.slate600} />
         </TouchableOpacity>
       </View>
     </View>

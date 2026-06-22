@@ -4,6 +4,7 @@ import { useColorScheme } from 'nativewind';
 
 import type { Mood } from '../../../models/interfaces/users.interface';
 import MoodBreakdownRow from './MoodBreakdownRow';
+import { Colors } from '../../../utils/colors';
 
 interface Props {
   moodCounts: Partial<Record<Mood, number>>;
@@ -20,7 +21,7 @@ export default function MoodBreakdown({ moodCounts }: Props) {
     <View
       className="mx-4 mt-3 bg-white dark:bg-slate-900 rounded-2xl p-4"
       style={{
-        shadowColor: '#000',
+        shadowColor: Colors.black,
         shadowOpacity: isDark ? 0.3 : 0.06,
         shadowRadius: 8,
         shadowOffset: { width: 0, height: 2 },

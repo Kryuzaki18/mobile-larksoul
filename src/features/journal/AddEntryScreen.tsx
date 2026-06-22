@@ -22,9 +22,11 @@ import type { Mood } from '../../models/interfaces/users.interface';
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 import { useAuthStore } from '../../store/authStore';
 import { formatEntryDate, toDateStr } from '../../utils/dateTime';
+import { Colors } from '../../utils/colors';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
 import DatePickerModal from './components/DatePickerModal';
+import SectionHeader from './components/SectionHeader';
 
 function parseDateStr(dateStr: string): Date {
   const [year, month, day] = dateStr.split('-').map(Number);
@@ -69,9 +71,8 @@ export default function AddEntryScreen() {
   const contentRef = useRef<TextInput>(null);
   const canSave = title.trim().length >= 2 && content.trim().length >= 7;
 
-  const placeholderColor = isDark ? '#475569' : '#94a3b8';
+  const placeholderColor = isDark ? Colors.slate600 : Colors.slate400;
 
-  // Stagger mount
   const sectionAnims = useRef(
     Array.from({ length: SECTION_COUNT }, () => ({
       opacity: new Animated.Value(0),
@@ -164,22 +165,21 @@ export default function AddEntryScreen() {
     }
   }
 
-  // Animated interpolations
   const titleBorderColor = titleFocusAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? '#334155' : '#e2e8f0', '#3b82f6'],
+    outputRange: [isDark ? Colors.slate700 : Colors.slate200, Colors.blue500],
   });
   const contentBorderColor = contentFocusAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? '#334155' : '#e2e8f0', '#3b82f6'],
+    outputRange: [isDark ? Colors.slate700 : Colors.slate200, Colors.blue500],
   });
   const saveBg = saveReadyAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? '#1e293b' : '#f1f5f9', '#1e40af'],
+    outputRange: [isDark ? Colors.slate800 : Colors.slate100, Colors.blue800],
   });
   const saveTextColor = saveReadyAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? '#475569' : '#94a3b8', '#ffffff'],
+    outputRange: [isDark ? Colors.slate600 : Colors.slate400, Colors.white],
   });
 
   function sectionStyle(i: number) {
@@ -190,73 +190,37 @@ export default function AddEntryScreen() {
   }
 
   const cardStyle = {
-    backgroundColor: isDark ? '#0f172a' : '#ffffff',
+    backgroundColor: isDark ? Colors.slate900 : Colors.white,
     borderRadius: 20,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOpacity: isDark ? 0.2 : 0.05,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },
     elevation: 2,
   };
 
-  function SectionHeader({
-    label,
-    required,
-    count,
-    max,
-    warn,
-  }: {
-    label: string;
-    required?: boolean;
-    count: number;
-    max: number;
-    warn?: boolean;
-  }) {
-    const counterColor = warn ? '#ef4444' : count >= max ? '#f59e0b' : '#64748b';
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <Text style={{ ...TYPE.label, color: '#64748b' }}>
-          {required && <Text style={{ color: '#ef4444' }}>* </Text>}
-          {label}
-        </Text>
-        <Text style={{ ...TYPE.counter, color: counterColor }}>
-          {count}/{max}
-        </Text>
-      </View>
-    );
-  }
-
   const inputContainerBase = {
     borderWidth: 1.5,
     borderRadius: 12,
-    backgroundColor: isDark ? '#1e293b' : '#f8fafc',
     paddingHorizontal: 14,
     paddingVertical: 12,
   };
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: isDark ? '#020617' : '#f1f5f9' }}
+      className="flex-1 bg-slate-100 dark:bg-slate-950"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingTop: 12,
-        paddingBottom: 10,
-        backgroundColor: isDark ? '#020617' : '#f1f5f9',
-      }}>
+      <View className="flex-row items-center justify-between px-4 pt-3 pb-2.5 bg-slate-100 dark:bg-slate-950">
         <BackButton />
 
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ ...TYPE.screenTitle, color: isDark ? '#f1f5f9' : '#0f172a' }}>
+          <Text style={{ ...TYPE.screenTitle, color: isDark ? Colors.slate100 : Colors.slate900 }}>
             {entryId ? 'Edit Entry' : 'New Entry'}
           </Text>
           {entryId ? (
-            <Text style={{ ...TYPE.screenDate, color: '#64748b', marginTop: 2 }}>
+            <Text style={{ ...TYPE.screenDate, color: Colors.slate500, marginTop: 2 }}>
               {formatEntryDate(date)}
             </Text>
           ) : (
@@ -265,8 +229,8 @@ export default function AddEntryScreen() {
               onPress={() => setShowDatePicker(true)}
               activeOpacity={0.65}
             >
-              <Calendar size={10} color="#64748b" />
-              <Text style={{ ...TYPE.screenDate, color: '#64748b' }}>
+              <Calendar size={10} color={Colors.slate500} />
+              <Text style={{ ...TYPE.screenDate, color: Colors.slate500 }}>
                 {formatEntryDate(date)}
               </Text>
             </TouchableOpacity>
@@ -284,7 +248,7 @@ export default function AddEntryScreen() {
               alignItems: 'center',
             }}>
               {saving
-                ? <ActivityIndicator size="small" color={canSave ? '#ffffff' : '#64748b'} />
+                ? <ActivityIndicator size="small" color={canSave ? Colors.white : Colors.slate500} />
                 : <Animated.Text style={{ ...TYPE.saveBtn, color: saveTextColor }}>Save</Animated.Text>
               }
             </Animated.View>
@@ -313,7 +277,10 @@ export default function AddEntryScreen() {
               max={30}
               warn={title.length > 0 && title.trim().length < 2}
             />
-            <Animated.View style={{ ...inputContainerBase, borderColor: titleBorderColor }}>
+            <Animated.View
+              className="bg-slate-50 dark:bg-slate-800"
+              style={{ ...inputContainerBase, borderColor: titleBorderColor }}
+            >
               <TextInput
                 value={title}
                 onChangeText={setTitle}
@@ -321,7 +288,7 @@ export default function AddEntryScreen() {
                 onBlur={() => animateFocus(titleFocusAnim, false)}
                 placeholder="Name this chapter of your day…"
                 placeholderTextColor={placeholderColor}
-                style={{ ...TYPE.inputTitle, color: isDark ? '#f1f5f9' : '#0f172a' }}
+                style={{ ...TYPE.inputTitle, color: isDark ? Colors.slate100 : Colors.slate900 }}
                 maxLength={30}
                 returnKeyType="next"
                 onSubmitEditing={() => contentRef.current?.focus()}
@@ -340,7 +307,10 @@ export default function AddEntryScreen() {
               max={300}
               warn={content.length > 0 && content.trim().length < 7}
             />
-            <Animated.View style={{ ...inputContainerBase, borderColor: contentBorderColor }}>
+            <Animated.View
+              className="bg-slate-50 dark:bg-slate-800"
+              style={{ ...inputContainerBase, borderColor: contentBorderColor }}
+            >
               <TextInput
                 ref={contentRef}
                 value={content}
@@ -351,7 +321,7 @@ export default function AddEntryScreen() {
                 placeholderTextColor={placeholderColor}
                 multiline
                 textAlignVertical="top"
-                style={{ ...TYPE.inputBody, color: isDark ? '#e2e8f0' : '#1e293b', minHeight: 148 }}
+                style={{ ...TYPE.inputBody, color: isDark ? Colors.slate200 : Colors.slate800, minHeight: 148 }}
                 scrollEnabled={false}
                 maxLength={300}
               />
@@ -368,15 +338,15 @@ export default function AddEntryScreen() {
 
         {error !== null && (
           <View style={{
-            backgroundColor: isDark ? 'rgba(239,68,68,0.1)' : '#fef2f2',
+            backgroundColor: isDark ? Colors.red500_10 : Colors.red50,
             borderWidth: 1,
-            borderColor: isDark ? 'rgba(239,68,68,0.2)' : '#fecaca',
+            borderColor: isDark ? Colors.red500_20 : Colors.red200,
             borderRadius: 12,
             paddingHorizontal: 14,
             paddingVertical: 10,
             marginTop: 4,
           }}>
-            <Text style={{ ...TYPE.error, color: '#ef4444', textAlign: 'center' }}>
+            <Text style={{ ...TYPE.error, color: Colors.red500, textAlign: 'center' }}>
               {error}
             </Text>
           </View>

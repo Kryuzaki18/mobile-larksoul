@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TouchableOpacity, TextInput } from 'react-native';
 import { Menu, LayoutGrid, BookOpen, Search, X } from 'lucide-react-native';
 import type { JournalLayout } from '../../../store/journalViewStore';
+import { Colors } from '../../../utils/colors';
 
 interface ChipProps {
   active: boolean;
@@ -11,8 +12,8 @@ interface ChipProps {
 }
 
 function ToggleChip({ active, onPress, icon, isDark }: ChipProps) {
-  const bg = active ? '#1e40af' : isDark ? '#1e293b' : '#f1f5f9';
-  const color = active ? '#fff' : isDark ? '#94a3b8' : '#6b7280';
+  const bg = active ? Colors.blue800 : isDark ? Colors.slate800 : Colors.slate100;
+  const color = active ? Colors.white : isDark ? Colors.slate400 : Colors.gray500;
   return (
     <TouchableOpacity
       style={{
@@ -81,24 +82,24 @@ export default function ControlsBar({
           alignItems: 'center',
           height: 32,
           borderRadius: 10,
-          backgroundColor: isDark ? '#1e293b' : '#f1f5f9',
+          backgroundColor: isDark ? Colors.slate800 : Colors.slate100,
           paddingHorizontal: 10,
           gap: 6,
           borderWidth: 1,
-          borderColor: isDark ? '#0f172a' : '#e2e8f0',
+          borderColor: isDark ? Colors.slate900 : Colors.slate200,
         }}
       >
-        <Search size={12} color={isDark ? '#94a3b8' : '#6b7280'} />
+        <Search size={12} color={isDark ? Colors.slate400 : Colors.gray500} />
         <TextInput
           value={inputValue}
           onChangeText={setInputValue}
           maxLength={30}
           placeholder="Search..."
-          placeholderTextColor={isDark ? '#64748b' : '#9ca3af'}
+          placeholderTextColor={isDark ? Colors.slate500 : Colors.gray400}
           style={{
             flex: 1,
             fontSize: 12,
-            color: isDark ? '#f1f5f9' : '#1e293b',
+            color: isDark ? Colors.slate100 : Colors.slate800,
             padding: 0,
           }}
         />
@@ -112,12 +113,12 @@ export default function ControlsBar({
                 width: 14,
                 height: 14,
                 borderRadius: 7,
-                backgroundColor: isDark ? '#475569' : '#cbd5e1',
+                backgroundColor: isDark ? Colors.slate600 : Colors.slate300,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <X size={8} color={isDark ? '#94a3b8' : '#6b7280'} />
+              <X size={8} color={isDark ? Colors.slate400 : Colors.gray500} />
             </View>
           </TouchableOpacity>
         )}

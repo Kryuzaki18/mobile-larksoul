@@ -34,6 +34,7 @@ import SettingsSection from './components/SettingsSection';
 import SettingsItem from './components/SettingsItem';
 import ExportModal from './components/ExportModal';
 import NetworkStatusDot from '../commons/NetworkStatusDot';
+import { Colors } from '../../utils/colors';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -51,8 +52,8 @@ export default function SettingsScreen() {
   const { theme, setTheme } = useThemeStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const chipInactiveBg = isDark ? '#1e293b' : '#f1f5f9';
-  const chipInactiveColor = isDark ? '#94a3b8' : '#6b7280';
+  const chipInactiveBg = isDark ? Colors.slate800 : Colors.slate100;
+  const chipInactiveColor = isDark ? Colors.slate400 : Colors.gray500;
 
   const [exportVisible, setExportVisible] = useState(false);
   const [exportEntries, setExportEntries] = useState<JournalEntry[]>([]);
@@ -112,7 +113,7 @@ export default function SettingsScreen() {
 
               {(hasGoogle || hasApple) && (
                 <View style={{ alignItems: 'flex-end', gap: 4 }}>
-                  <Text style={{ fontSize: 10, fontWeight: '500', color: '#94a3b8', letterSpacing: 0.4 }}>
+                  <Text style={{ fontSize: 10, fontWeight: '500', color: Colors.slate400, letterSpacing: 0.4 }}>
                     Signed in with
                   </Text>
                   <View style={{ flexDirection: 'row', gap: 5 }}>
@@ -124,12 +125,12 @@ export default function SettingsScreen() {
                         paddingHorizontal: 9,
                         paddingVertical: 4,
                         borderRadius: 20,
-                        backgroundColor: isDark ? 'rgba(239,68,68,0.1)' : '#fff5f5',
+                        backgroundColor: isDark ? Colors.red500_10 : Colors.red50,
                         borderWidth: 1,
-                        borderColor: isDark ? 'rgba(239,68,68,0.2)' : '#fecaca',
+                        borderColor: isDark ? Colors.red500_20 : Colors.red200,
                       }}>
                         <GmailIcon width={13} height={13} />
-                        <Text style={{ fontSize: 11, fontWeight: '600', color: '#dc2626', letterSpacing: 0.1 }}>
+                        <Text style={{ fontSize: 11, fontWeight: '600', color: Colors.red600, letterSpacing: 0.1 }}>
                           Google
                         </Text>
                       </View>
@@ -142,12 +143,12 @@ export default function SettingsScreen() {
                         paddingHorizontal: 9,
                         paddingVertical: 4,
                         borderRadius: 20,
-                        backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#1e293b',
+                        backgroundColor: isDark ? Colors.white_06 : Colors.slate800,
                         borderWidth: 1,
-                        borderColor: isDark ? 'rgba(255,255,255,0.1)' : '#1e293b',
+                        borderColor: isDark ? Colors.white_10 : Colors.slate800,
                       }}>
                         <AppleIcon width={12} height={12} />
-                        <Text style={{ fontSize: 11, fontWeight: '600', color: '#ffffff', letterSpacing: 0.1 }}>
+                        <Text style={{ fontSize: 11, fontWeight: '600', color: Colors.white, letterSpacing: 0.1 }}>
                           Apple
                         </Text>
                       </View>
@@ -165,7 +166,7 @@ export default function SettingsScreen() {
               onPress={() => navigation.navigate('SignUp')}
             >
               <View className="flex-row items-center gap-2">
-                <UserPlus size={14} color={isDark ? '#60a5fa' : '#1d4ed8'} />
+                <UserPlus size={14} color={isDark ? Colors.blue400 : Colors.blue700} />
                 <Text className="text-sm font-semibold text-blue-700 dark:text-blue-400">Create an Account</Text>
               </View>
             </TouchableOpacity>
@@ -174,8 +175,8 @@ export default function SettingsScreen() {
 
         <SettingsSection title="App Settings">
           <SettingsItem
-            icon={<Sun size={17} color="#fff" />}
-            iconBg="#f59e0b"
+            icon={<Sun size={17} color={Colors.white} />}
+            iconBg={Colors.amber500}
             extra={
               <View className="flex-row gap-1.5">
                 {THEME_OPTIONS.map(({ mode, label, Icon }) => {
@@ -190,12 +191,12 @@ export default function SettingsScreen() {
                         paddingHorizontal: 8,
                         paddingVertical: 5,
                         borderRadius: 8,
-                        backgroundColor: isActive ? '#1e40af' : chipInactiveBg,
+                        backgroundColor: isActive ? Colors.blue800 : chipInactiveBg,
                       }}
                       onPress={() => setTheme(mode)}
                     >
-                      <Icon size={11} color={isActive ? '#fff' : chipInactiveColor} />
-                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? '#fff' : chipInactiveColor }}>
+                      <Icon size={11} color={isActive ? Colors.white : chipInactiveColor} />
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? Colors.white : chipInactiveColor }}>
                         {label}
                       </Text>
                     </TouchableOpacity>
@@ -208,8 +209,8 @@ export default function SettingsScreen() {
           </SettingsItem>
 
           <SettingsItem
-            icon={<Lock size={17} color="#fff" />}
-            iconBg="#10b981"
+            icon={<Lock size={17} color={Colors.white} />}
+            iconBg={Colors.emerald500}
             extra={
               <Text className="text-xs font-medium text-gray-400">
                 {isPinEnabled ? 'Enabled' : 'Disabled'}
@@ -224,8 +225,8 @@ export default function SettingsScreen() {
 
         <SettingsSection title="Data">
           <SettingsItem
-            icon={<Download size={17} color="#fff" />}
-            iconBg="#8b5cf6"
+            icon={<Download size={17} color={Colors.white} />}
+            iconBg={Colors.violet500}
             extra={<Text className="text-xs font-medium text-gray-400">PDF, JSON</Text>}
             arrow
             onPress={handleOpenExport}
@@ -233,8 +234,8 @@ export default function SettingsScreen() {
             Export Journal
           </SettingsItem>
           {/* <SettingsItem
-            icon={<CloudUpload size={17} color="#fff" />}
-            iconBg="#0ea5e9"
+            icon={<CloudUpload size={17} color={Colors.white} />}
+            iconBg={Colors.sky500}
             extra={<Text className="text-xs font-medium text-gray-400">2h ago</Text>}
             arrow
             onPress={() => {}}
@@ -246,8 +247,8 @@ export default function SettingsScreen() {
         {!isGuest && (
           <SettingsSection>
             <SettingsItem
-              icon={<LogOut size={17} color="#ef4444" />}
-              iconBg="#fef2f2"
+              icon={<LogOut size={17} color={Colors.red500} />}
+              iconBg={Colors.red50}
               onPress={handleSignOut}
             >
               <Text className="text-sm font-medium text-red-500">Sign Out</Text>

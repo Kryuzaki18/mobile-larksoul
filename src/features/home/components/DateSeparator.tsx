@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useColorScheme } from 'nativewind';
+import { Colors } from '../../../utils/colors';
 
 interface DateSeparatorProps {
   label: string;
@@ -14,7 +15,7 @@ export default function DateSeparator({ label }: DateSeparatorProps) {
       <View
         className="flex-1 h-px"
         style={{
-          backgroundColor: colorScheme === 'dark' ? '#1e293b' : '#e9edf2',
+          backgroundColor: colorScheme === 'dark' ? Colors.slate800 : Colors.slate200,
         }}
       />
       <Text className="text-xs font-bold text-gray-400 tracking-widest ml-3">

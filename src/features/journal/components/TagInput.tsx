@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import { useColorScheme } from 'nativewind';
 import { X } from 'lucide-react-native';
 
+import { Colors } from '../../../utils/colors';
+
 const MAX_TAGS = 3;
 const MIN_CHARS = 2;
 const MAX_CHARS = 15;
@@ -53,9 +55,9 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1.5,
-        borderColor: isDark ? '#334155' : '#e2e8f0',
+        borderColor: isDark ? Colors.slate700 : Colors.slate200,
         borderRadius: 12,
-        backgroundColor: isDark ? '#1e293b' : '#f8fafc',
+        backgroundColor: isDark ? Colors.slate800 : Colors.slate50,
         paddingHorizontal: 10,
         paddingVertical: 6,
         minHeight: 44,
@@ -75,17 +77,17 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
               flexDirection: 'row',
               alignItems: 'center',
               gap: 5,
-              backgroundColor: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff',
+              backgroundColor: isDark ? Colors.blue500_15 : Colors.blue50,
               borderRadius: 20,
               paddingHorizontal: 10,
               paddingVertical: 5,
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: '600', letterSpacing: 0.1, color: isDark ? '#60a5fa' : '#1d4ed8' }}>
+            <Text style={{ fontSize: 13, fontWeight: '600', letterSpacing: 0.1, color: isDark ? Colors.blue400 : Colors.blue700 }}>
               {tag}
             </Text>
             <TouchableOpacity onPress={() => remove(tag)} hitSlop={8}>
-              <X size={10} color={isDark ? '#60a5fa' : '#3b82f6'} />
+              <X size={10} color={isDark ? Colors.blue400 : Colors.blue500} />
             </TouchableOpacity>
           </View>
         ))}
@@ -97,12 +99,12 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
             onChangeText={handleChangeText}
             onSubmitEditing={() => commit(value)}
             placeholder={tags.length === 0 ? 'mood, travel, idea…' : ''}
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={Colors.slate400}
             style={{
               fontSize: 14,
               fontWeight: '400',
               letterSpacing: 0.1,
-              color: isDark ? '#e2e8f0' : '#1e293b',
+              color: isDark ? Colors.slate200 : Colors.slate800,
               minWidth: 120,
               paddingVertical: 2,
             }}

@@ -26,6 +26,7 @@ import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import SignUpForm from './components/SignUpForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
+import { Colors } from '../../utils/colors';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
@@ -122,7 +123,7 @@ export default function SignUpScreen() {
     <View className="flex-1 bg-white dark:bg-slate-950">
       {!isConnected && (
         <View className="flex-row items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-500/10 border-b border-amber-100 dark:border-amber-500/20">
-          <WifiOff size={13} color="#d97706" />
+          <WifiOff size={13} color={Colors.amber600} />
           <Text className="text-xs font-medium text-amber-700 dark:text-amber-400 flex-1">
             No internet — social sign-in unavailable
           </Text>
@@ -181,7 +182,7 @@ export default function SignUpScreen() {
           disabled={isAnyLoading || !isConnected}
           onSelect={handleProviderSignUp}
         />
-        
+
       </ScrollView>
     </View>
   );

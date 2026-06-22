@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ArrowRight } from 'lucide-react-native';
+import { Colors } from '../../../utils/colors';
 
 interface LoginFormProps {
   email: string;
@@ -37,7 +38,7 @@ export default function LoginForm({
           value={email}
           onChangeText={onEmailChange}
           placeholder="john@example.com"
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor={Colors.gray400}
           autoCapitalize="none"
           keyboardType="email-address"
           editable={!disabled && !loading}
@@ -66,7 +67,7 @@ export default function LoginForm({
           value={password}
           onChangeText={onPasswordChange}
           placeholder="• • • • • • • •"
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor={Colors.gray400}
           secureTextEntry
           editable={!disabled && !loading}
           className="py-3.5 text-sm text-slate-800 dark:text-slate-100"
@@ -86,11 +87,11 @@ export default function LoginForm({
         disabled={disabled || loading}
       >
         {loading ? (
-          <ActivityIndicator size="small" color="#ffffff" />
+          <ActivityIndicator size="small" color={Colors.white} />
         ) : (
           <View className="flex-row items-center gap-2">
             <Text className="text-white text-sm font-semibold">Login</Text>
-            <ArrowRight size={15} color="#fff" />
+            <ArrowRight size={15} color={Colors.white} />
           </View>
         )}
       </TouchableOpacity>
