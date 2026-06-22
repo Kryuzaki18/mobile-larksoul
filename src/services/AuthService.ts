@@ -14,6 +14,17 @@ import { GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from '../config/auth.confi
 
 export const GUEST_EMAIL = 'guest@larksoul.local';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateEmailAndPassword(email: string, password: string): void {
+  if (!EMAIL_REGEX.test(email)) {
+    throw new Error('Enter a valid email address.');
+  }
+  if (password.length < 7) {
+    throw new Error('Password must be at least 7 characters.');
+  }
+}
+
 export function configureGoogleSignIn(): void {
   GoogleSignin.configure({
     webClientId: GOOGLE_WEB_CLIENT_ID,
@@ -31,11 +42,13 @@ export async function signInAsGuest(): Promise<User> {
   return createUser('Guest', GUEST_EMAIL);
 }
 
-export async function signIn(email: string): Promise<User | null> {
+export async function signIn(email: string, password: string): Promise<User | null> {
+  validateEmailAndPassword(email, password);
   return getUserByEmail(email);
 }
 
 export async function signUp(name: string, email: string, password?: string): Promise<User> {
+  validateEmailAndPassword(email, password ?? '');
   const existing = await getUserByEmail(email);
   if (existing) {
     throw new Error('An account with this email already exists.');

@@ -60,6 +60,8 @@ export default function LoginScreen() {
     }
     if (!password) {
       errors.password = 'Password is required.';
+    } else if (password.length < 7) {
+      errors.password = 'Password must be at least 7 characters.';
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -69,7 +71,7 @@ export default function LoginScreen() {
     if (!validateLoginFields()) return;
     setLoginLoading(true);
     try {
-      const user = await signIn(email.trim());
+      const user = await signIn(email.trim(), password);
       if (!user) {
         setFormErrors({ email: 'No account found with this email.' });
         return;
