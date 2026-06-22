@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Switch, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ChevronLeft, ShieldCheck } from 'lucide-react-native';
+import { ShieldCheck } from 'lucide-react-native';
+import BackButton from '../commons/Button';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import { setPinLock, removePinLock } from '../../services/securityService';
@@ -101,14 +102,8 @@ export default function SecurityScreen() {
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
       <View className="flex-row items-center px-4 pt-3 pb-3 bg-slate-50 dark:bg-slate-950">
-        <TouchableOpacity
-          className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 items-center justify-center mr-3"
-          style={{ shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 2 }}
-          onPress={() => navigation.goBack()}
-        >
-          <ChevronLeft size={18} color={isDark ? '#e2e8f0' : '#1e293b'} />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">Security & PIN Lock</Text>
+        <BackButton />
+        <Text className="text-xl font-bold text-slate-800 dark:text-slate-100 ml-3">Security & PIN Lock</Text>
       </View>
 
       <View className="px-4 pt-1">

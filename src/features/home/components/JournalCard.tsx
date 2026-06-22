@@ -12,7 +12,7 @@ import { useColorScheme } from 'nativewind';
 
 import type { JournalEntry } from '../../../models/interfaces/users.interface';
 import { formatTimeOnly } from '../../../utils/dateTime';
-import { MOOD_META } from '../../../utils/mood';
+import { MOOD_COLORS, MOOD_META } from '../../../utils/mood';
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -37,6 +37,7 @@ export default function JournalCard({
   const isOpen = useRef(false);
   const { colorScheme } = useColorScheme();
 
+  const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? '#f1f5f9';
   const isDark = colorScheme === 'dark';
   const timeLabel = formatTimeOnly(entry.createdAt);
 
@@ -89,7 +90,7 @@ export default function JournalCard({
 
   return (
     <Animated.View
-      className="mx-4 mb-3"
+      className="mx-4 mb-2"
       style={{ transform: [{ translateY: mountSlide }] }}
     >
       <View
@@ -117,9 +118,11 @@ export default function JournalCard({
           }}
         >
           <Pencil size={13} color={isDark ? '#cbd5e1' : '#475569'} />
-          <Text className="text-xs font-medium text-slate-700 dark:text-slate-300">Edit</Text>
+          <Text className="text-xs font-medium text-slate-700 dark:text-slate-300">
+            Edit
+          </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={{
             flex: 1,
@@ -138,65 +141,80 @@ export default function JournalCard({
       </View>
 
       <Animated.View
-        className="bg-white dark:bg-slate-900 rounded-2xl p-4"
+        className="bg-white dark:bg-slate-900 rounded-2xl"
         style={{
           transform: [{ translateX }],
           elevation: 1,
           shadowColor: '#000',
-          shadowOpacity: 0.03,
+          shadowOpacity: 0.05,
           shadowRadius: 6,
           shadowOffset: { width: 0, height: 2 },
         }}
         {...panResponder.panHandlers}
       >
-        <TouchableOpacity
-          activeOpacity={0.85}
-          onPress={() => {
-            if (isOpen.current) {
-              snap(false);
-            } else {
-              onPress?.();
-            }
-          }}
-          onLongPress={() => snap(true)}
-          delayLongPress={1000}
-        >
-          <View className="flex-row items-center mb-2">
-            <Clock size={13} color="#9ca3af" />
-            <Text className="text-xs text-gray-400 font-medium tracking-wider ml-1 flex-1">
-              {timeLabel}
+        <View className="overflow-hidden rounded-2xl">
+          <View style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, backgroundColor: accentColor, zIndex: 1 }} />
+
+          <TouchableOpacity
+            className="p-4"
+            activeOpacity={0.85}
+            onPress={() => {
+              if (isOpen.current) {
+                snap(false);
+              } else {
+                onPress?.();
+              }
+            }}
+            onLongPress={() => snap(true)}
+            delayLongPress={1000}
+          >
+            <View className="flex-row items-center mb-2">
+              <Clock size={13} color="#9ca3af" />
+              <Text className="text-xs text-gray-400 font-medium tracking-wider ml-1 flex-1">
+                {timeLabel}
+              </Text>
+              {entry.moods.length > 0 && (
+                <View
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}
+                >
+                  {entry.moods.map(mood => (
+                    <Text key={mood} style={{ fontSize: 16 }}>
+                      {MOOD_META[mood]?.emoji}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            <Text
+              className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5"
+              numberOfLines={2}
+            >
+              {entry.title}
             </Text>
-            {entry.moods.length > 0 && (
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-                {entry.moods.map(mood => (
-                  <Text key={mood} style={{ fontSize: 16 }}>{MOOD_META[mood]?.emoji}</Text>
-                ))}
-              </View>
-            )}
-          </View>
 
-          <Text
-            className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5"
-            numberOfLines={2}
-          >
-            {entry.title}
-          </Text>
+            <Text
+              className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed mb-3"
+              numberOfLines={3}
+            >
+              {entry.content}
+            </Text>
 
-          <Text
-            className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed mb-3"
-            numberOfLines={3}
-          >
-            {entry.content}
-          </Text>
-
-          <View className="flex-row flex-wrap gap-2">
-            {entry.tags.map(tag => (
-              <View key={tag} className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1">
-                <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">{tag}</Text>
-              </View>
-            ))}
-          </View>
-        </TouchableOpacity>
+              (entry.tags.length > 0 && ()
+            <View className="flex-row flex-wrap gap-2">
+              {entry.tags.map(tag => (
+                <View
+                  key={tag}
+                  className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1"
+                >
+                  <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">
+                    {tag}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     </Animated.View>
   );

@@ -157,7 +157,7 @@ const GridCard = memo(function GridCard({
             className="bg-white dark:bg-slate-900"
             style={{ borderRadius: 16, overflow: 'hidden' }}
           >
-            <View style={{ height: 2, backgroundColor: accentColor }} />
+            <View style={{ height: 3, backgroundColor: accentColor }} />
 
             <View className="pt-1 pb-3">
               <View className="flex-row items-center gap-1 mb-2 ml-2">

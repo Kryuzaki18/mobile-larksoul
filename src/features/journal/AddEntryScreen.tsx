@@ -14,7 +14,8 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
-import { ChevronLeft, Calendar } from 'lucide-react-native';
+import { Calendar } from 'lucide-react-native';
+import BackButton from '../commons/Button';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { Mood } from '../../models/interfaces/users.interface';
@@ -247,25 +248,7 @@ export default function AddEntryScreen() {
         paddingBottom: 10,
         backgroundColor: isDark ? '#020617' : '#f1f5f9',
       }}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          activeOpacity={0.7}
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 19,
-            backgroundColor: isDark ? '#1e293b' : '#ffffff',
-            alignItems: 'center',
-            justifyContent: 'center',
-            shadowColor: '#000',
-            shadowOpacity: 0.08,
-            shadowRadius: 6,
-            shadowOffset: { width: 0, height: 2 },
-            elevation: 2,
-          }}
-        >
-          <ChevronLeft size={18} color={isDark ? '#94a3b8' : '#475569'} />
-        </TouchableOpacity>
+        <BackButton />
 
         <View style={{ alignItems: 'center' }}>
           <Text style={{ ...TYPE.screenTitle, color: isDark ? '#f1f5f9' : '#0f172a' }}>

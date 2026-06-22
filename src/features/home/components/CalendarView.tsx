@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, PanResponder, View, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { MONTH_NAMES, WEEK_DAYS } from '../../../utils/dateTime';
+import { PrevButton, NextButton } from '../../commons/Button';
 
 type DayCell = { day: number; type: 'prev' | 'current' | 'next' };
 
@@ -161,25 +161,13 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
       {...panResponder.panHandlers}
     >
       <View className="flex-row items-center justify-between px-4 pt-4 pb-3">
-        <TouchableOpacity
-          className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
-          onPress={prevMonth}
-        >
-          <ChevronLeft size={14} color={isDark ? '#cbd5e1' : '#475569'} />
-        </TouchableOpacity>
+        <PrevButton onPress={prevMonth} />
 
         <Text className="text-sm font-bold text-slate-800 dark:text-slate-100">
           {MONTH_NAMES[month]} {year}
         </Text>
 
-        <TouchableOpacity
-          className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center"
-          onPress={nextMonth}
-          disabled={isCurrentMonth}
-          activeOpacity={isCurrentMonth ? 1 : 0.65}
-        >
-          <ChevronRight size={14} color={isCurrentMonth ? (isDark ? '#475569' : '#cbd5e1') : (isDark ? '#cbd5e1' : '#475569')} />
-        </TouchableOpacity>
+        <NextButton onPress={nextMonth} disabled={isCurrentMonth} />
       </View>
 
       <View style={{ overflow: 'hidden' }}>
