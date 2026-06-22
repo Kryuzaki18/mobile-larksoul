@@ -86,7 +86,7 @@ export default function BarTooltip({ day, x, y, totalEntries, monthName, isDark 
         )}
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 2 }}>
-        {day.entryMoods.map((mood, idx) => (
+        {[...new Set(day.entryMoods)].map((mood, idx) => (
           <Text key={idx} style={{ fontSize: 12 }}>
             {MOOD_META[mood ?? 'neutral'].emoji}
           </Text>
