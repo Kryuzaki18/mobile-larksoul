@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { ChevronLeft, ChevronRight, TrendingUp, BookOpen, Flame } from 'lucide-react-native';
+import { TrendingUp, BookOpen, Flame } from 'lucide-react-native';
+import { PrevButton, NextButton } from '../commons/Button';
 import { useColorScheme } from 'nativewind';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -40,8 +41,6 @@ export default function InsightsScreen() {
     }, [refetch]),
   );
 
-  const iconColor = isDark ? '#94a3b8' : '#64748b';
-
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
       <Header name={`${firstName}'s`} activeTab="graph" />
@@ -52,29 +51,13 @@ export default function InsightsScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
       >
         <View className="flex-row items-center justify-between px-5 pt-5 pb-1">
-          <TouchableOpacity
-            onPress={goToPrevMonth}
-            activeOpacity={0.7}
-            className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 items-center justify-center shadow-sm"
-          >
-            <ChevronLeft size={16} color={iconColor} />
-          </TouchableOpacity>
+          <PrevButton onPress={goToPrevMonth} />
 
-          <View>
-            <Text className="text-sm font-bold text-slate-800 dark:text-slate-100">
-              {monthName} {selectedYear}
-            </Text>
-          </View>
+          <Text className="text-sm font-bold text-slate-800 dark:text-slate-100">
+            {monthName} {selectedYear}
+          </Text>
 
-          <TouchableOpacity
-            onPress={goToNextMonth}
-            disabled={!canGoNext}
-            activeOpacity={0.7}
-            style={{ opacity: canGoNext ? 1 : 0.3 }}
-            className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 items-center justify-center shadow-sm"
-          >
-            <ChevronRight size={16} color={iconColor} />
-          </TouchableOpacity>
+          <NextButton onPress={goToNextMonth} disabled={!canGoNext} />
         </View>
 
         <View
