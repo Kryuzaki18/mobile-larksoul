@@ -35,6 +35,7 @@ import SettingsItem from './components/SettingsItem';
 import ExportModal from './components/ExportModal';
 import NetworkStatusDot from '../commons/NetworkStatusDot';
 import { Colors } from '../../utils/colors';
+import { COLOR_THEMES, type ColorTheme, type ThemeName } from '../../utils/themes';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -49,7 +50,7 @@ export default function SettingsScreen() {
   const { currentUser, isGuest, clearUser } = useAuthStore();
 
   const { isPinEnabled } = useSecurityStore();
-  const { theme, setTheme } = useThemeStore();
+  const { theme, setTheme, colorTheme, setColorTheme } = useThemeStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const chipInactiveBg = isDark ? Colors.slate800 : Colors.slate100;
@@ -178,30 +179,63 @@ export default function SettingsScreen() {
             icon={<Sun size={17} color={Colors.white} />}
             iconBg={Colors.amber500}
             extra={
-              <View className="flex-row gap-1.5">
-                {THEME_OPTIONS.map(({ mode, label, Icon }) => {
-                  const isActive = theme === mode;
-                  return (
-                    <TouchableOpacity
-                      key={mode}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 4,
-                        paddingHorizontal: 8,
-                        paddingVertical: 5,
-                        borderRadius: 8,
-                        backgroundColor: isActive ? Colors.blue800 : chipInactiveBg,
-                      }}
-                      onPress={() => setTheme(mode)}
-                    >
-                      <Icon size={11} color={isActive ? Colors.white : chipInactiveColor} />
-                      <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? Colors.white : chipInactiveColor }}>
-                        {label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
+              <View style={{ alignItems: 'flex-end', gap: 8 }}>
+                <View style={{ flexDirection: 'row', gap: 5 }}>
+                  {THEME_OPTIONS.map(({ mode, label, Icon }) => {
+                    const isActive = theme === mode;
+                    return (
+                      <TouchableOpacity
+                        key={mode}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 4,
+                          paddingHorizontal: 7,
+                          paddingVertical: 4,
+                          borderRadius: 8,
+                          backgroundColor: isActive ? Colors.blue800 : chipInactiveBg,
+                        }}
+                        onPress={() => setTheme(mode)}
+                      >
+                        <Icon size={11} color={isActive ? Colors.white : chipInactiveColor} />
+                        <Text style={{ fontSize: 11, fontWeight: '600', color: isActive ? Colors.white : chipInactiveColor }}>
+                          {label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
+                <View style={{ flexDirection: 'row', gap: 5 }}>
+                  {(Object.values(COLOR_THEMES) as ColorTheme[]).map(ct => {
+                    const isActive = colorTheme === ct.name;
+                    return (
+                      <TouchableOpacity
+                        key={ct.name}
+                        onPress={() => setColorTheme(ct.name as ThemeName)}
+                        activeOpacity={0.75}
+                        style={{
+                          width: 22,
+                          height: 22,
+                          borderRadius: 11,
+                          borderWidth: 2,
+                          borderColor: isActive ? ct[500] : 'transparent',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: 14,
+                            height: 14,
+                            borderRadius: 7,
+                            backgroundColor: ct[500],
+                          }}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
               </View>
             }
           >
