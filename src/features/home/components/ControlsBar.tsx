@@ -62,7 +62,7 @@ export default function ControlsBar({
   }, [inputValue, onSearch]);
 
   return (
-    <View className="flex-row items-center gap-2 p-4 bg-slate-50">
+    <View className="flex-row items-center gap-2 p-4 bg-slate-50 dark:bg-slate-950">
       <ToggleChip
         active={showAll}
         onPress={onToggleAll}
