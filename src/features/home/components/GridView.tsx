@@ -159,18 +159,30 @@ const GridCard = memo(function GridCard({
           >
             <View style={{ height: 2, backgroundColor: accentColor }} />
 
-            <View className="px-3 pb-3">
-              <View className="flex-row items-center justify-between gap-1 mb-2 pr-6">
-                <View className="flex-row items-center gap-1">
-                  <Clock size={12} color="#9ca3af" />
-                  <Text
-                    className="text-xs text-gray-400 flex-1"
-                    numberOfLines={1}
+            <View className="pt-1 pb-3">
+              <View className="flex-row items-center gap-1 mb-2 ml-2">
+                <Clock size={12} color="#9ca3af" />
+                <Text
+                  className="text-xs text-gray-400 flex-1"
+                  numberOfLines={1}
+                >
+                  {timeLabel}
+                </Text>
+                {entry.moods.length > 0 && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 2,
+                    }}
                   >
-                    {timeLabel}
-                  </Text>
-                </View>
-
+                    {entry.moods.map(mood => (
+                      <Text key={mood} style={{ fontSize: 13 }}>
+                        {MOOD_META[mood]?.emoji}
+                      </Text>
+                    ))}
+                  </View>
+                )}
                 <TouchableOpacity
                   className="w-7 h-7 rounded-full items-center justify-center"
                   onPress={handleToggle}
@@ -179,30 +191,25 @@ const GridCard = memo(function GridCard({
                 </TouchableOpacity>
               </View>
 
-              <Text
-                className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1.5"
-                numberOfLines={2}
-              >
-                {entry.title}
-              </Text>
-
-              <Text
-                className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed mb-2"
-                numberOfLines={3}
-              >
-                {entry.content}
-              </Text>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    gap: 4,
-                  }}
+              <View className="px-2">
+                <Text
+                  className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1.5"
+                  numberOfLines={2}
                 >
-                  {entry.tags.slice(0, 2).map(tag => (
+                  {entry.title}
+                </Text>
+
+                <Text
+                  className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed mb-2"
+                  numberOfLines={3}
+                >
+                  {entry.content}
+                </Text>
+
+                <View
+                  style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}
+                >
+                  {entry.tags.map(tag => (
                     <View
                       key={tag}
                       className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-2 py-0.5"
@@ -212,47 +219,7 @@ const GridCard = memo(function GridCard({
                       </Text>
                     </View>
                   ))}
-                  {entry.tags.length > 2 && (
-                    <View className="bg-slate-100 dark:bg-slate-800 rounded-full px-2 py-0.5">
-                      <Text
-                        style={{
-                          fontSize: 10,
-                          color: '#94a3b8',
-                          fontWeight: '600',
-                        }}
-                      >
-                        +{entry.tags.length - 2}
-                      </Text>
-                    </View>
-                  )}
                 </View>
-                {entry.moods.length > 0 && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 2,
-                      marginLeft: 4,
-                    }}
-                  >
-                    {entry.moods.slice(0, 2).map(mood => (
-                      <Text key={mood} style={{ fontSize: 13 }}>
-                        {MOOD_META[mood]?.emoji}
-                      </Text>
-                    ))}
-                    {entry.moods.length > 2 && (
-                      <Text
-                        style={{
-                          fontSize: 10,
-                          color: '#94a3b8',
-                          fontWeight: '600',
-                        }}
-                      >
-                        +{entry.moods.length - 2}
-                      </Text>
-                    )}
-                  </View>
-                )}
               </View>
             </View>
           </View>
