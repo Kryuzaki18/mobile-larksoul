@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
 
 interface NetworkStatusDotProps {
   size?: number;

@@ -34,8 +34,8 @@ import SettingsSection from './components/SettingsSection';
 import SettingsItem from './components/SettingsItem';
 import ExportModal from './components/ExportModal';
 import NetworkStatusDot from '../commons/NetworkStatusDot';
-import { Colors } from '../../utils/colors';
-import { COLOR_THEMES, type ColorTheme, type ThemeName } from '../../utils/themes';
+import { Colors, COLOR_THEMES, type ColorTheme, type ThemeName } from '../../utils/themes';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
 
 type HomeNav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -50,9 +50,10 @@ export default function SettingsScreen() {
   const { currentUser, isGuest, clearUser } = useAuthStore();
 
   const { isPinEnabled } = useSecurityStore();
-  const { theme, setTheme, colorTheme, setColorTheme } = useThemeStore();
+  const { theme: lightDarkMode, setTheme, colorTheme, setColorTheme } = useThemeStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const chipInactiveBg = isDark ? Colors.slate800 : Colors.slate100;
   const chipInactiveColor = isDark ? Colors.slate400 : Colors.gray500;
 
@@ -97,7 +98,7 @@ export default function SettingsScreen() {
         <View className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-4">
           <View className="flex-row items-center">
             <View className="relative mr-4">
-              <View className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center">
+              <View className="w-14 h-14 rounded-full items-center justify-center" style={{ backgroundColor: theme[800] }}>
                 <Text className="text-2xl font-bold text-white">{initial}</Text>
               </View>
               <NetworkStatusDot size={12} style={{ position: 'absolute', bottom: -1, right: -1 }} />
@@ -162,13 +163,14 @@ export default function SettingsScreen() {
 
           {isGuest && (
             <TouchableOpacity
-              className="mt-3 bg-blue-50 dark:bg-blue-500/10 rounded-xl py-2.5 items-center"
+              className="mt-3 rounded-xl py-2.5 items-center"
+              style={{ backgroundColor: isDark ? theme._15 : theme[50] }}
               activeOpacity={0.7}
               onPress={() => navigation.navigate('SignUp')}
             >
               <View className="flex-row items-center gap-2">
-                <UserPlus size={14} color={isDark ? Colors.blue400 : Colors.blue700} />
-                <Text className="text-sm font-semibold text-blue-700 dark:text-blue-400">Create an Account</Text>
+                <UserPlus size={14} color={isDark ? theme[400] : theme[700]} />
+                <Text className="text-sm font-semibold" style={{ color: isDark ? theme[400] : theme[700] }}>Create an Account</Text>
               </View>
             </TouchableOpacity>
           )}
@@ -182,7 +184,7 @@ export default function SettingsScreen() {
               <View style={{ alignItems: 'flex-end', gap: 8 }}>
                 <View style={{ flexDirection: 'row', gap: 5 }}>
                   {THEME_OPTIONS.map(({ mode, label, Icon }) => {
-                    const isActive = theme === mode;
+                    const isActive = lightDarkMode === mode;
                     return (
                       <TouchableOpacity
                         key={mode}
@@ -193,7 +195,7 @@ export default function SettingsScreen() {
                           paddingHorizontal: 7,
                           paddingVertical: 4,
                           borderRadius: 8,
-                          backgroundColor: isActive ? Colors.blue800 : chipInactiveBg,
+                          backgroundColor: isActive ? theme[800] : chipInactiveBg,
                         }}
                         onPress={() => setTheme(mode)}
                       >

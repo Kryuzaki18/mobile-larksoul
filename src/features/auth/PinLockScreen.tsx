@@ -7,7 +7,9 @@ import {
   getPinLockStatus,
   MAX_PIN_ATTEMPTS,
 } from '../../services/securityService';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
+import { useColorScheme } from 'nativewind';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
 
 interface PinLockScreenProps {
   title?: string;
@@ -31,6 +33,9 @@ export default function PinLockScreen({
   onCancel,
   cancelLabel = 'Cancel',
 }: PinLockScreenProps) {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
   const [attemptsRemaining, setAttemptsRemaining] = useState(MAX_PIN_ATTEMPTS);
@@ -92,11 +97,11 @@ export default function PinLockScreen({
         resizeMode="contain"
       />
 
-      <View className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 items-center justify-center mb-5">
+      <View className="w-16 h-16 rounded-full items-center justify-center mb-5" style={{ backgroundColor: isDark ? theme._15 : theme[50] }}>
         {isLocked ? (
           <Clock size={26} color={Colors.red500} />
         ) : (
-          <Lock size={26} color={Colors.blue500} />
+          <Lock size={26} color={theme[500]} />
         )}
       </View>
 

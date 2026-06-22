@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 import { BookOpen } from 'lucide-react-native';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 export default function EmptyEntry() {
   return (

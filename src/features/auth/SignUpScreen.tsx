@@ -26,7 +26,7 @@ import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import SignUpForm from './components/SignUpForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 

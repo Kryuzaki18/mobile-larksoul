@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TouchableOpacity, TextInput } from 'react-native';
 import { Menu, LayoutGrid, BookOpen, Search, X } from 'lucide-react-native';
 import type { JournalLayout } from '../../../store/journalViewStore';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 interface ChipProps {
   active: boolean;
@@ -12,7 +13,8 @@ interface ChipProps {
 }
 
 function ToggleChip({ active, onPress, icon, isDark }: ChipProps) {
-  const bg = active ? Colors.blue800 : isDark ? Colors.slate800 : Colors.slate100;
+  const theme = useActiveTheme();
+  const bg = active ? theme[800] : isDark ? Colors.slate800 : Colors.slate100;
   const color = active ? Colors.white : isDark ? Colors.slate400 : Colors.gray500;
   return (
     <TouchableOpacity

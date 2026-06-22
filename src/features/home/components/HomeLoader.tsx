@@ -9,9 +9,13 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { Colors } from '../../../utils/colors';
+import { useColorScheme } from 'nativewind';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 export default function HomeLoader() {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const scale = useSharedValue(0.85);
   const opacity = useSharedValue(0.5);
 
@@ -42,10 +46,10 @@ export default function HomeLoader() {
   return (
     <View className="flex-1 items-center justify-center py-16">
       <Animated.View
-        style={animatedStyle}
-        className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-500/15 items-center justify-center mb-4"
+        style={[animatedStyle, { backgroundColor: isDark ? theme._15 : theme[100] }]}
+        className="w-16 h-16 rounded-full items-center justify-center mb-4"
       >
-        <BookOpen size={28} color={Colors.blue500} />
+        <BookOpen size={28} color={theme[500]} />
       </Animated.View>
       <Text className="text-sm font-semibold text-gray-400">
         Loading your journal...

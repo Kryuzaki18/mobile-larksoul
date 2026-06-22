@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, PanResponder, View, Text } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { WEEK_DAYS } from '../../../utils/dateTime';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 import CalendarHeader from './CalendarHeader';
 import CalendarDayCell from './CalendarDayCell';
 

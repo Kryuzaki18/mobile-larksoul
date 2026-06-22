@@ -24,7 +24,8 @@ import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
 
 import type { GridCardProps } from '../../../models/interfaces/home.interface';
 import { GridViewProps } from '../../../models/types/home.type';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const CARD_SHADOW = {
   elevation: 1,
@@ -55,6 +56,7 @@ const GridCard = memo(function GridCard({
   const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
 
   const mountScale = useRef(new Animated.Value(0.8)).current;
   const pressScale = useRef(new Animated.Value(1)).current;
@@ -213,9 +215,10 @@ const GridCard = memo(function GridCard({
                   {entry.tags.map(tag => (
                     <View
                       key={tag}
-                      className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-2 py-0.5"
+                      className="rounded-full px-2 py-0.5"
+                      style={{ backgroundColor: isDark ? theme._15 : theme[50] }}
                     >
-                      <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">
+                      <Text className="text-xs font-medium" style={{ color: isDark ? theme[400] : theme[500] }}>
                         {tag}
                       </Text>
                     </View>

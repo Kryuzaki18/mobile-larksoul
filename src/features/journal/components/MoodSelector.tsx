@@ -3,7 +3,8 @@ import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import type { Mood } from '../../../models/interfaces/users.interface';
 import { MOOD_META } from '../../../utils/mood';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const MAX_MOODS = 3;
 
@@ -20,6 +21,7 @@ interface MoodSelectorProps {
 export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const isMaxed = selected.length >= MAX_MOODS;
 
   function toggle(value: Mood) {
@@ -50,9 +52,9 @@ export default function MoodSelector({ selected, onSelect }: MoodSelectorProps) 
               paddingHorizontal: 12,
               paddingVertical: 10,
               borderRadius: 16,
-              backgroundColor: isActive ? Colors.blue900 : isDark ? Colors.slate800 : Colors.slate50,
+              backgroundColor: isActive ? theme[900] : isDark ? Colors.slate800 : Colors.slate50,
               borderWidth: 1.5,
-              borderColor: isActive ? Colors.blue800 : isDark ? Colors.slate700 : Colors.slate100,
+              borderColor: isActive ? theme[800] : isDark ? Colors.slate700 : Colors.slate100,
               minWidth: 66,
               opacity: isDisabled ? 0.35 : 1,
             }}

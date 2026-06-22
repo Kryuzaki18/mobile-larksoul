@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Colors } from '../../../utils/colors';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 interface CalendarDayCellProps {
   day: number;
@@ -23,27 +23,32 @@ export default function CalendarDayCell({
   isDark,
   onPress,
 }: CalendarDayCellProps) {
+  const theme = useActiveTheme();
   const isSelectable = type === 'current' && !isFuture;
 
   const cellBg = isSelected
-    ? Colors.blue800
+    ? theme[800]
     : isToday
     ? isDark
-      ? Colors.blue500_15
-      : Colors.blue50
+      ? theme._15
+      : theme[50]
     : 'transparent';
 
   const textClass = `text-sm ${
     isSelected
       ? 'text-white font-bold'
       : isToday
-      ? 'text-blue-700 dark:text-blue-400 font-bold'
+      ? 'font-bold'
       : isFuture
       ? 'text-gray-200 dark:text-slate-700'
       : type === 'current'
       ? 'text-slate-700 dark:text-slate-200'
       : 'text-gray-300 dark:text-slate-700'
   }`;
+
+  const todayTextStyle = (!isSelected && isToday)
+    ? { color: isDark ? theme[400] : theme[700] }
+    : undefined;
 
   return (
     <View className="flex-1 items-center py-0.5">
@@ -54,11 +59,11 @@ export default function CalendarDayCell({
         className="w-8 h-8 rounded-full overflow-hidden items-center justify-center"
         style={{ backgroundColor: cellBg }}
       >
-        <Text className={textClass}>{day}</Text>
+        <Text className={textClass} style={todayTextStyle}>{day}</Text>
       </TouchableOpacity>
       <View className="h-1.5 items-center justify-center mt-0.5">
         {hasEntry && !isSelected && (
-          <View className="w-1 h-1 rounded-full" style={{ backgroundColor: Colors.blue500 }} />
+          <View className="w-1 h-1 rounded-full" style={{ backgroundColor: theme[500] }} />
         )}
       </View>
     </View>

@@ -11,12 +11,14 @@ import MoodBreakdown from './components/MoodBreakdown';
 import { useInsightsGraph } from '../../hooks/useInsightsGraph';
 import { useAuthStore } from '../../store/authStore';
 import { MOOD_META } from '../../utils/mood';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
 
 export default function InsightsScreen() {
   const { currentUser } = useAuthStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const userId = currentUser?.id ?? '';
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
 
@@ -89,8 +91,8 @@ export default function InsightsScreen() {
             className="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-4 items-center"
             style={{ shadowColor: Colors.black, shadowOpacity: isDark ? 0.3 : 0.06, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}
           >
-            <View className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 items-center justify-center mb-2">
-              <BookOpen size={14} color={Colors.blue500} />
+            <View className="w-8 h-8 rounded-full items-center justify-center mb-2" style={{ backgroundColor: isDark ? theme._15 : theme[50] }}>
+              <BookOpen size={14} color={theme[500]} />
             </View>
             <Text className="text-xl font-bold text-slate-800 dark:text-slate-100">
               {totalEntries}

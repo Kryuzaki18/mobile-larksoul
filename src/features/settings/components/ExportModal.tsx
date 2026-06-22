@@ -15,7 +15,7 @@ import { FileText, Code2, X } from 'lucide-react-native';
 import type { JournalEntry } from '../../../models/interfaces/users.interface';
 import { exportJournal, type ExportFormat } from '../../../services/exportService';
 import { useSecurityStore } from '../../../store/securityStore';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 interface Props {
   visible: boolean;

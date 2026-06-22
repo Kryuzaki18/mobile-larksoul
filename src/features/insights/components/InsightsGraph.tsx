@@ -5,7 +5,7 @@ import Svg, { Rect, Line, Text as SvgText, G } from 'react-native-svg';
 import type { DayData } from '../../../hooks/useInsightsGraph';
 import { MOOD_COLORS } from '../../../utils/mood';
 import BarTooltip, { TOOLTIP_W, TOOLTIP_H } from './BarTooltip';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 const CHART_H = 180;
 const PAD = { top: 16, right: 8, bottom: 30, left: 26 };

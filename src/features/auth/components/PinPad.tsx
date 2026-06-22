@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { Delete } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'back'];
 
@@ -17,6 +18,7 @@ export default function PinPad({ length = 4, value, onChange, error }: PinPadPro
   const shake = useRef(new Animated.Value(0)).current;
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
 
   useEffect(() => {
     if (!error) return;
@@ -52,7 +54,7 @@ export default function PinPad({ length = 4, value, onChange, error }: PinPadPro
               width: 14,
               height: 14,
               borderRadius: 7,
-              backgroundColor: i < value.length ? (error ? Colors.red500 : Colors.blue800) : (isDark ? Colors.slate700 : Colors.slate200),
+              backgroundColor: i < value.length ? (error ? Colors.red500 : theme[800]) : (isDark ? Colors.slate700 : Colors.slate200),
             }}
           />
         ))}

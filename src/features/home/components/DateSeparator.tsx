@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 interface DateSeparatorProps {
   label: string;

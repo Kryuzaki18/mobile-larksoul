@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
 
 interface BackButtonProps {
   onPress?: () => void;

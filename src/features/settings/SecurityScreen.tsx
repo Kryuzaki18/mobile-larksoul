@@ -6,7 +6,8 @@ import { ShieldCheck } from 'lucide-react-native';
 import BackButton from '../commons/Button';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
 import { setPinLock, removePinLock } from '../../services/securityService';
 import { useSecurityStore } from '../../store/securityStore';
 import PinPad from '../auth/components/PinPad';
@@ -20,6 +21,7 @@ export default function SecurityScreen() {
   const { isPinEnabled, setPinEnabled } = useSecurityStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const [step, setStep] = useState<Step>('idle');
   const [pin, setPin] = useState('');
   const [firstPin, setFirstPin] = useState('');
@@ -81,8 +83,8 @@ export default function SecurityScreen() {
   if (step !== 'idle') {
     return (
       <View className="flex-1 bg-slate-50 dark:bg-slate-950 items-center justify-center px-6">
-        <View className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 items-center justify-center mb-5">
-          <ShieldCheck size={26} color={Colors.blue500} />
+        <View className="w-16 h-16 rounded-full items-center justify-center mb-5" style={{ backgroundColor: isDark ? theme._15 : theme[50] }}>
+          <ShieldCheck size={26} color={theme[500]} />
         </View>
         <Text className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5">
           {step === 'create' ? 'Create a PIN' : 'Confirm your PIN'}
@@ -119,7 +121,7 @@ export default function SecurityScreen() {
             <Switch
               value={isPinEnabled}
               onValueChange={handleToggle}
-              trackColor={{ false: Colors.slate200, true: Colors.blue600 }}
+              trackColor={{ false: Colors.slate200, true: theme[600] }}
               thumbColor={Colors.white}
               style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }}
             />

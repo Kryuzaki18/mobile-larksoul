@@ -22,7 +22,8 @@ import type { Mood } from '../../models/interfaces/users.interface';
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 import { useAuthStore } from '../../store/authStore';
 import { formatEntryDate, toDateStr } from '../../utils/dateTime';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
 import DatePickerModal from './components/DatePickerModal';
@@ -68,6 +69,7 @@ export default function AddEntryScreen() {
   const date = toDateStr(selectedDate);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const contentRef = useRef<TextInput>(null);
   const canSave = title.trim().length >= 2 && content.trim().length >= 7;
 
@@ -167,15 +169,15 @@ export default function AddEntryScreen() {
 
   const titleBorderColor = titleFocusAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? Colors.slate700 : Colors.slate200, Colors.blue500],
+    outputRange: [isDark ? Colors.slate700 : Colors.slate200, theme[500]],
   });
   const contentBorderColor = contentFocusAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? Colors.slate700 : Colors.slate200, Colors.blue500],
+    outputRange: [isDark ? Colors.slate700 : Colors.slate200, theme[500]],
   });
   const saveBg = saveReadyAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? Colors.slate800 : Colors.slate100, Colors.blue800],
+    outputRange: [isDark ? Colors.slate800 : Colors.slate100, theme[800]],
   });
   const saveTextColor = saveReadyAnim.interpolate({
     inputRange: [0, 1],

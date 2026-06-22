@@ -13,7 +13,8 @@ import { useColorScheme } from 'nativewind';
 import type { JournalEntry } from '../../../models/interfaces/users.interface';
 import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_COLORS, MOOD_META } from '../../../utils/mood';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -40,6 +41,7 @@ export default function JournalCard({
 
   const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const timeLabel = formatTimeOnly(entry.createdAt);
 
   useEffect(() => {
@@ -206,9 +208,10 @@ export default function JournalCard({
                 {entry.tags.map(tag => (
                   <View
                     key={tag}
-                    className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1"
+                    className="rounded-full px-3 py-1"
+                    style={{ backgroundColor: isDark ? theme._15 : theme[50] }}
                   >
-                    <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">
+                    <Text className="text-xs font-medium" style={{ color: isDark ? theme[400] : theme[500] }}>
                       {tag}
                     </Text>
                   </View>

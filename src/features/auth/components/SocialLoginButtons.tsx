@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 import GmailIcon from '../../../assets/gmail.svg';
 import AppleLightIcon from '../../../assets/apple-white.svg';

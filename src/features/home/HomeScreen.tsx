@@ -30,7 +30,8 @@ import { useJournalViewStore } from '../../store/journalViewStore';
 import { useAuthStore } from '../../store/authStore';
 import { toDateStr } from '../../utils/dateTime';
 import type { RootStackParamList } from '../../models/types/navigation.type';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 type Route = RouteProp<RootStackParamList, 'Home'>;
@@ -43,6 +44,7 @@ export default function HomeScreen() {
   const { currentUser } = useAuthStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
 
   const { layout, setLayout, showAll, toggleAll } = useJournalViewStore();
   const userId = currentUser?.id ?? '';
@@ -187,7 +189,8 @@ export default function HomeScreen() {
         <View className="absolute bottom-6 right-6 items-center gap-4">
           {scrollY > 150 && (
             <TouchableOpacity
-              className="w-12 h-12 rounded-full bg-blue-800 items-center justify-center shadow-sm shadow-blue-900"
+              className="w-12 h-12 rounded-full items-center justify-center shadow-sm"
+              style={{ backgroundColor: theme[800] }}
               onPress={() =>
                 scrollViewRef.current?.scrollTo({ y: 0, animated: true })
               }
@@ -197,7 +200,8 @@ export default function HomeScreen() {
           )}
 
           <TouchableOpacity
-            className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-sm shadow-blue-900"
+            className="w-14 h-14 rounded-full items-center justify-center shadow-sm"
+            style={{ backgroundColor: theme[800] }}
             onPress={() =>
               navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })
             }

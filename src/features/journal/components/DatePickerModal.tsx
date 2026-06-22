@@ -13,7 +13,8 @@ import { useColorScheme } from 'nativewind';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CalendarView from '../../home/components/CalendarView';
 import { MONTH_NAMES } from '../../../utils/dateTime';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const SHEET_SLIDE = 420;
@@ -38,6 +39,7 @@ export default function DatePickerModal({
   const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
 
   const [internalVisible, setInternalVisible] = useState(false);
   const [localSelected, setLocalSelected] = useState(selectedDate);
@@ -164,9 +166,9 @@ export default function DatePickerModal({
           <View className="flex-row items-center" style={{ gap: 8 }}>
             <View
               className="w-8 h-8 rounded-[10px] items-center justify-center"
-              style={{ backgroundColor: isDark ? Colors.blue800_13 : Colors.blue50 }}
+              style={{ backgroundColor: isDark ? theme._13 : theme[50] }}
             >
-              <CalendarDays size={15} color={Colors.blue500} />
+              <CalendarDays size={15} color={theme[500]} />
             </View>
             <View>
               <Text style={{ fontSize: 16, fontWeight: '700', color: isDark ? Colors.slate100 : Colors.slate950, letterSpacing: -0.3 }}>
@@ -206,7 +208,7 @@ export default function DatePickerModal({
               paddingVertical: 12,
               borderRadius: 14,
               borderWidth: 1.5,
-              borderColor: isToday ? (isDark ? Colors.slate800 : Colors.slate200) : Colors.blue500,
+              borderColor: isToday ? (isDark ? Colors.slate800 : Colors.slate200) : theme[500],
               alignItems: 'center',
               opacity: isToday ? 0.4 : 1,
             }}
@@ -215,7 +217,7 @@ export default function DatePickerModal({
               fontSize: 14,
               fontWeight: '600',
               letterSpacing: 0.1,
-              color: isToday ? (isDark ? Colors.slate600 : Colors.slate400) : Colors.blue500,
+              color: isToday ? (isDark ? Colors.slate600 : Colors.slate400) : theme[500],
             }}>
               Today
             </Text>
@@ -228,7 +230,7 @@ export default function DatePickerModal({
               flex: 2,
               paddingVertical: 12,
               borderRadius: 14,
-              backgroundColor: Colors.blue800,
+              backgroundColor: theme[800],
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',

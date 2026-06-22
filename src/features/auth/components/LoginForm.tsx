@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ArrowRight } from 'lucide-react-native';
-import { Colors } from '../../../utils/colors';
+import { useColorScheme } from 'nativewind';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 interface LoginFormProps {
   email: string;
@@ -24,6 +26,9 @@ export default function LoginForm({
   disabled,
   errors,
 }: LoginFormProps) {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   return (
     <>
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">EMAIL</Text>
@@ -53,7 +58,7 @@ export default function LoginForm({
       <View className="flex-row justify-between items-center mb-3">
         <Text className="text-xs font-semibold text-gray-400 tracking-widest">PASSWORD</Text>
         <TouchableOpacity activeOpacity={0.7}>
-          <Text className="text-xs font-semibold text-blue-700 dark:text-blue-400">Forgot?</Text>
+          <Text className="text-xs font-semibold" style={{ color: isDark ? theme[400] : theme[700] }}>Forgot?</Text>
         </TouchableOpacity>
       </View>
       <View
@@ -79,9 +84,8 @@ export default function LoginForm({
       {!errors?.password && <View className="mb-5" />}
 
       <TouchableOpacity
-        className={`rounded-xl py-3.5 items-center ${
-          disabled || loading ? 'bg-blue-400 dark:bg-blue-900' : 'bg-blue-800'
-        }`}
+        className="rounded-xl py-3.5 items-center"
+        style={{ backgroundColor: disabled || loading ? (isDark ? theme[900] : theme[400]) : theme[800] }}
         onPress={onLogin}
         activeOpacity={0.85}
         disabled={disabled || loading}

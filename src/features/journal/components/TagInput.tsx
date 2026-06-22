@@ -3,7 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import { useColorScheme } from 'nativewind';
 import { X } from 'lucide-react-native';
 
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const MAX_TAGS = 3;
 const MIN_CHARS = 2;
@@ -20,6 +21,7 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
   const inputRef = useRef<TextInput>(null);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   const isAtMax = tags.length >= MAX_TAGS;
 
   function commit(raw: string) {
@@ -77,17 +79,17 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
               flexDirection: 'row',
               alignItems: 'center',
               gap: 5,
-              backgroundColor: isDark ? Colors.blue500_15 : Colors.blue50,
+              backgroundColor: isDark ? theme._15 : theme[50],
               borderRadius: 20,
               paddingHorizontal: 10,
               paddingVertical: 5,
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: '600', letterSpacing: 0.1, color: isDark ? Colors.blue400 : Colors.blue700 }}>
+            <Text style={{ fontSize: 13, fontWeight: '600', letterSpacing: 0.1, color: isDark ? theme[400] : theme[700] }}>
               {tag}
             </Text>
             <TouchableOpacity onPress={() => remove(tag)} hitSlop={8}>
-              <X size={10} color={isDark ? Colors.blue400 : Colors.blue500} />
+              <X size={10} color={isDark ? theme[400] : theme[500]} />
             </TouchableOpacity>
           </View>
         ))}

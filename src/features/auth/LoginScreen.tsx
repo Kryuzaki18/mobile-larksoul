@@ -25,7 +25,9 @@ import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
-import { Colors } from '../../utils/colors';
+import { Colors } from '../../utils/themes';
+import { useColorScheme } from 'nativewind';
+import { useActiveTheme } from '../../hooks/useActiveTheme';
 
 type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -35,6 +37,9 @@ export default function LoginScreen() {
   const navigation = useNavigation<LoginNav>();
   const { setUser } = useAuthStore();
   const { isConnected } = useNetworkStatus();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -164,7 +169,8 @@ export default function LoginScreen() {
         {showGuestButton && (
           <>
             <TouchableOpacity
-              className="bg-blue-800 rounded-2xl py-4 items-center mb-6"
+              className="rounded-2xl py-4 items-center mb-6"
+              style={{ backgroundColor: theme[800] }}
               onPress={handleGuestLogin}
               disabled={isAnyLoading}
               activeOpacity={0.85}
@@ -220,7 +226,7 @@ export default function LoginScreen() {
             disabled={isAnyLoading}
             activeOpacity={0.7}
           >
-            <Text className="text-sm font-semibold text-blue-700 dark:text-blue-400">Sign Up</Text>
+            <Text className="text-sm font-semibold" style={{ color: isDark ? theme[400] : theme[700] }}>Sign Up</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

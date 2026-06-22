@@ -3,7 +3,7 @@ import { View, Text, Animated } from 'react-native';
 
 import type { DayData } from '../../../hooks/useInsightsGraph';
 import { MOOD_META } from '../../../utils/mood';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 export const TOOLTIP_W = 120;
 export const TOOLTIP_H = 72;

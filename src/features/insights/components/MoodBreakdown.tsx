@@ -4,7 +4,7 @@ import { useColorScheme } from 'nativewind';
 
 import type { Mood } from '../../../models/interfaces/users.interface';
 import MoodBreakdownRow from './MoodBreakdownRow';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 interface Props {
   moodCounts: Partial<Record<Mood, number>>;

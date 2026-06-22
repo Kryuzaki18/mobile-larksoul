@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 interface SettingsItemProps {
   icon?: React.ReactNode;

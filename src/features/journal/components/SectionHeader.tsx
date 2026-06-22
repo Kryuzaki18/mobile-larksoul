@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Colors } from '../../../utils/colors';
+import { Colors } from '../../../utils/themes';
 
 const TYPE = {
   label:   { fontSize: 10, fontWeight: '700' as const, letterSpacing: 1.5 },

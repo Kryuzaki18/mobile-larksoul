@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ArrowRight } from 'lucide-react-native';
-import { Colors } from '../../../utils/colors';
+import { useColorScheme } from 'nativewind';
+import { Colors } from '../../../utils/themes';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 interface SignUpFormProps {
   name: string;
@@ -28,6 +30,9 @@ export default function SignUpForm({
   disabled,
   errors,
 }: SignUpFormProps) {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const theme = useActiveTheme();
   return (
     <>
       <Text className="text-xs font-semibold text-gray-400 tracking-widest mb-3">NAME</Text>
@@ -100,9 +105,8 @@ export default function SignUpForm({
       {!errors?.password && <View className="mb-5" />}
 
       <TouchableOpacity
-        className={`rounded-xl py-3.5 items-center ${
-          disabled || loading ? 'bg-blue-400 dark:bg-blue-900' : 'bg-blue-800'
-        }`}
+        className="rounded-xl py-3.5 items-center"
+        style={{ backgroundColor: disabled || loading ? (isDark ? theme[900] : theme[400]) : theme[800] }}
         onPress={onSubmit}
         activeOpacity={0.85}
         disabled={disabled || loading}
