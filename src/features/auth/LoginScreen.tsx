@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ArrowRight, WifiOff } from 'lucide-react-native';
+import { ArrowRight } from 'lucide-react-native';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import {
   signInAsGuest,
@@ -28,10 +28,10 @@ import type { SocialProvider } from './components/SocialLoginButtons';
 import { Colors } from '../../utils/themes';
 import { useColorScheme } from 'nativewind';
 import { useActiveTheme } from '../../hooks/useActiveTheme';
+import { EMAIL_REGEX, PASSWORD_MIN_LENGTH } from '../../utils/validation';
+import OfflineWarning from '../commons/OfflineWarning';
 
 type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginScreen() {
   const navigation = useNavigation<LoginNav>();
@@ -66,7 +66,7 @@ export default function LoginScreen() {
     }
     if (!password) {
       errors.password = 'Password is required.';
-    } else if (password.length < 7) {
+    } else if (password.length < PASSWORD_MIN_LENGTH) {
       errors.password = 'Password must be at least 7 characters.';
     }
     setFormErrors(errors);
@@ -137,14 +137,7 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 bg-white dark:bg-slate-950">
-      {!isConnected && (
-        <View className="flex-row items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-500/10 border-b border-amber-100 dark:border-amber-500/20">
-          <WifiOff size={13} color={Colors.amber600} />
-          <Text className="text-xs font-medium text-amber-700 dark:text-amber-400 flex-1">
-            No internet — social sign-in unavailable
-          </Text>
-        </View>
-      )}
+      {!isConnected && <OfflineWarning />}
 
       <View className="items-center pt-14 pb-8 px-6">
         <Image

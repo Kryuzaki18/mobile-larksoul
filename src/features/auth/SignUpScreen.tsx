@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { WifiOff } from 'lucide-react-native';
 import BackButton from '../commons/Button';
+import OfflineWarning from '../commons/OfflineWarning';
 import { useColorScheme } from 'nativewind';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { User } from '../../models/interfaces/users.interface';
@@ -26,11 +26,9 @@ import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import SignUpForm from './components/SignUpForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
-import { Colors } from '../../utils/themes';
+import { EMAIL_REGEX, PASSWORD_MIN_LENGTH } from '../../utils/validation';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SignUpScreen() {
   const navigation = useNavigation<Nav>();
@@ -60,7 +58,7 @@ export default function SignUpScreen() {
     }
     if (!password) {
       errors.password = 'Password is required.';
-    } else if (password.length < 7) {
+    } else if (password.length < PASSWORD_MIN_LENGTH) {
       errors.password = 'Password must be at least 7 characters.';
     }
     setFormErrors(errors);
@@ -121,14 +119,7 @@ export default function SignUpScreen() {
 
   return (
     <View className="flex-1 bg-white dark:bg-slate-950">
-      {!isConnected && (
-        <View className="flex-row items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-500/10 border-b border-amber-100 dark:border-amber-500/20">
-          <WifiOff size={13} color={Colors.amber600} />
-          <Text className="text-xs font-medium text-amber-700 dark:text-amber-400 flex-1">
-            No internet — social sign-in unavailable
-          </Text>
-        </View>
-      )}
+      {!isConnected && <OfflineWarning />}
 
       <View className="flex-row items-center px-4 pt-3 pb-3">
         <BackButton disabled={isAnyLoading} />

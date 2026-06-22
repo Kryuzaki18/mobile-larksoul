@@ -14,6 +14,14 @@ import { MOOD_META } from '../../utils/mood';
 import { Colors } from '../../utils/themes';
 import { useActiveTheme } from '../../hooks/useActiveTheme';
 
+const cardShadow = (isDark: boolean) => ({
+  shadowColor: Colors.black,
+  shadowOpacity: isDark ? 0.3 : 0.06,
+  shadowRadius: 8,
+  shadowOffset: { width: 0, height: 2 },
+  elevation: 2 as const,
+});
+
 export default function InsightsScreen() {
   const { currentUser } = useAuthStore();
   const { colorScheme } = useColorScheme();
@@ -65,7 +73,7 @@ export default function InsightsScreen() {
 
         <View
           className="mx-4 mt-3 bg-white dark:bg-slate-900 rounded-2xl p-4"
-          style={{ shadowColor: Colors.black, shadowOpacity: isDark ? 0.3 : 0.06, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}
+          style={cardShadow(isDark)}
         >
           <Text className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-3">
             Mood Activity
@@ -89,7 +97,7 @@ export default function InsightsScreen() {
         <View className="flex-row mx-4 mt-3 gap-3">
           <View
             className="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-4 items-center"
-            style={{ shadowColor: Colors.black, shadowOpacity: isDark ? 0.3 : 0.06, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}
+            style={cardShadow(isDark)}
           >
             <View className="w-8 h-8 rounded-full items-center justify-center mb-2" style={{ backgroundColor: isDark ? theme._15 : theme[50] }}>
               <BookOpen size={14} color={theme[500]} />
@@ -102,7 +110,7 @@ export default function InsightsScreen() {
 
           <View
             className="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-4 items-center"
-            style={{ shadowColor: Colors.black, shadowOpacity: isDark ? 0.3 : 0.06, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}
+            style={cardShadow(isDark)}
           >
             <View className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-500/10 items-center justify-center mb-2">
               <TrendingUp size={14} color={Colors.amber500} />
@@ -117,7 +125,7 @@ export default function InsightsScreen() {
 
           <View
             className="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-4 items-center"
-            style={{ shadowColor: Colors.black, shadowOpacity: isDark ? 0.3 : 0.06, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}
+            style={cardShadow(isDark)}
           >
             <View className="w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-500/10 items-center justify-center mb-2">
               <Flame size={14} color={Colors.orange500} />
@@ -136,7 +144,7 @@ export default function InsightsScreen() {
         {totalEntries === 0 && !isLoading && (
           <View
             className="mx-4 mt-3 bg-white dark:bg-slate-900 rounded-2xl p-8 items-center"
-            style={{ shadowColor: Colors.black, shadowOpacity: isDark ? 0.3 : 0.06, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 }}
+            style={cardShadow(isDark)}
           >
             <Text style={{ fontSize: 40, marginBottom: 12 }}>📊</Text>
             <Text className="text-sm font-semibold text-slate-700 dark:text-slate-200">

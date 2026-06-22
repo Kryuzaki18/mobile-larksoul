@@ -76,13 +76,13 @@ export function useInsightsGraph(userId: string) {
   const totalEntries = monthEntries.length;
 
   const streak = useMemo(() => {
+    const entryDateSet = new Set(allEntries.map(e => e.createdAt.slice(0, 10)));
     let count = 0;
     const today = new Date();
     for (let i = 0; i < 365; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().slice(0, 10);
-      if (allEntries.some(e => e.createdAt.startsWith(dateStr))) {
+      if (entryDateSet.has(d.toISOString().slice(0, 10))) {
         count++;
       } else {
         break;

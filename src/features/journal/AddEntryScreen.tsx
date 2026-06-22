@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -21,18 +21,13 @@ import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { Mood } from '../../models/interfaces/users.interface';
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 import { useAuthStore } from '../../store/authStore';
-import { formatEntryDate, toDateStr } from '../../utils/dateTime';
+import { formatEntryDate, toDateStr, parseDateStr } from '../../utils/dateTime';
 import { Colors } from '../../utils/themes';
 import { useActiveTheme } from '../../hooks/useActiveTheme';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
 import DatePickerModal from './components/DatePickerModal';
 import SectionHeader from './components/SectionHeader';
-
-function parseDateStr(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  return new Date(year, month - 1, day);
-}
 
 const TYPE = {
   screenTitle: { fontSize: 16, fontWeight: '700' as const, letterSpacing: -0.3 },
@@ -49,6 +44,13 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'AddEntry'>;
 type Route = RouteProp<RootStackParamList, 'AddEntry'>;
 
 const SECTION_COUNT = 4;
+
+const INPUT_CONTAINER_BASE = {
+  borderWidth: 1.5,
+  borderRadius: 12,
+  paddingHorizontal: 14,
+  paddingVertical: 12,
+} as const;
 
 export default function AddEntryScreen() {
   const navigation = useNavigation<Nav>();
@@ -109,21 +111,21 @@ export default function AddEntryScreen() {
     }).start();
   }, [canSave]);
 
-  function animateFocus(anim: Animated.Value, focused: boolean) {
+  const animateFocus = useCallback((anim: Animated.Value, focused: boolean) => {
     Animated.timing(anim, {
       toValue: focused ? 1 : 0,
       duration: 180,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: false,
     }).start();
-  }
+  }, []);
 
-  function pulseSave() {
+  const pulseSave = useCallback(() => {
     Animated.sequence([
       Animated.spring(saveScale, { toValue: 0.93, useNativeDriver: true, damping: 15, stiffness: 300 }),
       Animated.spring(saveScale, { toValue: 1, useNativeDriver: true, damping: 12, stiffness: 200 }),
     ]).start();
-  }
+  }, [saveScale]);
 
   useEffect(() => {
     if (!entryId) return;
@@ -136,7 +138,7 @@ export default function AddEntryScreen() {
     }).catch(console.error);
   }, [entryId]);
 
-  async function handleSave() {
+  const handleSave = useCallback(async () => {
     if (!canSave || saving) return;
     pulseSave();
     setSaving(true);
@@ -165,7 +167,7 @@ export default function AddEntryScreen() {
       setError(e instanceof Error ? e.message : 'Failed to save. Please try again.');
       setSaving(false);
     }
-  }
+  }, [canSave, saving, entryId, title, content, moods, tags, date, currentUser, navigation, pulseSave]);
 
   const titleBorderColor = titleFocusAnim.interpolate({
     inputRange: [0, 1],
@@ -191,7 +193,7 @@ export default function AddEntryScreen() {
     };
   }
 
-  const cardStyle = {
+  const cardStyle = useMemo(() => ({
     backgroundColor: isDark ? Colors.slate900 : Colors.white,
     borderRadius: 20,
     marginBottom: 12,
@@ -200,14 +202,7 @@ export default function AddEntryScreen() {
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },
     elevation: 2,
-  };
-
-  const inputContainerBase = {
-    borderWidth: 1.5,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  };
+  }), [isDark]);
 
   return (
     <KeyboardAvoidingView
@@ -281,7 +276,7 @@ export default function AddEntryScreen() {
             />
             <Animated.View
               className="bg-slate-50 dark:bg-slate-800"
-              style={{ ...inputContainerBase, borderColor: titleBorderColor }}
+              style={{ ...INPUT_CONTAINER_BASE, borderColor: titleBorderColor }}
             >
               <TextInput
                 value={title}
@@ -311,7 +306,7 @@ export default function AddEntryScreen() {
             />
             <Animated.View
               className="bg-slate-50 dark:bg-slate-800"
-              style={{ ...inputContainerBase, borderColor: contentBorderColor }}
+              style={{ ...INPUT_CONTAINER_BASE, borderColor: contentBorderColor }}
             >
               <TextInput
                 ref={contentRef}

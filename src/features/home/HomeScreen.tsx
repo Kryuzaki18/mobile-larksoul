@@ -38,6 +38,10 @@ type Route = RouteProp<RootStackParamList, 'Home'>;
 
 const MONTH_LOADER_DURATION_MS = 300;
 
+function matchesQuery(entry: { title: string; content: string }, q: string): boolean {
+  return entry.title.toLowerCase().includes(q) || entry.content.toLowerCase().includes(q);
+}
+
 export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
@@ -72,7 +76,7 @@ export default function HomeScreen() {
     const [year, month, day] = returnDate.split('-').map(Number);
     setSelectedDate(new Date(year, month - 1, day));
     setDisplayMonth({ year, month: month - 1 });
-  }, [route.params?.returnDate]);
+  }, [route.params?.returnDate, setSelectedDate, setDisplayMonth]);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const [scrollY, setScrollY] = useState(0);
@@ -98,6 +102,12 @@ export default function HomeScreen() {
     [setDisplayMonth],
   );
 
+  useEffect(() => {
+    return () => {
+      if (monthTimerRef.current) clearTimeout(monthTimerRef.current);
+    };
+  }, []);
+
   const calendarDisplayMonth = useMemo(
     () => new Date(displayMonth.year, displayMonth.month, 1),
     [displayMonth.year, displayMonth.month],
@@ -106,25 +116,14 @@ export default function HomeScreen() {
   const filteredEntriesForDay = useMemo(() => {
     if (!searchQuery) return entriesForDay;
     const q = searchQuery.toLowerCase();
-    return entriesForDay.filter(
-      e =>
-        e.title.toLowerCase().includes(q) ||
-        e.content.toLowerCase().includes(q),
-    );
+    return entriesForDay.filter(e => matchesQuery(e, q));
   }, [entriesForDay, searchQuery]);
 
   const filteredGroupedEntriesForMonth = useMemo(() => {
     if (!searchQuery) return groupedEntriesForMonth;
     const q = searchQuery.toLowerCase();
     return groupedEntriesForMonth
-      .map(group => ({
-        ...group,
-        items: group.items.filter(
-          e =>
-            e.title.toLowerCase().includes(q) ||
-            e.content.toLowerCase().includes(q),
-        ),
-      }))
+      .map(group => ({ ...group, items: group.items.filter(e => matchesQuery(e, q)) }))
       .filter(group => group.items.length > 0);
   }, [groupedEntriesForMonth, searchQuery]);
 
