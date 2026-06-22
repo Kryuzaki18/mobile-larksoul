@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { Plus, ChevronUp } from 'lucide-react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -42,6 +42,8 @@ export default function HomeScreen() {
 
   useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
 
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [scrollY, setScrollY] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMonthChanging, setIsMonthChanging] = useState(false);
   const isFirstMonthCall = useRef(true);
@@ -90,8 +92,11 @@ export default function HomeScreen() {
           <HomeLoader />
         ) : (
           <ScrollView
+            ref={scrollViewRef}
             className="flex-1"
             showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onScroll={e => setScrollY(e.nativeEvent.contentOffset.y)}
           >
             <CalendarView
               entryDates={entryDates}
@@ -133,12 +138,22 @@ export default function HomeScreen() {
           </ScrollView>
         )}
 
-        <TouchableOpacity
-          className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-lg shadow-blue-900"
-          onPress={() => navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })}
-        >
-          <Plus size={26} color="#ffffff" />
-        </TouchableOpacity>
+        <View className="absolute bottom-6 right-6 items-center gap-2">
+          {scrollY > 100 && (
+            <TouchableOpacity
+              className="w-12 h-12 rounded-full !bg-slate-800/60 items-center justify-center shadow-lg"
+              onPress={() => scrollViewRef.current?.scrollTo({ y: 0, animated: true })}
+            >
+              <ChevronUp size={22} color="#ffffff" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-lg shadow-blue-900"
+            onPress={() => navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })}
+          >
+            <Plus size={26} color="#ffffff" />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
