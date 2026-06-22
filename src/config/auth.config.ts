@@ -22,4 +22,4 @@ export const GOOGLE_WEB_CLIENT_ID = '563589011590-7fe0hbkgmdmi9ig7cg84lpeesaudmv
 // iOS-specific OAuth 2.0 client ID (from GoogleService-Info.plist → CLIENT_ID).
 // Optional — if GoogleService-Info.plist is bundled in the iOS app the SDK
 // reads it automatically, so you only need to set this if you want to override it.
-export const GOOGLE_IOS_CLIENT_ID: string | undefined = undefined;
+export const GOOGLE_IOS_CLIENT_ID = '563589011590-pvooto5suvl6kmnifpq3u0g4hsbqaalk.apps.googleusercontent.com';

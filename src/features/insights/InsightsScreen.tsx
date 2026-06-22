@@ -11,7 +11,7 @@ import { useInsightsGraph } from '../../hooks/useInsightsGraph';
 import { useAuthStore } from '../../store/authStore';
 import { MOOD_META } from '../../utils/mood';
 
-export default function MoodGraphScreen() {
+export default function InsightsScreen() {
   const { currentUser } = useAuthStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';

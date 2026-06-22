@@ -48,7 +48,7 @@ src/
 │   ├── auth/            # Login, Sign Up, PIN lock screens
 │   ├── commons/         # Shared Header, NetworkStatusDot
 │   ├── home/            # HomeScreen, CalendarView, ListView, GridView, JournalCard
-│   ├── insights/        # MoodGraph screen and components
+│   ├── insights/        # Insights screen and components
 │   ├── journal/         # AddEntryScreen, MoodSelector, TagInput, DatePickerModal
 │   └── settings/        # SettingsScreen, SecurityScreen
 ├── hooks/               # useHomeState, useInsightsGraph

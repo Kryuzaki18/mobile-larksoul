@@ -27,7 +27,7 @@ export default function Header({ name = 'Your', activeTab = 'home' }: HeaderProp
   const handleTabPress = (tab: HeaderTab) => {
     if (tab === activeTab) return;
     if (tab === 'graph') {
-      navigation.navigate('MoodGraph');
+      navigation.navigate('Insights');
     } else {
       navigation.goBack();
     }

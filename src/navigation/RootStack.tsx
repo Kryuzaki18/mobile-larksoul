@@ -9,7 +9,7 @@ import LoginScreen from '../features/auth/LoginScreen';
 import SignUpScreen from '../features/auth/SignUpScreen';
 import PinLockScreen from '../features/auth/PinLockScreen';
 import HomeScreen from '../features/home/HomeScreen';
-import MoodGraphScreen from '../features/insights/InsightsScreen';
+import InsightsScreen from '../features/insights/InsightsScreen';
 import SettingsScreen from '../features/settings/SettingsScreen';
 import SecurityScreen from '../features/settings/SecurityScreen';
 import AddEntryScreen from '../features/journal/AddEntryScreen';
@@ -104,7 +104,7 @@ export default function RootStack() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="MoodGraph" component={MoodGraphScreen} />
+        <Stack.Screen name="Insights" component={InsightsScreen} />
         <Stack.Screen name="AddEntry" component={AddEntryScreen} options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Security" component={SecurityScreen} />

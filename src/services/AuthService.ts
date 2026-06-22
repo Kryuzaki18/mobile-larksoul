@@ -85,12 +85,12 @@ export async function signInWithApple(): Promise<User | null> {
       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
     });
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      'code' in error &&
-      (error as { code: string }).code === appleAuth.Error.CANCELED
-    ) {
+    const code = (error as { code?: string }).code;
+    if (code === appleAuth.Error.CANCELED) {
       return null;
+    }
+    if (code === appleAuth.Error.FAILED) {
+      throw new Error('Sign In with Apple is not available on the simulator. Use a physical device.');
     }
     throw error;
   }
