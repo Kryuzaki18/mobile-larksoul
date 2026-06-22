@@ -5,6 +5,9 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "ipad": "react-native run-ios --simulator 'iPad Pro 13-inch (M5)'",
+    "build:ios": "react-native build-ios --mode Release",
+    "build:ipad": "react-native build-ios --mode Release --simulator 'iPad Pro 13-inch (M5)'",
     "build:android": "cd android && gradlew assembleRelease",
     "build:android:debug": "cd android && gradlew assembleDebug",
     "lint": "eslint .",
