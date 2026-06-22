@@ -72,15 +72,18 @@ export default function LoginScreen() {
     setLoginLoading(true);
     try {
       const user = await signIn(email.trim(), password);
-      if (!user) {
-        setFormErrors({ email: 'No account found with this email.' });
-        return;
-      }
       setUser(user, false);
       await saveSession(user.id, false);
       navigation.replace('Home');
     } catch (e) {
-      Alert.alert('Login Failed', e instanceof Error ? e.message : 'Please try again.');
+      const message = e instanceof Error ? e.message : 'Please try again.';
+      if (message.includes('No account found')) {
+        setFormErrors({ email: message });
+      } else if (message.includes('Incorrect password')) {
+        setFormErrors({ password: message });
+      } else {
+        Alert.alert('Login Failed', message);
+      }
     } finally {
       setLoginLoading(false);
     }

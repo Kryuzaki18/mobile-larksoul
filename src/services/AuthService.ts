@@ -42,9 +42,16 @@ export async function signInAsGuest(): Promise<User> {
   return createUser('Guest', GUEST_EMAIL);
 }
 
-export async function signIn(email: string, password: string): Promise<User | null> {
+export async function signIn(email: string, password: string): Promise<User> {
   validateEmailAndPassword(email, password);
-  return getUserByEmail(email);
+  const user = await getUserByEmail(email);
+  if (!user) {
+    throw new Error('No account found with this email.');
+  }
+  if (user.password !== password) {
+    throw new Error('Incorrect password.');
+  }
+  return user;
 }
 
 export async function signUp(name: string, email: string, password?: string): Promise<User> {
