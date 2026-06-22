@@ -200,19 +200,20 @@ export default function JournalCard({
               {entry.content}
             </Text>
 
-              (entry.tags.length > 0 && ()
-            <View className="flex-row flex-wrap gap-2">
-              {entry.tags.map(tag => (
-                <View
-                  key={tag}
-                  className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1"
-                >
-                  <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">
-                    {tag}
-                  </Text>
-                </View>
-              ))}
-            </View>
+            {entry.tags.length > 0 && (
+              <View className="flex-row flex-wrap gap-2">
+                {entry.tags.map(tag => (
+                  <View
+                    key={tag}
+                    className="bg-blue-50 dark:bg-blue-500/10 rounded-full px-3 py-1"
+                  >
+                    <Text className="text-xs text-blue-500 dark:text-blue-400 font-medium">
+                      {tag}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       </Animated.View>
