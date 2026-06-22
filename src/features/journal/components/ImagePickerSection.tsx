@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Image,
@@ -6,6 +6,10 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Platform,
+  ActionSheetIOS,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import { Camera, Images, X } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -22,21 +26,47 @@ interface Props {
   onChange: (paths: string[]) => void;
 }
 
-type PickMode = 'back' | 'front' | 'library';
+type PickMode = 'back' | 'library';
 
 export default function ImagePickerSection({ imagePaths, onChange }: Props) {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const theme = useActiveTheme();
+
   const [sheetVisible, setSheetVisible] = useState(false);
+  const [pendingMode, setPendingMode] = useState<PickMode | null>(null);
 
   const remaining = 3 - imagePaths.length;
   const canAdd = remaining > 0;
 
-  async function pick(mode: PickMode) {
-    setSheetVisible(false);
+  useEffect(() => {
+    if (Platform.OS === 'ios' || sheetVisible || pendingMode === null) return;
+    const mode = pendingMode;
+    setPendingMode(null);
+    const t = setTimeout(() => launchPick(mode), 100);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetVisible, pendingMode]);
+
+  async function launchPick(mode: PickMode) {
     useSecurityStore.getState().setPickingMedia(true);
-    await new Promise<void>(r => setTimeout(r, 300));
+
+    if (Platform.OS === 'android' && mode === 'back') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'LarkSoul needs access to your camera to add photos to journal entries.',
+          buttonPositive: 'Allow',
+          buttonNegative: 'Deny',
+        },
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        useSecurityStore.getState().setPickingMedia(false);
+        Alert.alert('Camera access denied', 'Enable camera permission in Settings to use this feature.');
+        return;
+      }
+    }
 
     const onDone = (uris: string[]) => {
       useSecurityStore.getState().setPickingMedia(false);
@@ -50,9 +80,23 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
       );
     } else {
       launchCamera(
-        { mediaType: 'photo', cameraType: mode, quality: 0.8, saveToPhotos: false },
+        { mediaType: 'photo', cameraType: 'back', quality: 0.8, saveToPhotos: false },
         res => onDone((res.assets ?? []).map(a => a.uri).filter((u): u is string => !!u)),
       );
+    }
+  }
+
+  function openSheet() {
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        { options: ['Cancel', 'Camera', 'Photo Library'], cancelButtonIndex: 0 },
+        index => {
+          if (index === 1) launchPick('back');
+          else if (index === 2) launchPick('library');
+        },
+      );
+    } else {
+      setSheetVisible(true);
     }
   }
 
@@ -60,8 +104,8 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
     onChange(imagePaths.filter((_, i) => i !== index));
   }
 
-  const sheetBg = isDark ? Colors.slate900 : Colors.white;
-  const rowBg   = isDark ? Colors.slate800 : Colors.slate50;
+  const sheetBg    = isDark ? Colors.slate900 : Colors.white;
+  const rowBg      = isDark ? Colors.slate800 : Colors.slate50;
   const labelColor = isDark ? Colors.slate100 : Colors.slate900;
 
   return (
@@ -96,7 +140,7 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
 
         {canAdd && (
           <TouchableOpacity
-            onPress={() => setSheetVisible(true)}
+            onPress={openSheet}
             activeOpacity={0.7}
             style={{
               width: THUMB,
@@ -112,79 +156,76 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
             }}
           >
             <Camera size={20} color={theme[500]} />
-            <Text style={{
-              fontSize: 9,
-              fontWeight: '700',
-              letterSpacing: 0.8,
-              color: theme[500],
-            }}>
+            <Text style={{ fontSize: 9, fontWeight: '700', letterSpacing: 0.8, color: theme[500] }}>
               ADD PHOTO
             </Text>
           </TouchableOpacity>
         )}
       </View>
 
-      <Modal
-        visible={sheetVisible}
-        transparent
-        animationType="slide"
-        statusBarTranslucent
-        onRequestClose={() => setSheetVisible(false)}
-      >
-        <Pressable
-          style={{ flex: 1, backgroundColor: Colors.backdrop, justifyContent: 'flex-end' }}
-          onPress={() => setSheetVisible(false)}
+      {Platform.OS === 'android' && (
+        <Modal
+          visible={sheetVisible}
+          transparent
+          animationType="slide"
+          statusBarTranslucent
+          onRequestClose={() => setSheetVisible(false)}
         >
-          <Pressable>
-            <View style={{
-              backgroundColor: sheetBg,
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              paddingTop: 12,
-              paddingBottom: 40,
-              paddingHorizontal: 16,
-            }}>
+          <Pressable
+            style={{ flex: 1, backgroundColor: Colors.backdrop, justifyContent: 'flex-end' }}
+            onPress={() => setSheetVisible(false)}
+          >
+            <Pressable>
               <View style={{
-                width: 36, height: 4, borderRadius: 2,
-                backgroundColor: isDark ? Colors.slate700 : Colors.slate200,
-                alignSelf: 'center',
-                marginBottom: 20,
-              }} />
+                backgroundColor: sheetBg,
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
+                paddingTop: 12,
+                paddingBottom: 40,
+                paddingHorizontal: 16,
+              }}>
+                <View style={{
+                  width: 36, height: 4, borderRadius: 2,
+                  backgroundColor: isDark ? Colors.slate700 : Colors.slate200,
+                  alignSelf: 'center',
+                  marginBottom: 20,
+                }} />
 
-              <SheetRow
-                icon={<Camera size={19} color={labelColor} />}
-                label="Camera"
-                onPress={() => pick('back')}
-                rowBg={rowBg}
-                labelColor={labelColor}
-              />
-              <SheetRow
-                icon={<Images size={19} color={labelColor} />}
-                label="Photo Library"
-                onPress={() => pick('library')}
-                rowBg={rowBg}
-                labelColor={labelColor}
-              />
+                <SheetRow
+                  icon={<Camera size={19} color={labelColor} />}
+                  label="Camera"
+                  onPress={() => { setPendingMode('back'); setSheetVisible(false); }}
+                  rowBg={rowBg}
+                  labelColor={labelColor}
+                />
+                <SheetRow
+                  icon={<Images size={19} color={labelColor} />}
+                  label="Photo Library"
+                  onPress={() => { setPendingMode('library'); setSheetVisible(false); }}
+                  rowBg={rowBg}
+                  labelColor={labelColor}
+                />
 
-              <TouchableOpacity
-                onPress={() => setSheetVisible(false)}
-                activeOpacity={0.7}
-                style={{
-                  marginTop: 8,
-                  paddingVertical: 14,
-                  borderRadius: 12,
-                  backgroundColor: isDark ? Colors.slate800 : Colors.slate100,
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ fontSize: 15, fontWeight: '600', color: isDark ? Colors.slate400 : Colors.slate500 }}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </View>
+                <TouchableOpacity
+                  onPress={() => setSheetVisible(false)}
+                  activeOpacity={0.7}
+                  style={{
+                    marginTop: 8,
+                    paddingVertical: 14,
+                    borderRadius: 12,
+                    backgroundColor: isDark ? Colors.slate800 : Colors.slate100,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ fontSize: 15, fontWeight: '600', color: isDark ? Colors.slate400 : Colors.slate500 }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </Modal>
+        </Modal>
+      )}
     </>
   );
 }
