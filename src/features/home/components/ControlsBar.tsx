@@ -1,19 +1,18 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Menu, LayoutGrid, BookOpen } from 'lucide-react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, TouchableOpacity, TextInput } from 'react-native';
+import { Menu, LayoutGrid, BookOpen, Search } from 'lucide-react-native';
 import type { JournalLayout } from '../../../store/journalViewStore';
 
 interface ChipProps {
   active: boolean;
   onPress: () => void;
   icon: (color: string) => React.ReactNode;
-  label: string;
   isDark: boolean;
 }
 
-function ToggleChip({ active, onPress, icon, label, isDark }: ChipProps) {
-  const bg = active ? '#1e40af' : (isDark ? '#1e293b' : '#f1f5f9');
-  const color = active ? '#fff' : (isDark ? '#94a3b8' : '#6b7280');
+function ToggleChip({ active, onPress, icon, isDark }: ChipProps) {
+  const bg = active ? '#1e40af' : isDark ? '#1e293b' : '#f1f5f9';
+  const color = active ? '#fff' : isDark ? '#94a3b8' : '#6b7280';
   return (
     <TouchableOpacity
       style={{
@@ -28,68 +27,90 @@ function ToggleChip({ active, onPress, icon, label, isDark }: ChipProps) {
       onPress={onPress}
     >
       {icon(color)}
-      <Text style={{ fontSize: 11, fontWeight: '700', color }}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
 interface ControlsBarProps {
-  dateLabel: string;
   showAll: boolean;
   onToggleAll: () => void;
   layout: JournalLayout;
   onLayoutChange: (layout: JournalLayout) => void;
   isDark: boolean;
+  onSearch: (query: string) => void;
 }
 
 export default function ControlsBar({
-  dateLabel,
   showAll,
   onToggleAll,
   layout,
   onLayoutChange,
   isDark,
+  onSearch,
 }: ControlsBarProps) {
-  const bgColor = isDark ? '#020617' : '#f8fafc';
-  const dividerColor = isDark ? '#1e293b' : '#e9edf2';
+  const [inputValue, setInputValue] = useState('');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onSearch(inputValue.trim());
+    }, 1000);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [inputValue, onSearch]);
 
   return (
-    <View
-      style={{ backgroundColor: bgColor, paddingTop: 16, paddingBottom: 4 }}
-      className="flex-row items-center px-4"
-    >
-      <View style={{ flexDirection: 'row', gap: 5 }}>
-        <ToggleChip
-          active={showAll}
-          onPress={onToggleAll}
-          icon={(color) => <BookOpen size={13} color={color} />}
-          label="All"
-          isDark={isDark}
-        />
-        <ToggleChip
-          active={layout === 'list'}
-          onPress={() => onLayoutChange('list')}
-          icon={(color) => <Menu size={13} color={color} />}
-          label="List"
-          isDark={isDark}
-        />
-        <ToggleChip
-          active={layout === 'grid'}
-          onPress={() => onLayoutChange('grid')}
-          icon={(color) => <LayoutGrid size={13} color={color} />}
-          label="Grid"
-          isDark={isDark}
+    <View className="flex-row items-center gap-2 p-4 bg-slate-50">
+      <ToggleChip
+        active={showAll}
+        onPress={onToggleAll}
+        icon={color => <BookOpen size={13} color={color} />}
+        isDark={isDark}
+      />
+
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          height: 28,
+          borderRadius: 7,
+          backgroundColor: isDark ? '#1e293b' : '#f1f5f9',
+          paddingHorizontal: 8,
+          gap: 4,
+        }}
+      >
+        <Search size={12} color={isDark ? '#94a3b8' : '#6b7280'} />
+        <TextInput
+          value={inputValue}
+          onChangeText={setInputValue}
+          maxLength={15}
+          placeholder="Search..."
+          placeholderTextColor={isDark ? '#64748b' : '#9ca3af'}
+          style={{
+            flex: 1,
+            fontSize: 12,
+            color: isDark ? '#f1f5f9' : '#1e293b',
+            padding: 0,
+          }}
         />
       </View>
 
-      <View
-        className="flex-1 h-px ml-2 mr-3"
-        style={{ backgroundColor: dividerColor }}
+      <ToggleChip
+        active={layout === 'list'}
+        onPress={() => onLayoutChange('list')}
+        icon={color => <Menu size={13} color={color} />}
+        isDark={isDark}
       />
 
-      <Text className="text-xs font-bold text-gray-400 tracking-widest uppercase">
-        {dateLabel}
-      </Text>
+      <ToggleChip
+        active={layout === 'grid'}
+        onPress={() => onLayoutChange('grid')}
+        icon={color => <LayoutGrid size={13} color={color} />}
+        isDark={isDark}
+      />
     </View>
   );
 }

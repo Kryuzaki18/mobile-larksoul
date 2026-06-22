@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -46,6 +46,7 @@ export default function HomeScreen() {
 
   useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
 
+  const [searchQuery, setSearchQuery] = useState('');
   const [isMonthChanging, setIsMonthChanging] = useState(false);
   const isFirstMonthCall = useRef(true);
   const monthTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -60,6 +61,27 @@ export default function HomeScreen() {
     setIsMonthChanging(true);
     monthTimerRef.current = setTimeout(() => setIsMonthChanging(false), MONTH_LOADER_DURATION_MS);
   }, [setDisplayMonth]);
+
+  const filteredEntriesForDay = useMemo(() => {
+    if (!searchQuery) return entriesForDay;
+    const q = searchQuery.toLowerCase();
+    return entriesForDay.filter(
+      e => e.title.toLowerCase().includes(q) || e.content.toLowerCase().includes(q),
+    );
+  }, [entriesForDay, searchQuery]);
+
+  const filteredGroupedEntriesForMonth = useMemo(() => {
+    if (!searchQuery) return groupedEntriesForMonth;
+    const q = searchQuery.toLowerCase();
+    return groupedEntriesForMonth
+      .map(group => ({
+        ...group,
+        items: group.items.filter(
+          e => e.title.toLowerCase().includes(q) || e.content.toLowerCase().includes(q),
+        ),
+      }))
+      .filter(group => group.items.length > 0);
+  }, [groupedEntriesForMonth, searchQuery]);
 
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
   const dateLabel = showAll && visibleDate
@@ -90,12 +112,12 @@ export default function HomeScreen() {
 
             <View onLayout={(e) => onControlsLayout(e.nativeEvent.layout.height)}>
               <ControlsBar
-                dateLabel={dateLabel}
                 showAll={showAll}
                 onToggleAll={toggleAll}
                 layout={layout}
                 onLayoutChange={setLayout}
                 isDark={isDark}
+                onSearch={setSearchQuery}
               />
             </View>
 
@@ -105,18 +127,18 @@ export default function HomeScreen() {
               ) : (
                 <View onLayout={(e) => onAllEntriesLayout(e.nativeEvent.layout.y)}>
                   <AllEntriesView
-                    groups={groupedEntriesForMonth}
+                    groups={filteredGroupedEntriesForMonth}
                     layout={layout}
                     refetch={refetch}
                     onGroupLayout={onGroupLayout}
                   />
                 </View>
               )
-            ) : entriesForDay.length > 0 ? (
+            ) : filteredEntriesForDay.length > 0 ? (
               layout === 'list' ? (
-                <ListView entries={entriesForDay} refetch={refetch} />
+                <ListView entries={filteredEntriesForDay} refetch={refetch} />
               ) : (
-                <GridView entries={entriesForDay} refetch={refetch} />
+                <GridView entries={filteredEntriesForDay} refetch={refetch} />
               )
             ) : (
               <EmptyEntry />

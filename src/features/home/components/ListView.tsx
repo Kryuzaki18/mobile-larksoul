@@ -9,7 +9,7 @@ export default function ListView({ entries, refetch }: EntryViewProps) {
   const { editEntry, confirmDelete } = useEntryActions(refetch);
 
   return (
-    <View className="pt-2">
+    <View className="pt-4 pb-8">
       {entries.map((entry, index) => (
         <JournalCard
           key={entry.id}

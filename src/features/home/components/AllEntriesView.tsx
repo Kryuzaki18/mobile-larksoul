@@ -32,7 +32,8 @@ export default function AllEntriesView({
           key={date}
           onLayout={(e) => onGroupLayout(date, e.nativeEvent.layout.y)}
         >
-          {index > 0 && <DateSeparator label={formatDateStrLabel(date)} />}
+          <DateSeparator label={formatDateStrLabel(date)} />
+          
           {layout === 'list' ? (
             <ListView entries={items} refetch={refetch} />
           ) : (
