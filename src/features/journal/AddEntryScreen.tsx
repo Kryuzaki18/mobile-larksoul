@@ -146,7 +146,7 @@ export default function AddEntryScreen() {
         const h = String(now.getHours()).padStart(2, '0');
         const m = String(now.getMinutes()).padStart(2, '0');
         const s = String(now.getSeconds()).padStart(2, '0');
-        const createdAt = new Date(`${date}T${h}:${m}:${s}`).toISOString();
+        const createdAt = `${date}T${h}:${m}:${s}`;
         await createEntry({
           userId: currentUser?.id ?? '',
           title: title.trim(),
