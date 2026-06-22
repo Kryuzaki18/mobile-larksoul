@@ -12,14 +12,12 @@ interface AllEntriesViewProps {
   groups: EntryGroup[];
   layout: 'list' | 'grid';
   refetch: () => void;
-  onGroupLayout: (date: string, y: number) => void;
 }
 
 export default function AllEntriesView({
   groups,
   layout,
   refetch,
-  onGroupLayout,
 }: AllEntriesViewProps) {
   if (groups.length === 0) {
     return <EmptyEntry />;
@@ -27,11 +25,8 @@ export default function AllEntriesView({
 
   return (
     <View>
-      {groups.map(({ date, items }, index) => (
-        <View
-          key={date}
-          onLayout={(e) => onGroupLayout(date, e.nativeEvent.layout.y)}
-        >
+      {groups.map(({ date, items }) => (
+        <View key={date}>
           <DateSeparator label={formatDateStrLabel(date)} />
           
           {layout === 'list' ? (

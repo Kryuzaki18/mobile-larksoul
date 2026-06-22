@@ -14,11 +14,10 @@ import HomeLoader from './components/HomeLoader';
 import ControlsBar from './components/ControlsBar';
 import AllEntriesView from './components/AllEntriesView';
 
-import { useScrollDateTracker } from '../../hooks/useScrollDateTracker';
 import { useHomeState } from '../../hooks/useHomeState';
 import { useJournalViewStore } from '../../store/journalViewStore';
 import { useAuthStore } from '../../store/authStore';
-import { formatDateLabel, formatDateStrLabel, toDateStr } from '../../utils/dateTime';
+import { toDateStr } from '../../utils/dateTime';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -40,9 +39,6 @@ export default function HomeScreen() {
     setDisplayMonth,
     isLoading, refetch,
   } = useHomeState(userId);
-
-  const { visibleDate, onGroupLayout, onScroll, onAllEntriesLayout, onControlsLayout } =
-    useScrollDateTracker(showAll, groupedEntriesForMonth);
 
   useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
 
@@ -84,9 +80,6 @@ export default function HomeScreen() {
   }, [groupedEntriesForMonth, searchQuery]);
 
   const firstName = currentUser?.name?.split(' ')[0] ?? 'Your';
-  const dateLabel = showAll && visibleDate
-    ? formatDateStrLabel(visibleDate)
-    : formatDateLabel(selectedDate);
 
   return (
     <View className="flex-1 bg-slate-50 dark:bg-slate-950">
@@ -99,9 +92,6 @@ export default function HomeScreen() {
           <ScrollView
             className="flex-1"
             showsVerticalScrollIndicator={false}
-            stickyHeaderIndices={[1]}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
           >
             <CalendarView
               entryDates={entryDates}
@@ -110,29 +100,24 @@ export default function HomeScreen() {
               onMonthChange={handleMonthChange}
             />
 
-            <View onLayout={(e) => onControlsLayout(e.nativeEvent.layout.height)}>
-              <ControlsBar
-                showAll={showAll}
-                onToggleAll={toggleAll}
-                layout={layout}
-                onLayoutChange={setLayout}
-                isDark={isDark}
-                onSearch={setSearchQuery}
-              />
-            </View>
+            <ControlsBar
+              showAll={showAll}
+              onToggleAll={toggleAll}
+              layout={layout}
+              onLayoutChange={setLayout}
+              isDark={isDark}
+              onSearch={setSearchQuery}
+            />
 
             {showAll ? (
               isMonthChanging ? (
                 <HomeLoader />
               ) : (
-                <View onLayout={(e) => onAllEntriesLayout(e.nativeEvent.layout.y)}>
-                  <AllEntriesView
-                    groups={filteredGroupedEntriesForMonth}
-                    layout={layout}
-                    refetch={refetch}
-                    onGroupLayout={onGroupLayout}
-                  />
-                </View>
+                <AllEntriesView
+                  groups={filteredGroupedEntriesForMonth}
+                  layout={layout}
+                  refetch={refetch}
+                />
               )
             ) : filteredEntriesForDay.length > 0 ? (
               layout === 'list' ? (
