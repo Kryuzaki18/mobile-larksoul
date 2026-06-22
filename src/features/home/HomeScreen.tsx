@@ -1,9 +1,20 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Plus, ChevronUp } from 'lucide-react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RouteProp } from '@react-navigation/native';
 
 import Header from '../commons/Header';
 import CalendarView from './components/CalendarView';
@@ -21,11 +32,13 @@ import { toDateStr } from '../../utils/dateTime';
 import type { RootStackParamList } from '../../models/types/navigation.type';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type Route = RouteProp<RootStackParamList, 'Home'>;
 
 const MONTH_LOADER_DURATION_MS = 300;
 
 export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
   const { currentUser } = useAuthStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -33,14 +46,30 @@ export default function HomeScreen() {
   const { layout, setLayout, showAll, toggleAll } = useJournalViewStore();
   const userId = currentUser?.id ?? '';
   const {
-    selectedDate, setSelectedDate,
-    entryDates, entriesForDay,
+    selectedDate,
+    setSelectedDate,
+    entryDates,
+    entriesForDay,
     groupedEntriesForMonth,
+    displayMonth,
     setDisplayMonth,
-    isLoading, refetch,
+    isLoading,
+    refetch,
   } = useHomeState(userId);
 
-  useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
+  useEffect(() => {
+    const returnDate = route.params?.returnDate;
+    if (!returnDate) return;
+    const [year, month, day] = returnDate.split('-').map(Number);
+    setSelectedDate(new Date(year, month - 1, day));
+    setDisplayMonth({ year, month: month - 1 });
+  }, [route.params?.returnDate]);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const [scrollY, setScrollY] = useState(0);
@@ -49,22 +78,35 @@ export default function HomeScreen() {
   const isFirstMonthCall = useRef(true);
   const monthTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleMonthChange = useCallback((year: number, month: number) => {
-    setDisplayMonth({ year, month });
-    if (isFirstMonthCall.current) {
-      isFirstMonthCall.current = false;
-      return;
-    }
-    if (monthTimerRef.current) clearTimeout(monthTimerRef.current);
-    setIsMonthChanging(true);
-    monthTimerRef.current = setTimeout(() => setIsMonthChanging(false), MONTH_LOADER_DURATION_MS);
-  }, [setDisplayMonth]);
+  const handleMonthChange = useCallback(
+    (year: number, month: number) => {
+      setDisplayMonth({ year, month });
+      if (isFirstMonthCall.current) {
+        isFirstMonthCall.current = false;
+        return;
+      }
+      if (monthTimerRef.current) clearTimeout(monthTimerRef.current);
+      setIsMonthChanging(true);
+      monthTimerRef.current = setTimeout(
+        () => setIsMonthChanging(false),
+        MONTH_LOADER_DURATION_MS,
+      );
+    },
+    [setDisplayMonth],
+  );
+
+  const calendarDisplayMonth = useMemo(
+    () => new Date(displayMonth.year, displayMonth.month, 1),
+    [displayMonth.year, displayMonth.month],
+  );
 
   const filteredEntriesForDay = useMemo(() => {
     if (!searchQuery) return entriesForDay;
     const q = searchQuery.toLowerCase();
     return entriesForDay.filter(
-      e => e.title.toLowerCase().includes(q) || e.content.toLowerCase().includes(q),
+      e =>
+        e.title.toLowerCase().includes(q) ||
+        e.content.toLowerCase().includes(q),
     );
   }, [entriesForDay, searchQuery]);
 
@@ -75,7 +117,9 @@ export default function HomeScreen() {
       .map(group => ({
         ...group,
         items: group.items.filter(
-          e => e.title.toLowerCase().includes(q) || e.content.toLowerCase().includes(q),
+          e =>
+            e.title.toLowerCase().includes(q) ||
+            e.content.toLowerCase().includes(q),
         ),
       }))
       .filter(group => group.items.length > 0);
@@ -103,6 +147,7 @@ export default function HomeScreen() {
               selectedDate={selectedDate}
               onDayPress={setSelectedDate}
               onMonthChange={handleMonthChange}
+              displayMonth={calendarDisplayMonth}
             />
 
             <ControlsBar
@@ -138,18 +183,23 @@ export default function HomeScreen() {
           </ScrollView>
         )}
 
-        <View className="absolute bottom-6 right-6 items-center gap-2">
-          {scrollY > 100 && (
+        <View className="absolute bottom-6 right-6 items-center gap-4">
+          {scrollY > 150 && (
             <TouchableOpacity
-              className="w-12 h-12 rounded-full !bg-slate-800/60 items-center justify-center shadow-lg"
-              onPress={() => scrollViewRef.current?.scrollTo({ y: 0, animated: true })}
+              className="w-12 h-12 rounded-full bg-blue-800 items-center justify-center shadow-sm shadow-blue-900"
+              onPress={() =>
+                scrollViewRef.current?.scrollTo({ y: 0, animated: true })
+              }
             >
               <ChevronUp size={22} color="#ffffff" />
             </TouchableOpacity>
           )}
+
           <TouchableOpacity
-            className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-lg shadow-blue-900"
-            onPress={() => navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })}
+            className="w-14 h-14 rounded-full bg-blue-800 items-center justify-center shadow-sm shadow-blue-900"
+            onPress={() =>
+              navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })
+            }
           >
             <Plus size={26} color="#ffffff" />
           </TouchableOpacity>

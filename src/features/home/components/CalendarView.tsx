@@ -120,7 +120,9 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
     prevDisplayMonth.current = displayMonth;
     const next = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 1);
     const c = currentRef.current;
-    const dir = next >= new Date(c.getFullYear(), c.getMonth(), 1) ? 1 : -1;
+    const cFirst = new Date(c.getFullYear(), c.getMonth(), 1);
+    if (next.getTime() === cFirst.getTime()) return;
+    const dir = next > cFirst ? 1 : -1;
     navigateRef.current(dir, next);
   }, [displayMonth]);
 

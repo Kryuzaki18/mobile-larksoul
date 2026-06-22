@@ -141,6 +141,7 @@ export default function AddEntryScreen() {
     try {
       if (entryId) {
         await updateEntry(entryId, { title: title.trim(), content: content.trim(), moods, tags });
+        navigation.goBack();
       } else {
         const now = new Date();
         const h = String(now.getHours()).padStart(2, '0');
@@ -155,8 +156,8 @@ export default function AddEntryScreen() {
           tags,
           createdAt,
         });
+        navigation.navigate('Home', { returnDate: date });
       }
-      navigation.goBack();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to save. Please try again.');
       setSaving(false);
