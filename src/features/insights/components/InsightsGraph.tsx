@@ -134,7 +134,6 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
               key={`day-${day.day}`}
               onPress={() => day.count > 0 ? handleBarPress(day, i) : setTooltip(null)}
             >
-              {/* Selected column background */}
               {isSelected && (
                 <Rect
                   x={x - 1}
@@ -183,7 +182,6 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
                     );
                   })}
 
-                  {/* Theme-colored accent cap on selected bar */}
                   {isSelected && (
                     <Rect
                       x={x}
@@ -199,7 +197,6 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
 
               <Rect x={x} y={PAD.top} width={barW} height={innerH} fill="transparent" />
 
-              {/* Day label */}
               {showLabel && (
                 <SvgText
                   x={x + barW / 2}
@@ -219,7 +216,6 @@ export default function MoodBarChart({ dayData, totalEntries, monthName, isDark,
                 </SvgText>
               )}
 
-              {/* Today dot */}
               {isToday && (
                 <Circle
                   cx={x + barW / 2}
