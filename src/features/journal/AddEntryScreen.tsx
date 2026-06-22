@@ -28,6 +28,7 @@ import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
 import DatePickerModal from './components/DatePickerModal';
 import SectionHeader from './components/SectionHeader';
+import ImagePickerSection from './components/ImagePickerSection';
 
 const TYPE = {
   screenTitle: { fontSize: 16, fontWeight: '700' as const, letterSpacing: -0.3 },
@@ -43,7 +44,7 @@ const TYPE = {
 type Nav = NativeStackNavigationProp<RootStackParamList, 'AddEntry'>;
 type Route = RouteProp<RootStackParamList, 'AddEntry'>;
 
-const SECTION_COUNT = 4;
+const SECTION_COUNT = 5;
 
 const INPUT_CONTAINER_BASE = {
   borderWidth: 1.5,
@@ -63,6 +64,7 @@ export default function AddEntryScreen() {
   const [content, setContent] = useState('');
   const [moods, setMoods] = useState<Mood[]>([]);
   const [tags, setTags] = useState<string[]>([]);
+  const [imagePaths, setImagePaths] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(() => parseDateStr(initialDate));
@@ -135,6 +137,7 @@ export default function AddEntryScreen() {
       setContent(entry.content);
       setMoods(entry.moods);
       setTags(entry.tags);
+      setImagePaths(entry.imagePaths ?? []);
     }).catch(console.error);
   }, [entryId]);
 
@@ -145,7 +148,7 @@ export default function AddEntryScreen() {
     setError(null);
     try {
       if (entryId) {
-        await updateEntry(entryId, { title: title.trim(), content: content.trim(), moods, tags });
+        await updateEntry(entryId, { title: title.trim(), content: content.trim(), moods, tags, imagePaths });
         navigation.goBack();
       } else {
         const now = new Date();
@@ -159,6 +162,7 @@ export default function AddEntryScreen() {
           content: content.trim(),
           moods,
           tags,
+          imagePaths,
           createdAt,
         });
         navigation.navigate('Home', { returnDate: date });
@@ -167,7 +171,7 @@ export default function AddEntryScreen() {
       setError(e instanceof Error ? e.message : 'Failed to save. Please try again.');
       setSaving(false);
     }
-  }, [canSave, saving, entryId, title, content, moods, tags, date, currentUser, navigation, pulseSave]);
+  }, [canSave, saving, entryId, title, content, moods, tags, imagePaths, date, currentUser, navigation, pulseSave]);
 
   const titleBorderColor = titleFocusAnim.interpolate({
     inputRange: [0, 1],
@@ -330,6 +334,13 @@ export default function AddEntryScreen() {
           <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
             <SectionHeader label="TAGS" count={tags.length} max={3} />
             <TagInput tags={tags} onChange={setTags} />
+          </View>
+        </Animated.View>
+
+        <Animated.View style={[cardStyle, sectionStyle(4)]}>
+          <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
+            <SectionHeader label="PHOTOS" count={imagePaths.length} max={3} />
+            <ImagePickerSection imagePaths={imagePaths} onChange={setImagePaths} />
           </View>
         </Animated.View>
 

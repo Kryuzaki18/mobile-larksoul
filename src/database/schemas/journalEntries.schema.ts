@@ -6,6 +6,7 @@ export const SQL_CREATE_JOURNAL_ENTRIES = `
     content     TEXT NOT NULL CHECK(length(content) >= 7 AND length(content) <= 300),
     mood        TEXT NOT NULL,
     tags        TEXT NOT NULL DEFAULT '[]',
+    image_paths TEXT NOT NULL DEFAULT '[]',
     created_at  TEXT NOT NULL,
     updated_at  TEXT NOT NULL,
     deleted_at  TEXT

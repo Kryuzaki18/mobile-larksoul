@@ -8,8 +8,8 @@
     "ipad": "react-native run-ios --simulator 'iPad Pro 13-inch (M5)'",
     "build:ios": "react-native build-ios --mode Release",
     "build:ipad": "react-native build-ios --mode Release --simulator 'iPad Pro 13-inch (M5)'",
-    "build:android": "cd android && gradlew assembleRelease",
-    "build:android:debug": "cd android && gradlew assembleDebug",
+    "build:android": "cd android && ./gradlew assembleRelease",
+    "build:android:debug": "cd android && ./gradlew assembleDebug",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
@@ -27,6 +27,7 @@
     "react": "19.2.3",
     "react-native": "0.85.3",
     "react-native-bootsplash": "^7.3.1",
+    "react-native-image-picker": "^8.2.1",
     "react-native-keychain": "^10.0.0",
     "react-native-print": "^0.11.0",
     "react-native-reanimated": "^4.4.1",

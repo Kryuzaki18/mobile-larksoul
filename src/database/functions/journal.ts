@@ -8,6 +8,7 @@ type RawEntry = {
   content: string;
   mood: string;
   tags: string;
+  image_paths: string;
   created_at: string;
   updated_at: string;
 };
@@ -29,6 +30,7 @@ function toEntry(raw: RawEntry): JournalEntry {
     content: raw.content,
     moods: parseMoods(raw.mood),
     tags: JSON.parse(raw.tags) as string[],
+    imagePaths: JSON.parse(raw.image_paths ?? '[]') as string[],
     createdAt: raw.created_at,
     updatedAt: raw.updated_at,
   };
@@ -43,6 +45,7 @@ function validateEntryFields(
   content?: string,
   moods?: Mood[],
   tags?: string[],
+  imagePaths?: string[],
 ): void {
   if (title !== undefined) {
     if (title.length < 2 || title.length > 30)
@@ -62,6 +65,9 @@ function validateEntryFields(
       if (bare.length < 2 || bare.length > 15)
         throw new Error(`Tag "${tag}" must be 2–15 characters`);
     }
+  }
+  if (imagePaths !== undefined && imagePaths.length > 3) {
+    throw new Error('Upload up to 3 images');
   }
 }
 
@@ -97,14 +103,14 @@ export async function getEntryById(id: string): Promise<JournalEntry | null> {
 export async function createEntry(
   entry: Omit<JournalEntry, 'id' | 'updatedAt'>,
 ): Promise<JournalEntry> {
-  validateEntryFields(entry.title, entry.content, entry.moods, entry.tags);
+  validateEntryFields(entry.title, entry.content, entry.moods, entry.tags, entry.imagePaths);
   const id = generateEntryId();
   const now = new Date().toISOString();
 
   await getDatabase().execute(
     `INSERT INTO journal_entries
-       (id, user_id, title, content, mood, tags, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id, user_id, title, content, mood, tags, image_paths, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       id,
       entry.userId,
@@ -112,6 +118,7 @@ export async function createEntry(
       entry.content,
       JSON.stringify(entry.moods),
       JSON.stringify(entry.tags),
+      JSON.stringify(entry.imagePaths ?? []),
       entry.createdAt,
       now,
     ],
@@ -122,9 +129,9 @@ export async function createEntry(
 
 export async function updateEntry(
   id: string,
-  patch: Partial<Pick<JournalEntry, 'title' | 'content' | 'moods' | 'tags'>>,
+  patch: Partial<Pick<JournalEntry, 'title' | 'content' | 'moods' | 'tags' | 'imagePaths'>>,
 ): Promise<void> {
-  validateEntryFields(patch.title, patch.content, patch.moods, patch.tags);
+  validateEntryFields(patch.title, patch.content, patch.moods, patch.tags, patch.imagePaths);
   const fields: string[] = [];
   const values: string[] = [];
 
@@ -132,6 +139,7 @@ export async function updateEntry(
   if (patch.content !== undefined) { fields.push('content = ?'); values.push(patch.content); }
   if (patch.moods !== undefined) { fields.push('mood = ?'); values.push(JSON.stringify(patch.moods)); }
   if (patch.tags !== undefined) { fields.push('tags = ?'); values.push(JSON.stringify(patch.tags)); }
+  if (patch.imagePaths !== undefined) { fields.push('image_paths = ?'); values.push(JSON.stringify(patch.imagePaths)); }
 
   if (fields.length === 0) return;
 

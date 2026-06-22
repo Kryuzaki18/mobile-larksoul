@@ -65,8 +65,10 @@ export default function RootStack() {
     const subscription = AppState.addEventListener('change', nextState => {
       const wasBackgrounded = appState.current.match(/inactive|background/);
       if (wasBackgrounded && nextState === 'active' && isPinEnabled && currentUser) {
-        const { suppressNextLock, clearSuppressLock } = useSecurityStore.getState();
-        if (suppressNextLock) {
+        const { suppressNextLock, clearSuppressLock, isPickingMedia } = useSecurityStore.getState();
+        if (isPickingMedia) {
+          // stay silent — the media picker owns this foreground event
+        } else if (suppressNextLock) {
           clearSuppressLock();
         } else {
           lock();

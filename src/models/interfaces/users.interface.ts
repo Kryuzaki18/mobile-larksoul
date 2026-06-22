@@ -20,6 +20,7 @@ export interface JournalEntry {
   content: string;
   moods: Mood[];
   tags: string[];
+  imagePaths: string[];
   createdAt: string;
   updatedAt: string;
 }
