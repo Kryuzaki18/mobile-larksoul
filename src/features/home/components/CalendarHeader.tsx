@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { MONTH_NAMES } from '../../../utils/dateTime';
-import { PrevButton, NextButton } from '../../commons/Button';
+import { PrevButton, NextButton } from '../../../components/Button';
 
 interface CalendarHeaderProps {
   year: number;

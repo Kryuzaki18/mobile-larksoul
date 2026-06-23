@@ -2,7 +2,7 @@
 // Bold, passionate, energetic. True crimson at 355° — no orange drift,
 // no pink softness. Blood-red darks, saturated scarlet accents.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const CrimsonTheme: ColorTheme = {
   name:        'crimson',

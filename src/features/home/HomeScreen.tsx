@@ -16,7 +16,7 @@ import { useColorScheme } from 'nativewind';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 
-import Header from '../commons/Header';
+import Header from '../../components/Header';
 import CalendarView from './components/CalendarView';
 import ListView from './components/ListView';
 import GridView from './components/GridView';
@@ -29,7 +29,7 @@ import { useHomeState } from '../../hooks/useHomeState';
 import { useJournalViewStore } from '../../store/journalViewStore';
 import { useAuthStore } from '../../store/authStore';
 import { toDateStr } from '../../utils/dateTime';
-import type { RootStackParamList } from '../../models/types/navigation.type';
+import type { RootStackParamList } from '../../types/navigation';
 import { Colors } from '../../utils/themes';
 import { useActiveTheme } from '../../hooks/useActiveTheme';
 

@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Switch, TouchableOpacity, Alert } from 'react-n
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import BackButton from '../commons/Button';
+import BackButton from '../../components/Button';
 import {
   Lock,
   Calendar,
@@ -20,9 +20,9 @@ import GmailIcon from '../../assets/gmail.svg';
 import AppleLightIcon from '../../assets/apple-white.svg';
 import AppleDarkIcon from '../../assets/apple-black.svg';
 
-import type { JournalEntry } from '../../models/interfaces/users.interface';
-import type { ThemePreference } from '../../models/types/ui.type';
-import { RootStackParamList } from '../../models/types/navigation.type';
+import type { JournalEntry } from '../../types/user';
+import type { ThemePreference } from '../../types/ui';
+import { RootStackParamList } from '../../types/navigation';
 
 import { useSecurityStore } from '../../store/securityStore';
 import { useThemeStore } from '../../store/themeStore';
@@ -35,7 +35,7 @@ import { getEntriesByUser } from '../../database/functions/journal';
 import SettingsSection from './components/SettingsSection';
 import SettingsItem from './components/SettingsItem';
 import ExportModal from './components/ExportModal';
-import NetworkStatusDot from '../commons/NetworkStatusDot';
+import NetworkStatusDot from '../../components/NetworkStatusDot';
 import { Colors, COLOR_THEMES, type ColorTheme, type ThemeName } from '../../utils/themes';
 import { useActiveTheme } from '../../hooks/useActiveTheme';
 

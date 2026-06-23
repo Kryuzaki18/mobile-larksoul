@@ -17,8 +17,8 @@ import type { RouteProp } from '@react-navigation/native';
 import { Calendar } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
-import type { RootStackParamList } from '../../models/types/navigation.type';
-import type { Mood } from '../../models/interfaces/users.interface';
+import type { RootStackParamList } from '../../types/navigation';
+import type { Mood } from '../../types/user';
 
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
 
@@ -30,7 +30,7 @@ import { Colors } from '../../utils/themes';
 
 import { useActiveTheme } from '../../hooks/useActiveTheme';
 
-import BackButton from '../commons/Button';
+import BackButton from '../../components/Button';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
 import DatePickerModal from './components/DatePickerModal';

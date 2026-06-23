@@ -17,7 +17,7 @@ import { useColorScheme } from 'nativewind';
 import { Colors } from '../../../utils/themes';
 import { MOOD_META } from '../../../utils/mood';
 
-import type { Mood } from '../../../models/interfaces/users.interface';
+import type { Mood } from '../../../types/user';
 
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
 

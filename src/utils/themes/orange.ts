@@ -2,7 +2,7 @@
 // Warm, energetic, bold. 27° is pure citrus orange — not golden-amber (42°),
 // not red-orange (15°). Deep ember darks, vivid sunset accents, peach lights.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const OrangeTheme: ColorTheme = {
   name:        'orange',

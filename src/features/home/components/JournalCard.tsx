@@ -11,7 +11,7 @@ import {
 import { Clock, Pencil, Trash2 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
-import type { JournalEntry } from '../../../models/interfaces/users.interface';
+import type { JournalEntry } from '../../../types/user';
 
 import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_COLORS, MOOD_META } from '../../../utils/mood';

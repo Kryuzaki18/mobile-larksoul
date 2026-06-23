@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import type { AppStateStatus } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../models/types/navigation.type';
+import type { RootStackParamList } from '../types/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LoginScreen from '../features/auth/LoginScreen';

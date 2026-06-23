@@ -4,11 +4,11 @@ import { Settings, Home, BarChart2 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../models/types/navigation.type';
-import { useAuthStore } from '../../store/authStore';
+import { RootStackParamList } from '../types/navigation';
+import { useAuthStore } from '../store/authStore';
 import NetworkStatusDot from './NetworkStatusDot';
-import { Colors } from '../../utils/themes';
-import { useActiveTheme } from '../../hooks/useActiveTheme';
+import { Colors } from '../utils/themes';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 

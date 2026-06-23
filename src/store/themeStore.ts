@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { colorScheme } from 'nativewind';
 
-import type { ThemePreference } from '../models/types/ui.type';
+import type { ThemePreference } from '../types/ui';
 import { getSetting, setSetting } from '../database/functions/settings';
 import type { ThemeName } from '../utils/themes';
 

@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { TrendingUp, BookOpen, Flame, BarChart2 } from 'lucide-react-native';
-import { PrevButton, NextButton } from '../commons/Button';
+import { PrevButton, NextButton } from '../../components/Button';
 import { useColorScheme } from 'nativewind';
 import { useFocusEffect } from '@react-navigation/native';
 
-import Header from '../commons/Header';
+import Header from '../../components/Header';
 import InsightsGraph from './components/InsightsGraph';
 import MoodBreakdown from './components/MoodBreakdown';
 import { useInsightsGraph, type DayData } from '../../hooks/useInsightsGraph';

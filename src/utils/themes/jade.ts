@@ -2,7 +2,7 @@
 // Fresh, vital, natural. 155° is the sweet spot between clinical teal and
 // yellow lime — jade stone, tropical leaves, a mountain spring.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const JadeTheme: ColorTheme = {
   name:        'jade',

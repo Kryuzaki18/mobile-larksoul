@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import JournalCard from './JournalCard';
 import { useEntryActions } from '../../../hooks/useEntryActions';
-import type { EntryViewProps } from '../../../models/interfaces/home.interface';
+import type { EntryViewProps } from '../../../types/home';
 
 export default function ListView({ entries, refetch }: EntryViewProps) {
   const { editEntry, confirmDelete } = useEntryActions(refetch);

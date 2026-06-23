@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { JournalEntry, Mood } from '../models/interfaces/users.interface';
+import type { JournalEntry, Mood } from '../types/user';
 import { getEntriesByUser } from '../database/functions/journal';
 import { MONTH_NAMES } from '../utils/dateTime';
 

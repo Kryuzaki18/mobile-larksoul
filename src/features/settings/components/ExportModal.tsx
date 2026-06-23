@@ -12,7 +12,7 @@ import {
 import { useColorScheme } from 'nativewind';
 import { FileText, Code2, X } from 'lucide-react-native';
 
-import type { JournalEntry } from '../../../models/interfaces/users.interface';
+import type { JournalEntry } from '../../../types/user';
 import { exportJournal, type ExportFormat } from '../../../services/exportService';
 import { useSecurityStore } from '../../../store/securityStore';
 import { Colors } from '../../../utils/themes';

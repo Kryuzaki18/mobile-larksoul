@@ -3,7 +3,7 @@ import { Share, NativeModules } from 'react-native';
 type RNPrintModule = { print: (opts: { html: string; jobName?: string }) => Promise<string | undefined> };
 const RNPrint = NativeModules.RNPrint as RNPrintModule | undefined;
 
-import type { JournalEntry } from '../models/interfaces/users.interface';
+import type { JournalEntry } from '../types/user';
 import { Colors } from '../utils/themes';
 
 import { MOOD_META } from '../utils/mood';

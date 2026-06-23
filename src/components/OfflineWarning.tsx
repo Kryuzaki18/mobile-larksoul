@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { WifiOff } from 'lucide-react-native';
-import { Colors } from '../../utils/themes';
+import { Colors } from '../utils/themes';
 
 export default function OfflineWarning() {
   return (

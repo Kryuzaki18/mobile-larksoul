@@ -1,4 +1,4 @@
-import type { Mood } from '../models/interfaces/users.interface';
+import type { Mood } from '../types/user';
 
 export const MOOD_META: Record<Mood, { emoji: string; label: string; color: string }> = {
   happy:      { emoji: '😊', label: 'Happy',      color: '#f59e0b' },

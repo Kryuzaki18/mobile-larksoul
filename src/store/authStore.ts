@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { User } from '../models/interfaces/users.interface';
+import type { User } from '../types/user';
 
 interface AuthState {
   currentUser: User | null;

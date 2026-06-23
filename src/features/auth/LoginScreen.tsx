@@ -13,7 +13,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowRight } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
-import type { RootStackParamList } from '../../models/types/navigation.type';
+import type { RootStackParamList } from '../../types/navigation';
 
 import {
   signInAsGuest,
@@ -37,7 +37,7 @@ import { useActiveTheme } from '../../hooks/useActiveTheme';
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
-import OfflineWarning from '../commons/OfflineWarning';
+import OfflineWarning from '../../components/OfflineWarning';
 
 type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 

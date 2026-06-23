@@ -1,4 +1,4 @@
-export type { ColorTheme } from '../../models/interfaces/colors.types';
+export type { ColorTheme } from '../../types/theme';
 export { Colors } from './colors';
 
 // ── Warm ──────────────────────────────────────────────────────────────────────

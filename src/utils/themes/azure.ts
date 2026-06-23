@@ -2,7 +2,7 @@
 // Airy, optimistic, clear. 200° is cloudless-sky blue — not cold cyan,
 // not deep navy. Arctic-tinted darks, icy light surfaces.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const AzureTheme: ColorTheme = {
   name:        'azure',

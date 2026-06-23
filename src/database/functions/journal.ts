@@ -1,5 +1,5 @@
 import { getDatabase } from '../index';
-import type { JournalEntry, Mood } from '../../models/interfaces/users.interface';
+import type { JournalEntry, Mood } from '../../types/user';
 
 type RawEntry = {
   id: string;

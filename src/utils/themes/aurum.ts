@@ -2,7 +2,7 @@
 // Premium, editorial. Gold at 42° — precious without the cheapness of #FFD700.
 // Ivory lights, amber-tinted dark surfaces.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const AurumTheme: ColorTheme = {
   name:        'aurum',

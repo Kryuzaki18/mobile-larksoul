@@ -8,13 +8,12 @@ import {
 } from '@react-native-google-signin/google-signin';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import { getUserByEmail, getUserById, createUser, updateUser, migrateGuestToUser } from '../database/functions/users';
-import type { User } from '../models/interfaces/users.interface';
+import type { User } from '../types/user';
 import { saveAppleUserMapping, getLocalUserIdForApple, clearAppleUserMapping } from './tokenService';
 import { GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from '../config/auth.config';
+import { EMAIL_REGEX } from '../utils/validation';
 
 export const GUEST_EMAIL = 'guest@larksoul.local';
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateEmailAndPassword(email: string, password: string): void {
   if (!EMAIL_REGEX.test(email)) {

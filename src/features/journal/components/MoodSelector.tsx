@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import type { Mood } from '../../../models/interfaces/users.interface';
+import type { Mood } from '../../../types/user';
 import { MOOD_META } from '../../../utils/mood';
 import { Colors } from '../../../utils/themes';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';

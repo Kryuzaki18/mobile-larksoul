@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { deleteEntry } from '../database/functions/journal';
-import type { RootStackParamList } from '../models/types/navigation.type';
+import type { RootStackParamList } from '../types/navigation';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 

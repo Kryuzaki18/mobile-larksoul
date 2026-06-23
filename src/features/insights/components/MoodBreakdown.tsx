@@ -3,7 +3,7 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import { SmilePlus } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
-import type { Mood } from '../../../models/interfaces/users.interface';
+import type { Mood } from '../../../types/user';
 import MoodBreakdownRow from './MoodBreakdownRow';
 import { Colors } from '../../../utils/themes';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';

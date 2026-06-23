@@ -25,8 +25,7 @@ import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
 import { Colors } from '../../../utils/themes';
 
-import type { GridCardProps } from '../../../models/interfaces/home.interface';
-import { GridViewProps } from '../../../models/types/home.type';
+import type { GridCardProps, EntryViewProps } from '../../../types/home';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const CARD_SHADOW = {
@@ -352,7 +351,7 @@ const GridCard = memo(function GridCard({
   );
 });
 
-export default function GridView({ entries, refetch }: GridViewProps) {
+export default function GridView({ entries, refetch }: EntryViewProps) {
   const { editEntry, confirmDelete } = useEntryActions(refetch);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 

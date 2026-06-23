@@ -2,7 +2,7 @@
 // Creative, spiritual, luxurious. 265° is pure violet — not blue-purple,
 // not pink. Deep indigo darks, vivid amethyst accents, lavender lights.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const VioletTheme: ColorTheme = {
   name:        'violet',

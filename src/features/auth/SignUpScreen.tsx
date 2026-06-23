@@ -10,11 +10,11 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColorScheme } from 'nativewind';
 
-import BackButton from '../commons/Button';
-import OfflineWarning from '../commons/OfflineWarning';
+import BackButton from '../../components/Button';
+import OfflineWarning from '../../components/OfflineWarning';
 
-import type { RootStackParamList } from '../../models/types/navigation.type';
-import type { User } from '../../models/interfaces/users.interface';
+import type { RootStackParamList } from '../../types/navigation';
+import type { User } from '../../types/user';
 
 import {
   signUp,

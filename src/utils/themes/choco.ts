@@ -2,7 +2,7 @@
 // Indulgent, cozy, rich. Restrained saturation (76%) keeps it squarely
 // chocolate — no orange drift, no muddy beige. Espresso darks, parchment lights.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const ChocoTheme: ColorTheme = {
   name:        'choco',

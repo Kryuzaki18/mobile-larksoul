@@ -2,7 +2,7 @@
 // Calm, balanced, deep. 177° sits between cyan and mint — the colour of
 // still harbour water. Deep ocean darks, vivid teal accents.
 
-import type { ColorTheme } from '../../models/interfaces/colors.types';
+import type { ColorTheme } from '../../types/theme';
 
 export const TealTheme: ColorTheme = {
   name:        'teal',

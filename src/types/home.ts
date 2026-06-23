@@ -1,4 +1,4 @@
-import type { JournalEntry } from '../interfaces/users.interface';
+import type { JournalEntry } from './user';
 
 export interface EntryViewProps {
   entries: JournalEntry[];

@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
-import { Colors } from '../../utils/themes';
+import { Colors } from '../utils/themes';
 
 interface BackButtonProps {
   onPress?: () => void;
@@ -61,9 +61,9 @@ function NextPrevButton({ isPrev, onPress, disabled }: NavButtonProps & { isPrev
 }
 
 export function PrevButton({ onPress, disabled }: NavButtonProps) {
-  return NextPrevButton({ isPrev: true, onPress, disabled });
+  return <NextPrevButton isPrev={true} onPress={onPress} disabled={disabled} />;
 }
 
 export function NextButton({ onPress, disabled }: NavButtonProps) {
-  return NextPrevButton({ isPrev: false, onPress, disabled });
+  return <NextPrevButton isPrev={false} onPress={onPress} disabled={disabled} />;
 }
