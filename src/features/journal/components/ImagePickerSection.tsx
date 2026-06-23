@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Image,
@@ -15,6 +15,7 @@ import { Camera, Images, X } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import type { ImagePickerResponse } from 'react-native-image-picker';
 import { useColorScheme } from 'nativewind';
+
 import { Colors } from '../../../utils/themes';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { useSecurityStore } from '../../../store/securityStore';
@@ -35,19 +36,9 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
   const theme = useActiveTheme();
 
   const [sheetVisible, setSheetVisible] = useState(false);
-  const [pendingMode, setPendingMode] = useState<PickMode | null>(null);
 
   const remaining = 3 - imagePaths.length;
   const canAdd = remaining > 0;
-
-  useEffect(() => {
-    if (Platform.OS === 'ios' || sheetVisible || pendingMode === null) return;
-    const mode = pendingMode;
-    setPendingMode(null);
-    const t = setTimeout(() => launchPick(mode), 100);
-    return () => clearTimeout(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sheetVisible, pendingMode]);
 
   async function launchPick(mode: PickMode) {
     useSecurityStore.getState().setPickingMedia(true);
@@ -214,14 +205,14 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
                 <SheetRow
                   icon={<Camera size={19} color={labelColor} />}
                   label="Camera"
-                  onPress={() => { setPendingMode('back'); setSheetVisible(false); }}
+                  onPress={() => { setSheetVisible(false); setTimeout(() => launchPick('back'), 300); }}
                   rowBg={rowBg}
                   labelColor={labelColor}
                 />
                 <SheetRow
                   icon={<Images size={19} color={labelColor} />}
                   label="Photo Library"
-                  onPress={() => { setPendingMode('library'); setSheetVisible(false); }}
+                  onPress={() => { setSheetVisible(false); setTimeout(() => launchPick('library'), 300); }}
                   rowBg={rowBg}
                   labelColor={labelColor}
                 />
