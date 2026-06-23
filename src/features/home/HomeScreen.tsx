@@ -128,6 +128,11 @@ export default function HomeScreen() {
     [displayMonth.year, displayMonth.month],
   );
 
+  const addEntryDate = useMemo(() => {
+    const { year, month } = displayMonth;
+    return `${year}-${String(month + 1).padStart(2, '0')}-01`;
+  }, [displayMonth]);
+
   const filteredEntriesForDay = useMemo(() => {
     if (!searchQuery) return entriesForDay;
     const q = searchQuery.toLowerCase();
@@ -219,7 +224,7 @@ export default function HomeScreen() {
             className="w-14 h-14 rounded-full items-center justify-center shadow-sm"
             style={{ backgroundColor: theme[800] }}
             onPress={() =>
-              navigation.navigate('AddEntry', { date: toDateStr(selectedDate) })
+              navigation.navigate('AddEntry', { date: addEntryDate })
             }
           >
             <Plus size={26} color={Colors.white} />

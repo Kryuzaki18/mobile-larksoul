@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, Switch, TouchableOpacity, Alert } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
@@ -63,13 +63,13 @@ export default function SettingsScreen() {
   const [exportVisible, setExportVisible] = useState(false);
   const [exportEntries, setExportEntries] = useState<JournalEntry[]>([]);
 
-  async function handleSignOut() {
+  const handleSignOut = useCallback(async () => {
     await clearSession();
     clearUser();
     navigation.replace('Login');
-  }
+  }, [clearUser, navigation]);
 
-  async function handleOpenExport() {
+  const handleOpenExport = useCallback(async () => {
     const userId = currentUser?.id;
     if (!userId) return;
     try {
@@ -79,7 +79,7 @@ export default function SettingsScreen() {
     } catch {
       Alert.alert('Error', 'Could not load journal entries. Please try again.');
     }
-  }
+  }, [currentUser?.id]);
 
   const initial = currentUser?.name?.[0]?.toUpperCase() ?? 'G';
   const userName = currentUser?.name ?? 'User';

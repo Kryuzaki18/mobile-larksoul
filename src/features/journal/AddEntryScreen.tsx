@@ -25,7 +25,7 @@ import { createEntry, updateEntry, getEntryById } from '../../database/functions
 import { useAuthStore } from '../../store/authStore';
 import { useJournalViewStore } from '../../store/journalViewStore';
 
-import { formatEntryDate, toDateStr, parseDateStr } from '../../utils/dateTime';
+import { formatEntryDate, toDateStr, parseDateStr, nowTimeStr } from '../../utils/dateTime';
 import { Colors } from '../../utils/themes';
 
 import { useActiveTheme } from '../../hooks/useActiveTheme';
@@ -160,11 +160,7 @@ export default function AddEntryScreen() {
         await updateEntry(entryId, { title: title.trim(), content: content.trim(), moods, tags, imagePaths });
         navigation.goBack();
       } else {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const s = String(now.getSeconds()).padStart(2, '0');
-        const createdAt = `${date}T${h}:${m}:${s}`;
+        const createdAt = `${date}T${nowTimeStr()}`;
         await createEntry({
           userId: currentUser?.id ?? '',
           title: title.trim(),

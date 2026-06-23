@@ -54,15 +54,13 @@ export default function JournalCard({
 
   useEffect(() => {
     const delay = Math.min(index, 8) * 45;
-    Animated.parallel([
-      Animated.timing(mountSlide, {
-        toValue: 0,
-        duration: 300,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    Animated.timing(mountSlide, {
+      toValue: 0,
+      duration: 300,
+      delay,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
   }, []);
 
   function snap(open: boolean) {

@@ -18,7 +18,7 @@ export interface DisplayMonth {
 export function useHomeState(userId: string) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [dayEntries, setDayEntries] = useState<JournalEntry[]>([]);
+  const [entriesForDay, setEntriesForDay] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDayLoading, setIsDayLoading] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<DisplayMonth>(() => {
@@ -54,7 +54,7 @@ export function useHomeState(userId: string) {
     setIsDayLoading(true);
     try {
       const result = await getEntriesByDate(userId, toDateStr(selectedDate));
-      setDayEntries(result);
+      setEntriesForDay(result);
     } catch (e) {
       console.error(e);
     } finally {
@@ -76,8 +76,6 @@ export function useHomeState(userId: string) {
     () => [...new Set(entries.map(e => e.createdAt.slice(0, 10)))],
     [entries],
   );
-
-  const entriesForDay = dayEntries;
 
   const groupedEntries = useMemo<EntryGroup[]>(() => {
     const map = new Map<string, JournalEntry[]>();
@@ -104,8 +102,6 @@ export function useHomeState(userId: string) {
     setSelectedDate,
     entryDates,
     entriesForDay,
-    entries,
-    groupedEntries,
     groupedEntriesForMonth,
     displayMonth,
     setDisplayMonth,

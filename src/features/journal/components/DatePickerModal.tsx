@@ -51,7 +51,7 @@ export default function DatePickerModal({
   useEffect(() => {
     if (visible) {
       setLocalSelected(selectedDate);
-      setJumpMonth(undefined);
+      setJumpMonth(selectedDate);
       setInternalVisible(true);
       requestAnimationFrame(() => {
         Animated.parallel([

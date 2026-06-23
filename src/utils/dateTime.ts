@@ -67,3 +67,11 @@ export function formatDateStrLabel(dateStr: string): string {
   const [year, month, day] = dateStr.split('-').map(Number);
   return `${MONTHS_ABBR_UPPER[month - 1]} ${String(day).padStart(2, '0')}, ${year}`;
 }
+
+export function nowTimeStr(): string {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+  return `${h}:${m}:${s}`;
+}
