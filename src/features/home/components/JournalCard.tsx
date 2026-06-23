@@ -102,7 +102,7 @@ export default function JournalCard({
         Animated.timing(pressOpacity, { toValue: 1, duration: 150, useNativeDriver: true }).start();
         if (Math.abs(dx) < 5 && Date.now() - touchStartTime.current < 300) {
           if (isOpen.current) snap(false);
-          else setViewerVisible(true);
+          else if (entry.imagePaths.length > 0) setViewerVisible(true);
           return;
         }
         const shouldOpen = isOpen.current

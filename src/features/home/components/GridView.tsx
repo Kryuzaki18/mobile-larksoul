@@ -175,7 +175,7 @@ const GridCard = memo(function GridCard({
               onPress={() => {
                 if (isMenuOpen) {
                   onDismiss();
-                } else {
+                } else if (entry.imagePaths.length > 0) {
                   setViewerVisible(true);
                 }
               }}
