@@ -24,8 +24,8 @@ export const useJournalViewStore = create<JournalViewState>((set, get) => ({
       getSetting(SHOW_ALL_KEY),
     ]);
     set({
-      layout: (storedLayout as JournalLayout) ?? 'list',
-      showAll: storedShowAll === 'true',
+      layout: (storedLayout as JournalLayout) ?? 'grid',
+      showAll: storedShowAll !== null ? storedShowAll === 'true' : true,
     });
   },
 
