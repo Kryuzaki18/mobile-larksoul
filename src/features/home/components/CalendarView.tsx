@@ -1,10 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, PanResponder, View, Text } from 'react-native';
+import {
+  Animated,
+  Easing,
+  LayoutAnimation,
+  PanResponder,
+  Platform,
+  TouchableOpacity,
+  UIManager,
+  View,
+  Text,
+} from 'react-native';
+import { ChevronDown } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import { WEEK_DAYS } from '../../../utils/dateTime';
 import { Colors } from '../../../utils/themes';
 import CalendarHeader from './CalendarHeader';
 import CalendarDayCell from './CalendarDayCell';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 type DayCell = { day: number; type: 'prev' | 'current' | 'next' };
 
@@ -41,13 +56,21 @@ interface CalendarViewProps {
   displayMonth?: Date;
 }
 
-export default function CalendarView({ selectedDate, entryDates = [], onDayPress, onMonthChange, displayMonth }: CalendarViewProps) {
+export default function CalendarView({
+  selectedDate,
+  entryDates = [],
+  onDayPress,
+  onMonthChange,
+  displayMonth,
+}: CalendarViewProps) {
   const [current, setCurrent] = useState(() => new Date());
+  const [isExpanded, setIsExpanded] = useState(true);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   const slideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim  = useRef(new Animated.Value(1)).current;
+  const arrowAnim = useRef(new Animated.Value(1)).current;
 
   const currentRef = useRef(current);
   useEffect(() => { currentRef.current = current; }, [current]);
@@ -60,6 +83,36 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const isCurrentMonth =
     current.getFullYear() === now.getFullYear() && current.getMonth() === now.getMonth();
+
+  const arrowRotate = arrowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
+  function toggleExpand() {
+    const next = !isExpanded;
+    LayoutAnimation.configureNext({
+      duration: 260,
+      create: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+      },
+      update: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+      },
+      delete: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+      },
+    });
+    setIsExpanded(next);
+    Animated.timing(arrowAnim, {
+      toValue: next ? 1 : 0,
+      duration: 280,
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }
 
   function navigate(dir: -1 | 1, next: Date) {
     Animated.parallel([
@@ -159,8 +212,14 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
 
   return (
     <View
-      className="bg-white dark:bg-slate-900 rounded-2xl mx-4 mt-4 pb-3"
-      style={{ elevation: 1, shadowColor: Colors.black, shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } }}
+      className="bg-white dark:bg-slate-900 rounded-2xl mx-4 mt-4"
+      style={{
+        elevation: 1,
+        shadowColor: Colors.black,
+        shadowOpacity: 0.04,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 2 },
+      }}
       {...panResponder.panHandlers}
     >
       <CalendarHeader
@@ -171,49 +230,80 @@ export default function CalendarView({ selectedDate, entryDates = [], onDayPress
         onNext={nextMonth}
       />
 
-      <View style={{ overflow: 'hidden' }}>
-        <Animated.View style={{ transform: [{ translateX: slideAnim }], opacity: fadeAnim }}>
-          <View className="flex-row px-2 mb-1">
-            {WEEK_DAYS.map((d, i) => (
-              <View key={i} className="flex-1 items-center py-1">
-                <Text className="text-xs font-semibold text-gray-400">{d}</Text>
+      {isExpanded && (
+        <View style={{ overflow: 'hidden' }}>
+          <Animated.View style={{ transform: [{ translateX: slideAnim }], opacity: fadeAnim }}>
+            <View className="flex-row px-2 mb-1">
+              {WEEK_DAYS.map((d, i) => (
+                <View key={i} className="flex-1 items-center py-1">
+                  <Text className="text-xs font-semibold text-gray-400">{d}</Text>
+                </View>
+              ))}
+            </View>
+
+            {rows.map((row, rowIdx) => (
+              <View key={rowIdx} className="flex-row px-2">
+                {row.map((cell, colIdx) => {
+                  const isToday =
+                    isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
+                  const isSelected =
+                    cell.type === 'current' &&
+                    !!selectedDate &&
+                    selectedDate.toDateString() ===
+                      new Date(year, month, cell.day).toDateString();
+                  const hasEntry =
+                    cell.type === 'current' && entrySet.has(getDateStr(cell.day));
+                  const isFuture =
+                    cell.type === 'current' && new Date(year, month, cell.day) > today;
+
+                  return (
+                    <CalendarDayCell
+                      key={colIdx}
+                      day={cell.day}
+                      type={cell.type}
+                      isToday={isToday}
+                      isSelected={isSelected}
+                      hasEntry={hasEntry}
+                      isFuture={isFuture}
+                      isDark={isDark}
+                      onPress={() => {
+                        if (cell.type === 'current' && !isFuture) {
+                          onDayPress?.(new Date(year, month, cell.day));
+                        }
+                      }}
+                    />
+                  );
+                })}
               </View>
             ))}
-          </View>
+          </Animated.View>
+        </View>
+      )}
 
-          {rows.map((row, rowIdx) => (
-            <View key={rowIdx} className="flex-row px-2">
-              {row.map((cell, colIdx) => {
-                const isToday    = isCurrentMonth && cell.type === 'current' && cell.day === todayDay;
-                const isSelected =
-                  cell.type === 'current' &&
-                  !!selectedDate &&
-                  selectedDate.toDateString() === new Date(year, month, cell.day).toDateString();
-                const hasEntry   = cell.type === 'current' && entrySet.has(getDateStr(cell.day));
-                const isFuture   = cell.type === 'current' && new Date(year, month, cell.day) > today;
-
-                return (
-                  <CalendarDayCell
-                    key={colIdx}
-                    day={cell.day}
-                    type={cell.type}
-                    isToday={isToday}
-                    isSelected={isSelected}
-                    hasEntry={hasEntry}
-                    isFuture={isFuture}
-                    isDark={isDark}
-                    onPress={() => {
-                      if (cell.type === 'current' && !isFuture) {
-                        onDayPress?.(new Date(year, month, cell.day));
-                      }
-                    }}
-                  />
-                );
-              })}
-            </View>
-          ))}
-        </Animated.View>
-      </View>
+      <TouchableOpacity
+        onPress={toggleExpand}
+        activeOpacity={0.6}
+        style={{ alignItems: 'center', paddingVertical: 8 }}
+      >
+        <View
+          style={{
+            width: 36,
+            height: 20,
+            borderRadius: 10,
+            backgroundColor: isDark ? Colors.slate800 : Colors.slate100,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Animated.View style={{ transform: [{ rotate: arrowRotate }] }}>
+            <ChevronDown
+              size={13}
+              color={isDark ? Colors.slate500 : Colors.slate400}
+              strokeWidth={2.5}
+            />
+          </Animated.View>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
