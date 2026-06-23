@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { toDateStr } from '../utils/dateTime';
 import type { JournalEntry } from '../models/interfaces/users.interface';
-import { getEntriesByUser } from '../database/functions/journal';
+import { getEntriesByUser, getEntriesByDate } from '../database/functions/journal';
 
 const MIN_LOADER_DURATION_MS = 1000;
 
@@ -18,7 +18,9 @@ export interface DisplayMonth {
 export function useHomeState(userId: string) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [dayEntries, setDayEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDayLoading, setIsDayLoading] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<DisplayMonth>(() => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() };
@@ -47,22 +49,35 @@ export function useHomeState(userId: string) {
       });
   }, [userId]);
 
+  const fetchDay = useCallback(async () => {
+    if (!userId) return;
+    setIsDayLoading(true);
+    try {
+      const result = await getEntriesByDate(userId, toDateStr(selectedDate));
+      setDayEntries(result);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTimeout(() => {
+        setIsDayLoading(false);
+      }, 300);
+    }
+  }, [userId, selectedDate]);
+
   useEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
+
+  useEffect(() => {
+    fetchDay();
+  }, [fetchDay]);
 
   const entryDates = useMemo(
     () => [...new Set(entries.map(e => e.createdAt.slice(0, 10)))],
     [entries],
   );
 
-  const entriesForDay = useMemo<JournalEntry[]>(
-    () => {
-      const dateStr = toDateStr(selectedDate);
-      return entries.filter(e => e.createdAt.startsWith(dateStr));
-    },
-    [entries, selectedDate],
-  );
+  const entriesForDay = dayEntries;
 
   const groupedEntries = useMemo<EntryGroup[]>(() => {
     const map = new Map<string, JournalEntry[]>();
@@ -79,6 +94,11 @@ export function useHomeState(userId: string) {
     return groupedEntries.filter(g => g.date.startsWith(prefix));
   }, [groupedEntries, displayMonth]);
 
+  const refetch = useCallback(() => {
+    fetchEntries();
+    fetchDay();
+  }, [fetchEntries, fetchDay]);
+
   return {
     selectedDate,
     setSelectedDate,
@@ -90,6 +110,7 @@ export function useHomeState(userId: string) {
     displayMonth,
     setDisplayMonth,
     isLoading,
-    refetch: fetchEntries,
+    isDayLoading,
+    refetch,
   };
 }

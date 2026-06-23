@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Plus, ChevronUp } from 'lucide-react-native';
 import {
   useNavigation,
@@ -50,7 +50,7 @@ export default function HomeScreen() {
   const isDark = colorScheme === 'dark';
   const theme = useActiveTheme();
 
-  const { layout, setLayout, showAll, toggleAll } = useJournalViewStore();
+  const { layout, setLayout, showAll, setShowAll, toggleAll } = useJournalViewStore();
   const userId = currentUser?.id ?? '';
   const {
     selectedDate,
@@ -61,6 +61,7 @@ export default function HomeScreen() {
     displayMonth,
     setDisplayMonth,
     isLoading,
+    isDayLoading,
     refetch,
   } = useHomeState(userId);
 
@@ -85,6 +86,19 @@ export default function HomeScreen() {
   const isFirstMonthCall = useRef(true);
   const monthTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const handleDayPress = useCallback(
+    (date: Date) => {
+      const alreadySelected = !showAll && toDateStr(date) === toDateStr(selectedDate);
+      if (alreadySelected) {
+        setShowAll(true);
+      } else {
+        setSelectedDate(date);
+        if (showAll) setShowAll(false);
+      }
+    },
+    [setSelectedDate, selectedDate, showAll, setShowAll],
+  );
+
   const handleMonthChange = useCallback(
     (year: number, month: number) => {
       setDisplayMonth({ year, month });
@@ -92,6 +106,7 @@ export default function HomeScreen() {
         isFirstMonthCall.current = false;
         return;
       }
+      if (!showAll) setShowAll(true);
       if (monthTimerRef.current) clearTimeout(monthTimerRef.current);
       setIsMonthChanging(true);
       monthTimerRef.current = setTimeout(
@@ -99,7 +114,7 @@ export default function HomeScreen() {
         MONTH_LOADER_DURATION_MS,
       );
     },
-    [setDisplayMonth],
+    [setDisplayMonth, showAll, setShowAll],
   );
 
   useEffect(() => {
@@ -146,8 +161,8 @@ export default function HomeScreen() {
           >
             <CalendarView
               entryDates={entryDates}
-              selectedDate={selectedDate}
-              onDayPress={setSelectedDate}
+              selectedDate={showAll ? undefined : selectedDate}
+              onDayPress={handleDayPress}
               onMonthChange={handleMonthChange}
               displayMonth={calendarDisplayMonth}
             />
@@ -171,6 +186,8 @@ export default function HomeScreen() {
                   refetch={refetch}
                 />
               )
+            ) : isDayLoading ? (
+                <HomeLoader />
             ) : filteredEntriesForDay.length > 0 ? (
               layout === 'list' ? (
                 <ListView entries={filteredEntriesForDay} refetch={refetch} />

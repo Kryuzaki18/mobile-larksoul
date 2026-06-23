@@ -11,6 +11,7 @@ interface JournalViewState {
   showAll: boolean;
   hydrate: () => Promise<void>;
   setLayout: (layout: JournalLayout) => Promise<void>;
+  setShowAll: (value: boolean) => Promise<void>;
   toggleAll: () => Promise<void>;
 }
 
@@ -32,6 +33,11 @@ export const useJournalViewStore = create<JournalViewState>((set, get) => ({
   setLayout: async (layout) => {
     set({ layout });
     await setSetting(LAYOUT_KEY, layout);
+  },
+
+  setShowAll: async (value) => {
+    set({ showAll: value });
+    await setSetting(SHOW_ALL_KEY, String(value));
   },
 
   toggleAll: async () => {
