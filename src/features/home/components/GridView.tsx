@@ -19,13 +19,14 @@ import { Clock, Pencil, Trash2, MoreVertical } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
 import { useEntryActions } from '../../../hooks/useEntryActions';
+import ImageViewerModal from './ImageViewerModal';
 
 import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_META, MOOD_COLORS } from '../../../utils/mood';
+import { Colors } from '../../../utils/themes';
 
 import type { GridCardProps } from '../../../models/interfaces/home.interface';
 import { GridViewProps } from '../../../models/types/home.type';
-import { Colors } from '../../../utils/themes';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const CARD_SHADOW = {
@@ -53,8 +54,6 @@ const GridCard = memo(function GridCard({
   onEdit,
   onDelete,
 }: GridCardProps) {
-  const timeLabel = formatTimeOnly(entry.createdAt);
-  const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const theme = useActiveTheme();
@@ -63,6 +62,12 @@ const GridCard = memo(function GridCard({
   const pressScale = useRef(new Animated.Value(1)).current;
   const menuFade = useRef(new Animated.Value(0)).current;
   const menuScale = useRef(new Animated.Value(0.88)).current;
+
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerVisible, setViewerVisible] = useState(false);
+  
+  const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
+  const timeLabel = formatTimeOnly(entry.createdAt);
 
   useEffect(() => {
     Animated.timing(mountScale, {
@@ -212,13 +217,18 @@ const GridCard = memo(function GridCard({
 
                 {entry.imagePaths.length > 0 && (
                   <View style={{ flexDirection: 'row', gap: 4, marginTop: 6 }}>
-                    {entry.imagePaths.slice(0, 3).map(uri => (
-                      <Image
+                    {entry.imagePaths.slice(0, 3).map((uri, i) => (
+                      <TouchableOpacity
                         key={uri}
-                        source={{ uri }}
-                        style={{ width: 34, height: 34, borderRadius: 6 }}
-                        resizeMode="cover"
-                      />
+                        activeOpacity={0.85}
+                        onPress={() => { setViewerIndex(i); setViewerVisible(true); }}
+                      >
+                        <Image
+                          source={{ uri }}
+                          style={{ width: 34, height: 34, borderRadius: 6 }}
+                          resizeMode="cover"
+                        />
+                      </TouchableOpacity>
                     ))}
                   </View>
                 )}
@@ -283,6 +293,17 @@ const GridCard = memo(function GridCard({
           </>
         )}
       </Animated.View>
+
+      <ImageViewerModal
+        visible={viewerVisible}
+        images={entry.imagePaths}
+        initialIndex={viewerIndex}
+        title={entry.title}
+        content={entry.content}
+        moods={entry.moods}
+        tags={entry.tags}
+        onClose={() => setViewerVisible(false)}
+      />
     </Pressable>
   );
 });

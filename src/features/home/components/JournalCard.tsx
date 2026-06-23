@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,10 +12,14 @@ import { Clock, Pencil, Trash2 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
 import type { JournalEntry } from '../../../models/interfaces/users.interface';
+
 import { formatTimeOnly } from '../../../utils/dateTime';
 import { MOOD_COLORS, MOOD_META } from '../../../utils/mood';
 import { Colors } from '../../../utils/themes';
+
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
+
+import ImageViewerModal from './ImageViewerModal';
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -35,6 +39,9 @@ export default function JournalCard({
   onDelete,
   onPress,
 }: JournalCardProps) {
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerVisible, setViewerVisible] = useState(false);
+
   const translateX = useRef(new Animated.Value(0)).current;
   const mountSlide = useRef(new Animated.Value(16)).current;
   const isOpen = useRef(false);
@@ -210,19 +217,24 @@ export default function JournalCard({
               {entry.imagePaths.length > 0 && (
                 <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 2 }}>
                   {entry.imagePaths.slice(0, 3).map((uri, i) => (
-                    <Image
+                    <TouchableOpacity
                       key={uri}
-                      source={{ uri }}
-                      style={{
-                        width: 38,
-                        height: 38,
-                        borderRadius: 8,
-                        marginLeft: i === 0 ? 0 : -10,
-                        borderWidth: 2,
-                        borderColor: isDark ? Colors.slate900 : Colors.white,
-                      }}
-                      resizeMode="cover"
-                    />
+                      activeOpacity={0.85}
+                      onPress={() => { setViewerIndex(i); setViewerVisible(true); }}
+                    >
+                      <Image
+                        source={{ uri }}
+                        style={{
+                          width: 38,
+                          height: 38,
+                          borderRadius: 8,
+                          marginLeft: i === 0 ? 0 : -10,
+                          borderWidth: 2,
+                          borderColor: isDark ? Colors.slate900 : Colors.white,
+                        }}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
                   ))}
                 </View>
               )}
@@ -246,6 +258,17 @@ export default function JournalCard({
           </TouchableOpacity>
         </View>
       </Animated.View>
+
+      <ImageViewerModal
+        visible={viewerVisible}
+        images={entry.imagePaths}
+        initialIndex={viewerIndex}
+        title={entry.title}
+        content={entry.content}
+        moods={entry.moods}
+        tags={entry.tags}
+        onClose={() => setViewerVisible(false)}
+      />
     </Animated.View>
   );
 }
