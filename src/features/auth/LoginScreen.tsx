@@ -11,7 +11,10 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowRight } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
+
 import type { RootStackParamList } from '../../models/types/navigation.type';
+
 import {
   signInAsGuest,
   signIn,
@@ -19,16 +22,21 @@ import {
   getGoogleSignInError,
 } from '../../services/authService';
 import { saveSession } from '../../services/sessionService';
+
 import { useAuthStore } from '../../store/authStore';
+import { useJournalViewStore } from '../../store/journalViewStore';
+
 import { hasRegisteredUser } from '../../database/functions/users';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
+
+import { Colors } from '../../utils/themes';
+import { EMAIL_REGEX, PASSWORD_MIN_LENGTH } from '../../utils/validation';
+
+import { useActiveTheme } from '../../hooks/useActiveTheme';
+
 import LoginForm from './components/LoginForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
-import { Colors } from '../../utils/themes';
-import { useColorScheme } from 'nativewind';
-import { useActiveTheme } from '../../hooks/useActiveTheme';
-import { EMAIL_REGEX, PASSWORD_MIN_LENGTH } from '../../utils/validation';
 import OfflineWarning from '../commons/OfflineWarning';
 
 type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -36,6 +44,7 @@ type LoginNav = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 export default function LoginScreen() {
   const navigation = useNavigation<LoginNav>();
   const { setUser } = useAuthStore();
+  const setAutoShowDatePicker = useJournalViewStore(state => state.setAutoShowDatePicker);
   const { isConnected } = useNetworkStatus();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -101,6 +110,7 @@ export default function LoginScreen() {
       const user = await signInAsGuest();
       setUser(user, true);
       await saveSession(user.id, true);
+      void setAutoShowDatePicker(true);
       navigation.replace('Home');
     } finally {
       setGuestLoading(false);

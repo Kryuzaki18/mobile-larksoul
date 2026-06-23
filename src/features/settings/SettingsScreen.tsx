@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, Switch, TouchableOpacity, Alert } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import BackButton from '../commons/Button';
 import {
   Lock,
+  Calendar,
   Download,
   // CloudUpload,
   LogOut,
@@ -26,6 +27,7 @@ import { RootStackParamList } from '../../models/types/navigation.type';
 import { useSecurityStore } from '../../store/securityStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useAuthStore } from '../../store/authStore';
+import { useJournalViewStore } from '../../store/journalViewStore';
 
 import { clearSession } from '../../services/sessionService';
 import { getEntriesByUser } from '../../database/functions/journal';
@@ -51,6 +53,7 @@ export default function SettingsScreen() {
 
   const { isPinEnabled } = useSecurityStore();
   const { theme: lightDarkMode, setTheme, colorTheme, setColorTheme } = useThemeStore();
+  const { autoShowDatePicker, setAutoShowDatePicker } = useJournalViewStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
   const theme = useActiveTheme();
@@ -256,6 +259,22 @@ export default function SettingsScreen() {
             onPress={() => navigation.navigate('Security')}
           >
             Security & PIN Lock
+          </SettingsItem>
+
+          <SettingsItem
+            icon={<Calendar size={17} color={Colors.white} />}
+            iconBg={Colors.sky500}
+            extra={
+              <Switch
+                value={autoShowDatePicker}
+                onValueChange={(v) => { void setAutoShowDatePicker(v); }}
+                trackColor={{ false: isDark ? Colors.slate700 : Colors.slate200, true: theme[500] }}
+                thumbColor={Colors.white}
+              />
+            }
+            isLast
+          >
+            Auto-open date picker on new entry
           </SettingsItem>
         </SettingsSection>
 

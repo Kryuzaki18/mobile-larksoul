@@ -3,17 +3,19 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   Alert,
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useColorScheme } from 'nativewind';
+
 import BackButton from '../commons/Button';
 import OfflineWarning from '../commons/OfflineWarning';
-import { useColorScheme } from 'nativewind';
+
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { User } from '../../models/interfaces/users.interface';
+
 import {
   signUp,
   signInWithProvider,
@@ -21,21 +23,25 @@ import {
   getGoogleSignInError,
 } from '../../services/authService';
 import { saveSession } from '../../services/sessionService';
+
 import { useAuthStore } from '../../store/authStore';
+import { useJournalViewStore } from '../../store/journalViewStore';
+
+import { EMAIL_REGEX, PASSWORD_MIN_LENGTH } from '../../utils/validation';
+
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import SignUpForm from './components/SignUpForm';
 import SocialLoginButtons from './components/SocialLoginButtons';
 import type { SocialProvider } from './components/SocialLoginButtons';
-import { EMAIL_REGEX, PASSWORD_MIN_LENGTH } from '../../utils/validation';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
 export default function SignUpScreen() {
   const navigation = useNavigation<Nav>();
   const { currentUser, isGuest, setUser } = useAuthStore();
+  const setAutoShowDatePicker = useJournalViewStore(state => state.setAutoShowDatePicker);
   const { isConnected } = useNetworkStatus();
   const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === 'dark';
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -71,6 +77,7 @@ export default function SignUpScreen() {
     }
     setUser(user, false);
     await saveSession(user.id, false);
+    void setAutoShowDatePicker(true);
     navigation.replace('Home');
   }
 

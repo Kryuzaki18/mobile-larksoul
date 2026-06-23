@@ -40,24 +40,12 @@ export function runMigrations(db: DB): void {
   db.executeSync(SQL_CREATE_DB_LARKSOUL);
 
   const current = getVersion(db);
-  setVersion(db, 1);
 
   if (current < 1) {
     db.executeSync(SQL_CREATE_USERS);
     db.executeSync(SQL_CREATE_JOURNAL_ENTRIES);
     db.executeSync(SQL_CREATE_INDEX_ENTRIES_USER);
     setVersion(db, 1);
-  }
-
-  if (current < 2) {
-    try {
-      db.executeSync(
-        "ALTER TABLE journal_entries ADD COLUMN image_paths TEXT NOT NULL DEFAULT '[]'",
-      );
-    } catch {
-      // column already exists — safe to ignore
-    }
-    setVersion(db, 2);
   }
 
   if (current < DB_VERSION) {

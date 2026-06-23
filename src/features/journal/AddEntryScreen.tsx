@@ -15,15 +15,22 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { Calendar } from 'lucide-react-native';
-import BackButton from '../commons/Button';
 import { useColorScheme } from 'nativewind';
+
 import type { RootStackParamList } from '../../models/types/navigation.type';
 import type { Mood } from '../../models/interfaces/users.interface';
+
 import { createEntry, updateEntry, getEntryById } from '../../database/functions/journal';
+
 import { useAuthStore } from '../../store/authStore';
+import { useJournalViewStore } from '../../store/journalViewStore';
+
 import { formatEntryDate, toDateStr, parseDateStr } from '../../utils/dateTime';
 import { Colors } from '../../utils/themes';
+
 import { useActiveTheme } from '../../hooks/useActiveTheme';
+
+import BackButton from '../commons/Button';
 import MoodSelector from './components/MoodSelector';
 import TagInput from './components/TagInput';
 import DatePickerModal from './components/DatePickerModal';
@@ -59,6 +66,8 @@ export default function AddEntryScreen() {
   const entryId = route.params?.entryId;
   const initialDate = route.params?.date ?? toDateStr(new Date());
   const { currentUser } = useAuthStore();
+  const { autoShowDatePicker: storeAutoShow } = useJournalViewStore();
+  const autoShowDatePicker = !entryId && storeAutoShow;
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -68,7 +77,7 @@ export default function AddEntryScreen() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(() => parseDateStr(initialDate));
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(autoShowDatePicker);
 
   const date = toDateStr(selectedDate);
   const { colorScheme } = useColorScheme();

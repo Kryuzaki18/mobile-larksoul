@@ -1,31 +1,32 @@
 import { create } from 'zustand';
 import { colorScheme } from 'nativewind';
+
 import type { ThemePreference } from '../models/types/ui.type';
 import { getSetting, setSetting } from '../database/functions/settings';
 import type { ThemeName } from '../utils/themes';
 
-const THEME_KEY       = 'theme';
-const COLOR_THEME_KEY = 'colorTheme';
+const THEME_KEY = 'larksoul_theme';
+const COLOR_THEME_KEY = 'larksoul_color_theme';
 
 interface ThemeState {
-  theme:          ThemePreference;
-  colorTheme:     ThemeName;
-  isReady:        boolean;
-  hydrate:        () => Promise<void>;
-  setTheme:       (theme: ThemePreference) => Promise<void>;
-  setColorTheme:  (colorTheme: ThemeName)  => Promise<void>;
+  theme: ThemePreference;
+  colorTheme: ThemeName;
+  isReady: boolean;
+  hydrate: () => Promise<void>;
+  setTheme: (theme: ThemePreference) => Promise<void>;
+  setColorTheme: (colorTheme: ThemeName) => Promise<void>;
 }
 
 export const useThemeStore = create<ThemeState>(set => ({
-  theme:      'system',
+  theme: 'system',
   colorTheme: 'azure',
-  isReady:    false,
+  isReady: false,
 
   hydrate: async () => {
-    const stored      = (await getSetting(THEME_KEY))       as ThemePreference | null;
+    const stored = (await getSetting(THEME_KEY)) as ThemePreference | null;
     const storedColor = (await getSetting(COLOR_THEME_KEY)) as ThemeName | null;
-    const theme       = stored      ?? 'system';
-    const colorTheme  = storedColor ?? 'azure';
+    const theme = stored ?? 'system';
+    const colorTheme = storedColor ?? 'azure';
     colorScheme.set(theme);
     set({ theme, colorTheme, isReady: true });
   },
