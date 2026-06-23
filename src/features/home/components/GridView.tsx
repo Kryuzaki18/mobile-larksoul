@@ -63,7 +63,6 @@ const GridCard = memo(function GridCard({
   const menuFade = useRef(new Animated.Value(0)).current;
   const menuScale = useRef(new Animated.Value(0.88)).current;
 
-  const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerVisible, setViewerVisible] = useState(false);
   
   const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
@@ -144,7 +143,13 @@ const GridCard = memo(function GridCard({
   return (
     <Pressable
       style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}
-      onPress={onDismiss}
+      onPress={() => {
+        if (isMenuOpen) {
+          onDismiss();
+        } else {
+          setViewerVisible(true);
+        }
+      }}
       onLongPress={handleToggle}
       delayLongPress={1000}
       onPressIn={handlePressIn}
@@ -217,18 +222,13 @@ const GridCard = memo(function GridCard({
 
                 {entry.imagePaths.length > 0 && (
                   <View style={{ flexDirection: 'row', gap: 4, marginTop: 6 }}>
-                    {entry.imagePaths.slice(0, 3).map((uri, i) => (
-                      <TouchableOpacity
+                    {entry.imagePaths.slice(0, 3).map(uri => (
+                      <Image
                         key={uri}
-                        activeOpacity={0.85}
-                        onPress={() => { setViewerIndex(i); setViewerVisible(true); }}
-                      >
-                        <Image
-                          source={{ uri }}
-                          style={{ width: 34, height: 34, borderRadius: 6 }}
-                          resizeMode="cover"
-                        />
-                      </TouchableOpacity>
+                        source={{ uri }}
+                        style={{ width: 34, height: 34, borderRadius: 6 }}
+                        resizeMode="cover"
+                      />
                     ))}
                   </View>
                 )}
@@ -297,7 +297,6 @@ const GridCard = memo(function GridCard({
       <ImageViewerModal
         visible={viewerVisible}
         images={entry.imagePaths}
-        initialIndex={viewerIndex}
         title={entry.title}
         content={entry.content}
         moods={entry.moods}

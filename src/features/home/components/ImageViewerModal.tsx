@@ -58,8 +58,9 @@ export default function ImageViewerModal({
   const contentScale = useRef(new Animated.Value(0.88)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const dotAnims = useRef(
-    Array.from({ length: DOT_COUNT }, (_, i) =>
-      new Animated.Value(i === initialIndex ? 1 : 0),
+    Array.from(
+      { length: DOT_COUNT },
+      (_, i) => new Animated.Value(i === initialIndex ? 1 : 0),
     ),
   ).current;
 
@@ -128,20 +129,20 @@ export default function ImageViewerModal({
     moveDots(nextIndex);
   }
 
-  const overlayColor   = isDark ? 'rgba(2,6,23,0.97)'     : 'rgba(241,245,249,0.97)';
-  const titleColor     = isDark ? Colors.white              : Colors.slate900;
-  const contentColor   = isDark ? Colors.slate400           : Colors.slate500;
-  const closeBg        = isDark ? theme._15                 : 'rgba(0,0,0,0.06)';
-  const closeIcon      = isDark ? theme[300]                : Colors.slate600;
-  const arrowBg        = isDark ? theme._15                 : 'rgba(0,0,0,0.06)';
-  const arrowBorder    = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-  const arrowIcon      = isDark ? theme[300]                : Colors.slate600;
-  const activeDot      = isDark ? theme[400]                : theme[500];
-  const inactiveDotBg  = isDark ? Colors.white              : Colors.slate400;
-  const tagBg          = isDark ? theme._15                 : theme[50];
-  const tagBorder      = isDark ? 'rgba(255,255,255,0.06)' : theme[100];
-  const tagText        = isDark ? theme[300]                : theme[600];
-  const dividerColor   = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const overlayColor = isDark ? 'rgba(2,6,23,0.97)' : 'rgba(241,245,249,0.97)';
+  const titleColor = isDark ? Colors.white : Colors.slate900;
+  const contentColor = isDark ? Colors.slate400 : Colors.slate500;
+  const closeBg = isDark ? theme._15 : 'rgba(0,0,0,0.06)';
+  const closeIcon = isDark ? theme[300] : Colors.slate600;
+  const arrowBg = isDark ? theme._15 : 'rgba(0,0,0,0.06)';
+  const arrowBorder = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const arrowIcon = isDark ? theme[300] : Colors.slate600;
+  const activeDot = isDark ? theme[400] : theme[500];
+  const inactiveDotBg = isDark ? Colors.white : Colors.slate400;
+  const tagBg = isDark ? theme._15 : theme[50];
+  const tagBorder = isDark ? 'rgba(255,255,255,0.06)' : theme[100];
+  const tagText = isDark ? theme[300] : theme[600];
+  const dividerColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
   return (
     <Modal
@@ -152,7 +153,10 @@ export default function ImageViewerModal({
       statusBarTranslucent
     >
       <Animated.View
-        style={[StyleSheet.absoluteFill, { backgroundColor: overlayColor, opacity: bgAnim }]}
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: overlayColor, opacity: bgAnim },
+        ]}
       />
 
       <Animated.View
@@ -194,29 +198,32 @@ export default function ImageViewerModal({
               {title}
             </Text>
 
-            {moods && moods.length > 0 && (
-              <View style={{ flexDirection: 'row', gap: 4, marginTop: 6 }}>
-                {moods.map(mood => (
-                  <Text key={mood} style={{ fontSize: 20 }}>
-                    {MOOD_META[mood as Mood]?.emoji}
-                  </Text>
-                ))}
-              </View>
-            )}
-
             {!!content && (
               <Text
-                style={{ fontSize: 13, lineHeight: 20, color: contentColor, marginTop: 8 }}
+                style={{
+                  fontSize: 13,
+                  lineHeight: 20,
+                  color: contentColor,
+                  marginTop: 8,
+                }}
               >
                 {content}
               </Text>
             )}
           </View>
 
-          <View
-            style={{ height: 1, backgroundColor: dividerColor, marginHorizontal: 20, marginBottom: 16 }}
-          />
+          {images.length > 0 && (
+            <View
+              style={{
+                height: 1,
+                backgroundColor: dividerColor,
+                marginHorizontal: 20,
+                marginBottom: 16,
+              }}
+            />
+          )}
 
+          {images.length > 0 && (
           <View style={{ height: IMG_H }}>
             <ScrollView
               ref={scrollRef}
@@ -224,7 +231,7 @@ export default function ImageViewerModal({
               pagingEnabled
               showsHorizontalScrollIndicator={false}
               bounces={images.length > 1}
-              onMomentumScrollEnd={(e) => {
+              onMomentumScrollEnd={e => {
                 const newIndex = Math.round(e.nativeEvent.contentOffset.x / SW);
                 if (newIndex !== currentIndex) {
                   setCurrentIndex(newIndex);
@@ -235,7 +242,12 @@ export default function ImageViewerModal({
               {images.map((uri, i) => (
                 <View
                   key={i}
-                  style={{ width: SW, height: IMG_H, alignItems: 'center', justifyContent: 'center' }}
+                  style={{
+                    width: SW,
+                    height: IMG_H,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
                 >
                   <Image
                     source={{ uri }}
@@ -250,7 +262,11 @@ export default function ImageViewerModal({
               pointerEvents="box-none"
               style={[
                 StyleSheet.absoluteFill,
-                { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12 },
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingHorizontal: 12,
+                },
               ]}
             >
               {currentIndex > 0 ? (
@@ -296,6 +312,7 @@ export default function ImageViewerModal({
               )}
             </View>
           </View>
+          )}
 
           {images.length > 1 && (
             <View
@@ -313,9 +330,16 @@ export default function ImageViewerModal({
                   style={{
                     height: 6,
                     borderRadius: 3,
-                    backgroundColor: i === currentIndex ? activeDot : inactiveDotBg,
-                    width: dotAnims[i].interpolate({ inputRange: [0, 1], outputRange: [6, 22] }),
-                    opacity: dotAnims[i].interpolate({ inputRange: [0, 1], outputRange: [0.25, 1] }),
+                    backgroundColor:
+                      i === currentIndex ? activeDot : inactiveDotBg,
+                    width: dotAnims[i].interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [6, 22],
+                    }),
+                    opacity: dotAnims[i].interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.25, 1],
+                    }),
                   }}
                 />
               ))}
@@ -345,10 +369,30 @@ export default function ImageViewerModal({
                     borderColor: tagBorder,
                   }}
                 >
-                  <Text style={{ fontSize: 12, fontWeight: '600', color: tagText }}>
+                  <Text
+                    style={{ fontSize: 12, fontWeight: '600', color: tagText }}
+                  >
                     {tag}
                   </Text>
                 </View>
+              ))}
+            </View>
+          )}
+
+          {moods && moods.length > 0 && (
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 4,
+                justifyContent: 'center',
+                paddingHorizontal: 24,
+                marginTop: 6,
+              }}
+            >
+              {moods.map(mood => (
+                <Text key={mood} style={{ fontSize: 20 }}>
+                  {MOOD_META[mood as Mood]?.emoji}
+                </Text>
               ))}
             </View>
           )}
