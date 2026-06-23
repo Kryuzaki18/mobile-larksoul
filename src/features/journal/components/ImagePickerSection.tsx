@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Image,
@@ -11,6 +11,14 @@ import {
   PermissionsAndroid,
   Alert,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { Camera, Images, X } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import type { ImagePickerResponse } from 'react-native-image-picker';
@@ -36,9 +44,23 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
   const theme = useActiveTheme();
 
   const [sheetVisible, setSheetVisible] = useState(false);
+  // URIs that have already rendered — initialised with whatever was already
+  // in the list at mount so pre-existing photos don't shimmer.
+  const [loadedUris, setLoadedUris] = useState<ReadonlySet<string>>(
+    () => new Set(imagePaths),
+  );
 
   const remaining = 3 - imagePaths.length;
   const canAdd = remaining > 0;
+
+  function markLoaded(uri: string) {
+    setLoadedUris(prev => {
+      if (prev.has(uri)) return prev;
+      const next = new Set(prev);
+      next.add(uri);
+      return next;
+    });
+  }
 
   async function launchPick(mode: PickMode) {
     useSecurityStore.getState().setPickingMedia(true);
@@ -128,7 +150,11 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
               source={{ uri }}
               style={{ width: THUMB, height: THUMB, borderRadius: RADIUS }}
               resizeMode="cover"
+              onLoad={() => markLoaded(uri)}
             />
+            {!loadedUris.has(uri) && (
+              <ShimmerOverlay isDark={isDark} />
+            )}
             <TouchableOpacity
               onPress={() => remove(i)}
               hitSlop={8}
@@ -238,6 +264,37 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
         </Modal>
       )}
     </>
+  );
+}
+
+function ShimmerOverlay({ isDark }: { isDark: boolean }) {
+  const opacity = useSharedValue(0.45);
+
+  useEffect(() => {
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.9, { duration: 650, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.45, { duration: 650, easing: Easing.inOut(Easing.ease) }),
+      ),
+      -1,
+      true,
+    );
+  }, [opacity]);
+
+  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+
+  return (
+    <Animated.View
+      style={[
+        animatedStyle,
+        {
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          borderRadius: RADIUS,
+          backgroundColor: isDark ? Colors.slate700 : Colors.slate200,
+        },
+      ]}
+    />
   );
 }
 
