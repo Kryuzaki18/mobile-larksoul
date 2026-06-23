@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Camera, Images, X } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import type { ImagePickerResponse } from 'react-native-image-picker';
 import { useColorScheme } from 'nativewind';
 import { Colors } from '../../../utils/themes';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
@@ -73,15 +74,34 @@ export default function ImagePickerSection({ imagePaths, onChange }: Props) {
       if (uris.length > 0) onChange([...imagePaths, ...uris]);
     };
 
+    const handleResponse = (res: ImagePickerResponse) => {
+      if (res.errorCode === 'permission') {
+        useSecurityStore.getState().setPickingMedia(false);
+        Alert.alert('Permission denied', 'Enable camera or photo library access in your device Settings.');
+        return;
+      }
+      if (res.errorCode === 'camera_unavailable') {
+        useSecurityStore.getState().setPickingMedia(false);
+        Alert.alert('Camera unavailable', 'No camera was found on this device.');
+        return;
+      }
+      if (res.errorCode) {
+        useSecurityStore.getState().setPickingMedia(false);
+        Alert.alert('Error', res.errorMessage ?? 'Something went wrong. Please try again.');
+        return;
+      }
+      onDone((res.assets ?? []).map(a => a.uri).filter((u): u is string => !!u));
+    };
+
     if (mode === 'library') {
       launchImageLibrary(
         { mediaType: 'photo', selectionLimit: remaining, quality: 0.8 },
-        res => onDone((res.assets ?? []).map(a => a.uri).filter((u): u is string => !!u)),
+        handleResponse,
       );
     } else {
       launchCamera(
         { mediaType: 'photo', cameraType: 'back', quality: 0.8, saveToPhotos: false },
-        res => onDone((res.assets ?? []).map(a => a.uri).filter((u): u is string => !!u)),
+        handleResponse,
       );
     }
   }
