@@ -10,6 +10,7 @@ import {
   Pressable,
   View,
   Text,
+  Image,
   TouchableOpacity,
   Animated,
   Easing,
@@ -203,27 +204,42 @@ const GridCard = memo(function GridCard({
                 </Text>
 
                 <Text
-                  className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed mb-2"
+                  className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed"
                   numberOfLines={3}
                 >
                   {entry.content}
                 </Text>
 
-                <View
-                  style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}
-                >
-                  {entry.tags.map(tag => (
-                    <View
-                      key={tag}
-                      className="rounded-full px-2 py-0.5"
-                      style={{ backgroundColor: isDark ? theme._15 : theme[50] }}
-                    >
-                      <Text className="text-xs font-medium" style={{ color: isDark ? theme[400] : theme[500] }}>
-                        {tag}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
+                {entry.imagePaths.length > 0 && (
+                  <View style={{ flexDirection: 'row', gap: 4, marginTop: 6 }}>
+                    {entry.imagePaths.slice(0, 3).map(uri => (
+                      <Image
+                        key={uri}
+                        source={{ uri }}
+                        style={{ width: 34, height: 34, borderRadius: 6 }}
+                        resizeMode="cover"
+                      />
+                    ))}
+                  </View>
+                )}
+
+                {entry.tags.length > 0 && (
+                  <View
+                    style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 6 }}
+                  >
+                    {entry.tags.map(tag => (
+                      <View
+                        key={tag}
+                        className="rounded-full px-2 py-0.5"
+                        style={{ backgroundColor: isDark ? theme._15 : theme[50] }}
+                      >
+                        <Text className="text-xs font-medium" style={{ color: isDark ? theme[400] : theme[500] }}>
+                          {tag}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </View>
             </View>
           </View>

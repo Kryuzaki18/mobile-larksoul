@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
+  Image,
   TouchableOpacity,
   Animated,
   Easing,
@@ -189,22 +190,46 @@ export default function JournalCard({
               )}
             </View>
 
-            <Text
-              className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5"
-              numberOfLines={2}
-            >
-              {entry.title}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+              <View style={{ flex: 1 }}>
+                <Text
+                  className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5"
+                  numberOfLines={2}
+                >
+                  {entry.title}
+                </Text>
 
-            <Text
-              className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed mb-3"
-              numberOfLines={3}
-            >
-              {entry.content}
-            </Text>
+                <Text
+                  className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed"
+                  numberOfLines={3}
+                >
+                  {entry.content}
+                </Text>
+              </View>
+
+              {entry.imagePaths.length > 0 && (
+                <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 2 }}>
+                  {entry.imagePaths.slice(0, 3).map((uri, i) => (
+                    <Image
+                      key={uri}
+                      source={{ uri }}
+                      style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: 8,
+                        marginLeft: i === 0 ? 0 : -10,
+                        borderWidth: 2,
+                        borderColor: isDark ? Colors.slate900 : Colors.white,
+                      }}
+                      resizeMode="cover"
+                    />
+                  ))}
+                </View>
+              )}
+            </View>
 
             {entry.tags.length > 0 && (
-              <View className="flex-row flex-wrap gap-2">
+              <View className="flex-row flex-wrap gap-2 mt-3">
                 {entry.tags.map(tag => (
                   <View
                     key={tag}
