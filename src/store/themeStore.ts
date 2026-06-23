@@ -18,14 +18,14 @@ interface ThemeState {
 
 export const useThemeStore = create<ThemeState>(set => ({
   theme:      'system',
-  colorTheme: 'aurum',
+  colorTheme: 'azure',
   isReady:    false,
 
   hydrate: async () => {
     const stored      = (await getSetting(THEME_KEY))       as ThemePreference | null;
     const storedColor = (await getSetting(COLOR_THEME_KEY)) as ThemeName | null;
     const theme       = stored      ?? 'system';
-    const colorTheme  = storedColor ?? 'aurum';
+    const colorTheme  = storedColor ?? 'azure';
     colorScheme.set(theme);
     set({ theme, colorTheme, isReady: true });
   },
