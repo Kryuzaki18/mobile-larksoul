@@ -7,15 +7,15 @@ import React, {
   memo,
 } from 'react';
 import {
-  Pressable,
   View,
   Text,
   Image,
   TouchableOpacity,
   Animated,
   Easing,
+  ScrollView,
 } from 'react-native';
-import { Clock, Pencil, Trash2, MoreVertical } from 'lucide-react-native';
+import { Clock, Pencil, Trash2, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 
 import { useEntryActions } from '../../../hooks/useEntryActions';
@@ -64,6 +64,17 @@ const GridCard = memo(function GridCard({
   const menuScale = useRef(new Animated.Value(0.88)).current;
 
   const [viewerVisible, setViewerVisible] = useState(false);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+  const tagsScrollRef = useRef<ScrollView>(null);
+  const tagsScrollX = useRef(0);
+  const tagsContentWidth = useRef(0);
+  const tagsLayoutWidth = useRef(0);
+
+  function updateTagsArrows(sx = tagsScrollX.current, cw = tagsContentWidth.current, lw = tagsLayoutWidth.current) {
+    setShowLeftArrow(sx > 2);
+    setShowRightArrow(sx + lw < cw - 2);
+  }
   
   const accentColor = MOOD_COLORS[entry.moods[0] ?? 'neutral'] ?? Colors.slate100;
   const timeLabel = formatTimeOnly(entry.createdAt);
@@ -141,21 +152,7 @@ const GridCard = memo(function GridCard({
   const iconColor = isDark ? Colors.slate300 : Colors.slate600;
 
   return (
-    <Pressable
-      style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}
-      onPress={() => {
-        if (isMenuOpen) {
-          onDismiss();
-        } else {
-          setViewerVisible(true);
-        }
-      }}
-      onLongPress={handleToggle}
-      delayLongPress={1000}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      android_ripple={null}
-    >
+    <View style={{ width: '50%', padding: 6, zIndex: isMenuOpen ? 20 : 1 }}>
       <Animated.View
         className="relative"
         style={{ transform: [{ scale: mountScale }] }}
@@ -173,39 +170,52 @@ const GridCard = memo(function GridCard({
           >
             <View style={{ height: 3, backgroundColor: accentColor }} />
 
-            <View className="pt-1 pb-3">
-              <View className="flex-row items-center gap-1 mb-2 ml-2">
-                <Clock size={12} color={Colors.gray400} />
-                <Text
-                  className="text-xs text-gray-400 flex-1"
-                  numberOfLines={1}
-                >
-                  {timeLabel}
-                </Text>
-                {entry.moods.length > 0 && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 2,
-                    }}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                if (isMenuOpen) {
+                  onDismiss();
+                } else {
+                  setViewerVisible(true);
+                }
+              }}
+              onLongPress={handleToggle}
+              delayLongPress={1000}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+            >
+              <View className="pt-1 px-2" style={{ paddingBottom: entry.tags.length > 0 ? 6 : 12 }}>
+                <View className="flex-row items-center gap-1 mb-2">
+                  <Clock size={12} color={Colors.gray400} />
+                  <Text
+                    className="text-xs text-gray-400 flex-1"
+                    numberOfLines={1}
                   >
-                    {entry.moods.map(mood => (
-                      <Text key={mood} style={{ fontSize: 13 }}>
-                        {MOOD_META[mood]?.emoji}
-                      </Text>
-                    ))}
-                  </View>
-                )}
-                <TouchableOpacity
-                  className="w-7 h-7 rounded-full items-center justify-center"
-                  onPress={handleToggle}
-                >
-                  <MoreVertical size={14} color={iconColor} />
-                </TouchableOpacity>
-              </View>
+                    {timeLabel}
+                  </Text>
+                  {entry.moods.length > 0 && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 2,
+                      }}
+                    >
+                      {entry.moods.map(mood => (
+                        <Text key={mood} style={{ fontSize: 13 }}>
+                          {MOOD_META[mood]?.emoji}
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                  <TouchableOpacity
+                    className="w-7 h-7 rounded-full items-center justify-center"
+                    onPress={handleToggle}
+                  >
+                    <MoreVertical size={14} color={iconColor} />
+                  </TouchableOpacity>
+                </View>
 
-              <View className="px-2">
                 <Text
                   className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1.5"
                   numberOfLines={2}
@@ -232,26 +242,61 @@ const GridCard = memo(function GridCard({
                     ))}
                   </View>
                 )}
+              </View>
+            </TouchableOpacity>
 
-                {entry.tags.length > 0 && (
-                  <View
-                    style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 6 }}
+            {entry.tags.length > 0 && (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 10, marginHorizontal: 4 }}>
+                {showLeftArrow && (
+                  <TouchableOpacity
+                    onPress={() => tagsScrollRef.current?.scrollTo({ x: Math.max(0, tagsScrollX.current - 80), animated: true })}
+                    hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
                   >
-                    {entry.tags.map(tag => (
-                      <View
-                        key={tag}
-                        className="rounded-full px-2 py-0.5"
-                        style={{ backgroundColor: isDark ? theme._15 : theme[50] }}
-                      >
-                        <Text className="text-xs font-medium" style={{ color: isDark ? theme[400] : theme[500] }}>
-                          {tag}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
+                    <ChevronLeft size={12} color={isDark ? theme[400] : theme[500]} />
+                  </TouchableOpacity>
+                )}
+                <ScrollView
+                  ref={tagsScrollRef}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={{ flex: 1 }}
+                  contentContainerStyle={{ flexDirection: 'row', gap: 4 }}
+                  scrollEventThrottle={16}
+                  onScroll={e => {
+                    tagsScrollX.current = e.nativeEvent.contentOffset.x;
+                    updateTagsArrows(tagsScrollX.current);
+                  }}
+                  onContentSizeChange={w => {
+                    tagsContentWidth.current = w;
+                    updateTagsArrows(undefined, w);
+                  }}
+                  onLayout={e => {
+                    tagsLayoutWidth.current = e.nativeEvent.layout.width;
+                    updateTagsArrows(undefined, undefined, e.nativeEvent.layout.width);
+                  }}
+                >
+                  {entry.tags.map(tag => (
+                    <View
+                      key={tag}
+                      className="rounded-full px-2 py-0.5"
+                      style={{ backgroundColor: isDark ? theme._15 : theme[50] }}
+                    >
+                      <Text className="text-xs font-medium" style={{ color: isDark ? theme[400] : theme[500] }}>
+                        {tag}
+                      </Text>
+                    </View>
+                  ))}
+                </ScrollView>
+                {showRightArrow && (
+                  <TouchableOpacity
+                    onPress={() => tagsScrollRef.current?.scrollTo({ x: tagsScrollX.current + 80, animated: true })}
+                    hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+                  >
+                    <ChevronRight size={12} color={isDark ? theme[400] : theme[500]} />
+                  </TouchableOpacity>
                 )}
               </View>
-            </View>
+            )}
           </View>
         </Animated.View>
 
@@ -303,7 +348,7 @@ const GridCard = memo(function GridCard({
         tags={entry.tags}
         onClose={() => setViewerVisible(false)}
       />
-    </Pressable>
+    </View>
   );
 });
 

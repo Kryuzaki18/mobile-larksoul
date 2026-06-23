@@ -4,9 +4,7 @@ import {
   Easing,
   LayoutAnimation,
   PanResponder,
-  Platform,
   TouchableOpacity,
-  UIManager,
   View,
   Text,
 } from 'react-native';
@@ -17,9 +15,6 @@ import { Colors } from '../../../utils/themes';
 import CalendarHeader from './CalendarHeader';
 import CalendarDayCell from './CalendarDayCell';
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 type DayCell = { day: number; type: 'prev' | 'current' | 'next' };
 
