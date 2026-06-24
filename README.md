@@ -1,20 +1,22 @@
-# Larksoul
+# LarkSoul
 
-A personal journal app built with React Native. Write daily entries, track your mood, and reflect on your thoughts — all stored locally on your device.
+> A personal journal app for iOS and Android. Write daily entries, track your mood, and reflect on your thoughts — all stored privately on your device.
 
 ---
 
 ## Features
 
-- **Journal entries** — Title, free-form thoughts, up to 3 moods, and up to 3 hashtag tags per entry
-- **Calendar view** — Browse entries by date with an animated month calendar; swipe or tap arrows to navigate months
-- **List / Grid layout toggle** — Switch between a card list and a compact grid on the home screen
-- **Mood insights** — Bar chart breakdown of mood frequency over time
-- **Authentication** — Email/password, Google Sign-In, Apple Sign-In, and guest mode
-- **PIN lock** — Optional PIN to protect the app on resume
-- **Theme** — Light, Dark, and system-auto modes
-- **Export** — Print or export journal entries
-- **Offline-first** — All data stored locally via SQLite; no internet required to read or write
+| | |
+|---|---|
+| **Journal entries** | Title, free-form content, up to 3 moods, up to 3 tags, and up to 3 images |
+| **Calendar view** | Browse entries by month with swipe navigation |
+| **List & Grid layouts** | Toggle between card list and compact grid on the home screen |
+| **Mood insights** | Bar chart breakdown of mood frequency over time |
+| **Authentication** | Email/password, Google Sign-In, Apple Sign-In, and guest mode |
+| **PIN lock** | Optional PIN to protect the app on resume |
+| **Themes** | Light, Dark, and system-auto |
+| **Export** | Print or export journal entries |
+| **Offline-first** | All data stored locally via SQLite — no internet required |
 
 ---
 
@@ -25,14 +27,44 @@ A personal journal app built with React Native. Write daily entries, track your 
 | Framework | React Native 0.85 (CLI) |
 | Language | TypeScript 5 |
 | Styling | NativeWind 4 (Tailwind CSS) |
-| Navigation | React Navigation 7 (Native Stack) |
+| Navigation | React Navigation 7 |
 | State | Zustand 5 |
+| Server state | TanStack Query 5 |
 | Database | op-sqlite 16 |
-| Animations | React Native Animated API + React Native Reanimated 4 |
+| Animations | Animated API + Reanimated 4 |
+| Charts | react-native-svg |
 | Icons | lucide-react-native |
-| Auth | Google Sign-In, Apple Authentication, react-native-keychain |
-| Networking | @react-native-community/netinfo |
-| Splash screen | react-native-bootsplash |
+| Auth | Google Sign-In · Apple Authentication · react-native-keychain |
+| Media | react-native-image-picker |
+| Print / Export | react-native-print |
+
+---
+
+## Getting Started
+
+**Prerequisites**
+- Node >= 22
+- React Native environment — [setup guide](https://reactnative.dev/docs/set-up-your-environment)
+- iOS only: Ruby + CocoaPods
+
+```sh
+# Install dependencies
+npm install
+
+# iOS — install pods
+bundle install && bundle exec pod install
+```
+
+```sh
+# Start Metro
+npm start
+
+# Run on Android
+npm run android
+
+# Run on iOS
+npm run ios
+```
 
 ---
 
@@ -40,95 +72,59 @@ A personal journal app built with React Native. Write daily entries, track your 
 
 ```
 src/
+├── assets/              # Static assets (images, fonts)
+├── components/          # Shared UI components
+├── config/              # App-wide configuration constants
 ├── database/
-│   ├── functions/       # journal, users — CRUD helpers
-│   ├── migrations/      # versioned schema migrations
-│   └── schemas/         # table definitions with CHECK constraints
+│   ├── functions/       # CRUD helpers for journal and users
+│   ├── migrations/      # Versioned schema migrations
+│   └── schemas/         # Table definitions with CHECK constraints
 ├── features/
-│   ├── auth/            # Login, Sign Up, PIN lock screens
-│   ├── commons/         # Shared Header, NetworkStatusDot
-│   ├── home/            # HomeScreen, CalendarView, ListView, GridView, JournalCard
-│   ├── insights/        # Insights screen and components
-│   ├── journal/         # AddEntryScreen, MoodSelector, TagInput, DatePickerModal
-│   └── settings/        # SettingsScreen, SecurityScreen
-├── hooks/               # useHomeState, useInsightsGraph
-├── models/              # TypeScript interfaces and navigation types
-├── navigation/          # RootStack (screen registration + transitions)
-├── services/            # auth, session, security services
+│   ├── auth/
+│   │   └── components/  # Login, Sign Up, PIN lock
+│   ├── home/
+│   │   └── components/  # Calendar, List/Grid views, Journal cards
+│   ├── insights/
+│   │   └── components/  # Mood chart and insight components
+│   ├── journal/
+│   │   └── components/  # Add Entry, Mood Selector, Tag Input, Date Picker
+│   └── settings/
+│       └── components/  # Settings and Security screens
+├── hooks/               # Shared custom hooks
+├── navigation/          # RootStack with screen transitions
+├── services/            # Auth, session, and security services
 ├── store/               # Zustand stores (auth, theme, security, settings)
-└── utils/               # dateTime, mood metadata
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node >= 22
-- React Native environment set up — follow the [official guide](https://reactnative.dev/docs/set-up-your-environment)
-- For iOS: Ruby + CocoaPods
-
-### Install dependencies
-
-```sh
-npm install
-```
-
-### iOS — install pods
-
-```sh
-bundle install
-bundle exec pod install
-```
-
-### Run
-
-```sh
-# Start Metro
-npm start
-
-# Android (new terminal)
-npm run android
-
-# iOS (new terminal)
-npm run ios
+├── types/               # TypeScript interfaces and navigation types
+└── utils/
+    └── themes/          # Theme tokens and helpers
 ```
 
 ---
 
 ## Database
 
-The app uses op-sqlite with a versioned migration system (`src/database/migrations/index.ts`). The current schema version is tracked in `DB_VERSION`. Migrations run automatically on app start.
+Uses **op-sqlite** with a versioned migration system. Migrations run automatically on app start, tracked by `DB_VERSION` in `src/database/migrations/index.ts`.
 
-Validation is enforced at the app layer (`validateEntryFields` in `src/database/functions/journal.ts`) before any write reaches SQLite:
+Entry validation runs before any write:
 
-- Title: 2–30 characters
-- Content: 7–300 characters
-- Moods: max 3
-- Tags: max 3, each 2–15 characters
-
----
-
-## Navigation Transitions
-
-| Route | Animation |
+| Field | Constraint |
 |---|---|
-| Any screen push | Slide from right |
-| Insights → Home | Slide from left (pop) |
-| Settings → back | Slide to right (pop) |
-| Home → Add Entry | Slide from bottom |
+| Title | 2–30 characters |
+| Content | 7–300 characters |
+| Moods | Max 3 |
+| Tags | Max 3, each 2–15 characters |
+| Images | Max 3 |
 
 ---
 
 ## Building for Release
 
 ```sh
-# Android APK
+# Android release APK
 npm run build:android
 
 # Android debug APK
 npm run build:android:debug
 ```
 
-For iOS release builds, archive from Xcode.
+For iOS, archive via Xcode.
