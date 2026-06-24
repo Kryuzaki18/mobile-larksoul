@@ -6,7 +6,7 @@ import ListView from './ListView';
 import GridView from './GridView';
 import EmptyEntry from './EmptyEntry';
 import type { EntryGroup } from '../../../hooks/useHomeState';
-import { formatDateStrLabel } from '../../../utils/dateTime';
+import { formatDateStrLabel, parseDateStr, DAY_NAMES } from '../../../utils/dateTime';
 
 interface AllEntriesViewProps {
   groups: EntryGroup[];
@@ -27,7 +27,7 @@ export default function AllEntriesView({
     <View>
       {groups.map(({ date, items }) => (
         <View key={date}>
-          <DateSeparator label={formatDateStrLabel(date)} />
+          <DateSeparator label={`${DAY_NAMES[parseDateStr(date).getDay()].slice(0, 3).toUpperCase()} · ${formatDateStrLabel(date)}`} />
           
           {layout === 'list' ? (
             <ListView entries={items} refetch={refetch} />
