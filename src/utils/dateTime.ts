@@ -1,13 +1,31 @@
-const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+export const DAY_NAMES = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
 
 export const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 export const WEEK_DAYS = DAY_NAMES.map(m => m.slice(0, 1)); // 'S', 'M', 'T', 'W', 'T', 'F', 'S'
 
-const MONTHS_ABBR = MONTH_NAMES.map(m => m.slice(0, 3));          // 'Jan', 'Feb', ...
-const MONTHS_ABBR_UPPER = MONTHS_ABBR.map(m => m.toUpperCase());  // 'JAN', 'FEB', ...
+const MONTHS_ABBR = MONTH_NAMES.map(m => m.slice(0, 3)); // 'Jan', 'Feb', ...
+const MONTHS_ABBR_UPPER = MONTHS_ABBR.map(m => m.toUpperCase()); // 'JAN', 'FEB', ...
 
 export function formatTimeOnly(createdAt: string): string {
   const date = new Date(createdAt);
@@ -37,7 +55,10 @@ export function formatEntryTime(createdAt: string): string {
 }
 
 export function toDateStr(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    '0',
+  )}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 export function formatDateLabel(date: Date): string {
@@ -50,7 +71,9 @@ export function formatDateLabel(date: Date): string {
 export function formatEntryDate(dateStr: string): string {
   const [year, month, day] = dateStr.split('-').map(Number);
   const d = new Date(year, month - 1, day);
-  return `${DAY_NAMES[d.getDay()]}, ${MONTHS_ABBR[month - 1]} ${String(day).padStart(2, '0')} · ${year}`;
+  return `${DAY_NAMES[d.getDay()]}, ${MONTHS_ABBR[month - 1]} ${String(
+    day,
+  ).padStart(2, '0')} · ${year}`;
 }
 
 export function formatDateShort(dateStr: string): string {
@@ -65,7 +88,10 @@ export function parseDateStr(dateStr: string): Date {
 
 export function formatDateStrLabel(dateStr: string): string {
   const [year, month, day] = dateStr.split('-').map(Number);
-  return `${MONTHS_ABBR_UPPER[month - 1]} ${String(day).padStart(2, '0')}, ${year}`;
+  return `${MONTHS_ABBR_UPPER[month - 1]} ${String(day).padStart(
+    2,
+    '0',
+  )}, ${year}`;
 }
 
 export function nowTimeStr(): string {
@@ -74,4 +100,10 @@ export function nowTimeStr(): string {
   const m = String(now.getMinutes()).padStart(2, '0');
   const s = String(now.getSeconds()).padStart(2, '0');
   return `${h}:${m}:${s}`;
+}
+
+export function formatSelected(date: Date): string {
+  return `${DAY_NAMES[date.getDay()]}, ${
+    MONTH_NAMES[date.getMonth()]
+  } ${date.getDate()}, ${date.getFullYear()}`;
 }

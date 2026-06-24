@@ -11,17 +11,15 @@ import {
 import { X, CalendarDays, Check } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CalendarView from '../../home/components/CalendarView';
-import { MONTH_NAMES } from '../../../utils/dateTime';
-import { Colors } from '../../../utils/themes';
+
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
-const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const SHEET_SLIDE = 420;
+import CalendarView from '../../home/components/CalendarView';
 
-function formatSelected(date: Date): string {
-  return `${DAY_NAMES[date.getDay()]}, ${MONTH_NAMES[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-}
+import { formatSelected } from '../../../utils/dateTime';
+import { Colors } from '../../../utils/themes';
+
+const SHEET_SLIDE = 420;
 
 interface DatePickerModalProps {
   visible: boolean;
